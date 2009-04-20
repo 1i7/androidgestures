@@ -30,6 +30,7 @@ public class AppPicker extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.picker);
+		//int x=R.layout.main;
 		PackageManager pm=getPackageManager();
 		
 		

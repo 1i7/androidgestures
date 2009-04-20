@@ -48,7 +48,7 @@ public class Manager extends Activity {
 		c = getContentResolver().query(
 				Uri.withAppendedPath(MotionsDB.CONTENT_URI, "motions"),
 				new String[] { "_id", MotionColumns.NAME },
-				null, null, null);
+				null, null, null); 
 		startManagingCursor(c);
 		motions = new SimpleCursorAdapter(this,
 				 android.R.layout.simple_list_item_single_choice, c, new String[] { MotionColumns.NAME},
