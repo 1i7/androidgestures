@@ -2,7 +2,7 @@ package org.sadko.gestures;
 
 import java.util.Iterator;
 import java.util.List;
-
+//import org.sadko.gestures.*;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
