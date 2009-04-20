@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?><LinearLayout android:id="@+id/LinearLayout01" xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical">
-<LinearLayout android:id="@+id/LinearLayout02" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="1"><ListView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/apps" android:layout_weight="1">
-</ListView><ListView android:id="@+id/activities" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="1"></ListView></LinearLayout>
-<LinearLayout android:id="@+id/LinearLayout03" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="0" android:layout_gravity="center_horizontal"><Button android:layout_height="wrap_content" android:text="ok" android:layout_width="fill_parent" android:layout_weight="1" android:id="@+id/okay"></Button>
-<Button android:layout_height="wrap_content" android:text="cancel" android:layout_width="fill_parent" android:layout_weight="1" android:id="@+id/no"></Button>
-</LinearLayout>
-</LinearLayout>
