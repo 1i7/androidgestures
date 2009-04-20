@@ -1,0 +1,81 @@
+package org.sadko.gestures;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+
+
+import org.openintents.hardware.SensorManagerSimulator;
+import org.openintents.provider.Hardware;
+
+import android.app.Service;
+import android.content.Intent;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
+import android.os.Binder;
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.RemoteException;
+import android.util.Log;
+
+public abstract class MotionHandler extends Service implements SensorListener{
+	public static final int START_STOP=359;
+	protected List<Motion> motions;
+	boolean isEnabled=true;
+	public void addMotion(Motion motion){
+		motions.add(motion);
+	}
+	
+	protected List<ListnerBinder> listners=new ArrayList<ListnerBinder>();
+	
+	MotionHandler(){
+		motions=new ArrayList<Motion>();
+	}
+	@Override
+	public IBinder onBind(Intent arg0) {
+		Log.i("serv","binding");
+		if(arg0.getAction()!=null && arg0.getAction().equals("CONTROL")) return new Binder(){
+
+			@Override
+			protected boolean onTransact(int code, Parcel data, Parcel reply,
+					int flags) throws RemoteException {
+				isEnabled=!isEnabled;
+				Log.i("binder","here!");
+				return super.onTransact(code, data, reply, flags);
+			}};
+		if(listners.isEmpty()){
+			//Hardware.mContentResolver=getContentResolver();
+			//SensorManager mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
+			//SensorManagerSimulator.connectSimulator();
+			SensorManager mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
+			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION_RAW,SensorManager.SENSOR_DELAY_UI);
+		}
+		ListnerBinder lb=new ListnerBinder();
+		listners.add(lb);
+		return lb;
+	}
+	protected void notifyListeners(int motion){
+		Iterator<ListnerBinder> iter=listners.iterator();
+		while(iter.hasNext()){
+			ListnerBinder lb=iter.next();
+			if(lb.ms!=null) lb.ms.onMotionRecieved(motion);
+		}
+	}
+	public static double[][] math(double yaw2, double pitch2, double roll2, double yaw,
+    		double pitch, double roll ){
+
+    	double[][]ans=new double[3][3];
+    	ans[0][0] =  (double) (Math.sin(roll2)*Math.cos(pitch2)*Math.sin(roll)*Math.cos(pitch)+Math.sin(roll2)*Math.sin(yaw2)*Math.sin(pitch2)*Math.sin(roll)*Math.sin(yaw)*Math.sin(pitch)+Math.sin(roll2)*Math.cos(yaw2)*Math.sin(pitch2)*Math.sin(yaw)*Math.cos(roll)+Math.sin(roll2)*Math.cos(yaw2)*Math.sin(pitch2)*Math.sin(roll)*Math.cos(yaw)*Math.sin(pitch)+Math.sin(yaw2)*Math.cos(roll2)*Math.sin(roll)*Math.cos(yaw)*Math.sin(pitch)-Math.sin(roll2)*Math.sin(yaw2)*Math.sin(pitch2)*Math.cos(yaw)*Math.cos(roll)+Math.sin(yaw2)*Math.cos(roll2)*Math.sin(yaw)*Math.cos(roll)+Math.cos(yaw2)*Math.cos(roll2)*Math.cos(yaw)*Math.cos(roll)-Math.cos(yaw2)*Math.cos(roll2)*Math.sin(roll)*Math.sin(yaw)*Math.sin(pitch));
+    	ans[0][1] =  (double) (Math.sin(roll2)*Math.cos(pitch2)*Math.sin(pitch)-Math.sin(roll2)*Math.cos(pitch)*Math.sin(yaw)*Math.sin(yaw2)*Math.sin(pitch2)-Math.cos(pitch)*Math.cos(yaw)*Math.sin(yaw2)*Math.cos(roll2)-Math.sin(roll2)*Math.cos(pitch)*Math.cos(yaw)*Math.cos(yaw2)*Math.sin(pitch2)+Math.cos(pitch)*Math.sin(yaw)*Math.cos(yaw2)*Math.cos(roll2) );
+    	ans[0][2] =  (double) (-Math.sin(roll2)*Math.cos(pitch2)*Math.cos(pitch)*Math.cos(roll)-Math.sin(pitch2)*Math.sin(roll2)*Math.sin(yaw2)*Math.cos(yaw)*Math.sin(roll)-Math.sin(pitch2)*Math.sin(roll2)*Math.sin(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.sin(yaw)-Math.sin(yaw2)*Math.cos(roll2)*Math.sin(pitch)*Math.cos(roll)*Math.cos(yaw)+Math.cos(yaw2)*Math.cos(roll2)*Math.cos(yaw)*Math.sin(roll)+Math.sin(yaw2)*Math.cos(roll2)*Math.sin(roll)*Math.sin(yaw)-Math.sin(pitch2)*Math.cos(yaw2)*Math.sin(roll2)*Math.sin(pitch)*Math.cos(roll)*Math.cos(yaw)+Math.sin(pitch2)*Math.cos(yaw2)*Math.sin(roll2)*Math.sin(roll)*Math.sin(yaw)+Math.cos(yaw2)*Math.cos(roll2)*Math.sin(pitch)*Math.cos(roll)*Math.sin(yaw));
+    	ans[1][0] = (double)(-Math.cos(pitch2)*Math.sin(yaw2)*Math.sin(roll)*Math.sin(yaw)*Math.sin(pitch)+Math.cos(pitch2)*Math.sin(yaw2)*Math.cos(yaw)*Math.cos(roll)-Math.cos(pitch2)*Math.cos(yaw2)*Math.sin(roll)*Math.cos(yaw)*Math.sin(pitch)-Math.cos(pitch2)*Math.cos(yaw2)*Math.sin(yaw)*Math.cos(roll)+Math.sin(pitch2)*Math.sin(roll)*Math.cos(pitch));
+    	ans[1][1]= (double)(Math.cos(pitch2)*Math.sin(yaw2)*Math.cos(pitch)*Math.sin(yaw)+Math.cos(pitch2)*Math.cos(yaw2)*Math.cos(pitch)*Math.cos(yaw)+Math.sin(pitch2)*Math.sin(pitch));
+    	ans[1][2]= (double)(Math.cos(pitch2)*Math.sin(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.sin(yaw)+Math.cos(pitch2)*Math.sin(yaw2)*Math.cos(yaw)*Math.sin(roll)+Math.cos(pitch2)*Math.cos(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.cos(yaw)-Math.cos(pitch2)*Math.cos(yaw2)*Math.sin(roll)*Math.sin(yaw)-Math.sin(pitch2)*Math.cos(pitch)*Math.cos(roll));
+    	ans[2][0]= (double)(-Math.cos(pitch2)*Math.cos(roll2)*Math.sin(roll)*Math.cos(pitch)+Math.sin(roll2)*Math.cos(yaw2)*Math.cos(yaw)*Math.cos(roll)+Math.sin(roll2)*Math.sin(yaw2)*Math.sin(roll)*Math.cos(yaw)*Math.sin(pitch)-Math.sin(pitch2)*Math.cos(roll2)*Math.cos(yaw2)*Math.sin(yaw)*Math.cos(roll)+Math.sin(roll2)*Math.sin(yaw2)*Math.sin(yaw)*Math.cos(roll)-Math.sin(pitch2)*Math.cos(roll2)*Math.sin(yaw2)*Math.sin(roll)*Math.sin(yaw)*Math.sin(pitch)-Math.sin(pitch2)*Math.cos(roll2)*Math.cos(yaw2)*Math.sin(roll)*Math.cos(yaw)*Math.sin(pitch)-Math.sin(roll2)*Math.cos(yaw2)*Math.sin(roll)*Math.sin(yaw)*Math.sin(pitch)+Math.sin(pitch2)*Math.cos(roll2)*Math.sin(yaw2)*Math.cos(yaw)*Math.cos(roll));
+    	ans[2][1]=(double)(-Math.cos(pitch2)*Math.cos(roll2)*Math.sin(pitch)-Math.sin(roll2)*Math.cos(pitch)*Math.cos(yaw)*Math.sin(yaw2)+Math.cos(pitch)*Math.sin(yaw)*Math.sin(pitch2)*Math.cos(roll2)*Math.sin(yaw2)+Math.sin(roll2)*Math.cos(pitch)*Math.sin(yaw)*Math.cos(yaw2)+Math.cos(pitch)*Math.cos(yaw)*Math.sin(pitch2)*Math.cos(roll2)*Math.cos(yaw2));
+    	ans[2][2]=(double)(Math.cos(pitch2)*Math.cos(roll2)*Math.cos(pitch)*Math.cos(roll)+Math.sin(roll2)*Math.cos(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.sin(yaw)+Math.sin(pitch2)*Math.cos(roll2)*Math.sin(yaw2)*Math.cos(yaw)*Math.sin(roll)+Math.sin(roll2)*Math.cos(yaw2)*Math.cos(yaw)*Math.sin(roll)-Math.sin(pitch2)*Math.cos(roll2)*Math.cos(yaw2)*Math.sin(roll)*Math.sin(yaw)-Math.sin(roll2)*Math.sin(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.cos(yaw)+Math.sin(pitch2)*Math.cos(roll2)*Math.cos(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.cos(yaw)+Math.sin(pitch2)*Math.cos(roll2)*Math.sin(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.sin(yaw)+Math.sin(roll2)*Math.sin(yaw2)*Math.sin(roll)*Math.sin(yaw));
+     	return ans;
+    	 
+    }
+}
