@@ -14,7 +14,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.text.TextUtils;
 import android.util.Log;
 
 public class MotionsDB extends ContentProvider {
@@ -25,7 +24,7 @@ public class MotionsDB extends ContentProvider {
     private static final int MOTIONS = 1;
     private static final int MOTION_ID = 2;
 	//public static final String DURATION="time";
-	public static final String DATABASE_NAME="MOTION_DB6";
+	public static final String DATABASE_NAME="MOTION_DB8";
 	public static final String TABLE_NAME="MOTIONS_last";
 	private static final int DATABASE_VERSION = 2;
 	private static class MOTION_COL implements BaseColumns{
