@@ -22,6 +22,7 @@ import android.widget.EditText;
 public class MotionEditor extends Activity {
 	ContentValues values=new ContentValues();
 	String action;
+	long motionId;
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==1)
@@ -46,8 +47,8 @@ public class MotionEditor extends Activity {
 		Button record=(Button) findViewById(R.id.Record);
 		action=getIntent().getAction();
 		if(action.equals(android.content.Intent.ACTION_EDIT)){
-			long id=getIntent().getExtras().getLong("id");
-			Cursor c=getContentResolver().query(Uri.withAppendedPath(MotionColumns.CONTENT_URI, id+""), new String[] {MotionColumns.NAME,MotionColumns.PACK,MotionColumns.ACTIVITY},null, null, null);
+			motionId=getIntent().getExtras().getLong("id");
+			Cursor c=getContentResolver().query(Uri.withAppendedPath(MotionColumns.CONTENT_URI, motionId+""), new String[] {MotionColumns.NAME,MotionColumns.PACK,MotionColumns.ACTIVITY},null, null, null);
 			;
 			
 			c.moveToFirst();
@@ -67,7 +68,10 @@ public class MotionEditor extends Activity {
 
 			public void onClick(View v) {
 				values.put(MotionColumns.NAME, ((EditText)findViewById(R.id.EditText01)).getText().toString());
-				Uri ur= getContentResolver().insert(Uri.withAppendedPath(MotionsDB.CONTENT_URI, "motions"), values);
+				if(action.equals(android.content.Intent.ACTION_EDIT))
+					getContentResolver().update(Uri.withAppendedPath(MotionsDB.CONTENT_URI, "motions"), values, "_ID="+motionId, null);
+				else
+				getContentResolver().insert(Uri.withAppendedPath(MotionsDB.CONTENT_URI, "motions"), values);
 				
 				finish();
 			}
