@@ -64,7 +64,7 @@ public class Recorder extends Activity {
 					
 			}
     	});
-        mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
+        //mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
     	//Hardware.mContentResolver=getContentResolver();
         //mSensorManager=  new SensorManagerSimulator((SensorManager) 
         	//                getSystemService(SENSOR_SERVICE)); 

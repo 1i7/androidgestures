@@ -9,6 +9,10 @@ import java.util.List;
 import org.openintents.hardware.SensorManagerSimulator;
 import org.openintents.provider.Hardware;
 
+//import android.R;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.SensorListener;
@@ -34,7 +38,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	}
 	@Override
 	public IBinder onBind(Intent arg0) {
-		Log.i("serv","binding");
+		//Log.i("serv","binding");
 		if(arg0.getAction()!=null && arg0.getAction().equals("CONTROL")) return new Binder(){
 
 			@Override
@@ -52,6 +56,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION_RAW,SensorManager.SENSOR_DELAY_UI);
 		}
 		ListnerBinder lb=new ListnerBinder();
+		lb.mh=this;
 		listners.add(lb);
 		return lb;
 	}
@@ -78,4 +83,18 @@ public abstract class MotionHandler extends Service implements SensorListener{
      	return ans;
     	 
     }
+	protected void showNotification() {
+		Intent m_clickIntent = new Intent();
+		m_clickIntent.setClass(this, Manager.class);
+		m_clickIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+				| Intent.FLAG_ACTIVITY_NEW_TASK);
+		NotificationManager mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		Notification m_currentNotification = new Notification(isEnabled?R.drawable.iphone:R.drawable.iphone_icons,
+				isEnabled?"Service is running":"Service is idle", System.currentTimeMillis());
+		m_currentNotification.setLatestEventInfo(this, "Service is running",
+				"click here to change state", PendingIntent.getActivity(this, 0,
+						m_clickIntent, PendingIntent.FLAG_CANCEL_CURRENT));
+		mNM.notify(0, m_currentNotification);
+
+	}
 }

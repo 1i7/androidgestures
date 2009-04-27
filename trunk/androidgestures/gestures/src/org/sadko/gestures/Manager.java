@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +13,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcel;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,29 +23,17 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class Manager extends Activity {
 	ListView lv;
 	Cursor c;
 	SimpleCursorAdapter motions;
 	int selectedItem=-1;
+	ListnerBinder lb=null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		// ListView lv=(ListView) findViewById(R.id);
-		/*ContentValues val = new ContentValues();
-		for (int i = 0; i < 3; i++)
-			for (int j = 0; j < 3; j++)
-				val.put(MotionColumns.MATRIX[i][j], i + j);
-		val.put(MotionColumns.TIME, 1000);
-		val.put(MotionColumns.NAME, "right");
-		val.put(MotionColumns.PATH, "comasdf");
-		Uri ur = getContentResolver().insert(
-				Uri.withAppendedPath(MotionsDB.CONTENT_URI, "motions"), val);
-				*/
-		//Log.i("urrrii", ur + "");
 		c = getContentResolver().query(
 				Uri.withAppendedPath(MotionsDB.CONTENT_URI, "motions"),
 				new String[] { "_id", MotionColumns.NAME },
@@ -57,12 +46,6 @@ public class Manager extends Activity {
 		lv.setAdapter(motions);
         lv.setItemsCanFocus(false);
         lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        
-		//lv.setItemsCanFocus(false);
-		// lv.setItemsCanFocus(false);
-		// lv.setItemChecked(1, true);
-		// Log.i("mot",""+motions.areAllItemsEnabled());
-		//lv.
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onClick(View v) {
 				Log.i("list",""+((ListView)lv).getCheckedItemPosition());
@@ -80,7 +63,7 @@ public class Manager extends Activity {
 		Button delete = (Button) findViewById(R.id.delete);
 		Button modify = (Button) findViewById(R.id.modify);
 		Button exit = (Button) findViewById(R.id.exit);
-		Button startMyService = (Button) findViewById(R.id.service_start);
+		final Button startMyService = (Button) findViewById(R.id.service_start);
 		exit.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
@@ -91,15 +74,16 @@ public class Manager extends Activity {
 		startMyService.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
+				if(lb==null){
 				ServiceConnection sc=new ServiceConnection(){
-		        	ListnerBinder b;
+		        	
 					public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-						b=(ListnerBinder) arg1;
+						lb=(ListnerBinder) arg1;
 
-						b.ms=new MotionListener(){
+						lb.ms=new MotionListener(){
 
 							public void onMotionRecieved(int motion) {
-								Cursor c=getContentResolver().query(Uri.parse("content://net.sadko.gestures.content/motions/"+motion), new String [] {"package","activity"}, null, null, null);
+								Cursor c=getContentResolver().query(Uri.withAppendedPath(MotionsDB.CONTENT_URI,"motions/"+motion), new String [] {"package","activity"}, null, null, null);
 								c.moveToFirst();
 								Intent i=new Intent();
 								i.setClassName(c.getString(0),c.getString(1));
@@ -107,12 +91,25 @@ public class Manager extends Activity {
 							}
 							
 						};
-						//Log.i("connected","");
 					}
 					public void onServiceDisconnected(ComponentName arg0) {}
 		        };
 		        Intent i=new Intent(Manager.this, MotionHandler1.class);
 		        bindService(i,sc,Context.BIND_AUTO_CREATE);
+		        startMyService.setText("stop service");
+				}
+				else {
+					try {
+						Parcel p=Parcel.obtain();
+						lb.transact(ListnerBinder.ENABLE_DISABLE, null, p, 0);
+						startMyService.setText(p.readBundle().getBoolean("on/off")?"stop":"start");
+						lb.mh.showNotification();
+					} catch (RemoteException e) {
+						
+						e.printStackTrace();
+					}
+					//lb.mh.isEnabled
+				}
 		        
 		    }
 			

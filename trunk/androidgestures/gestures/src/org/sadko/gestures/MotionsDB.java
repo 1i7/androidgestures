@@ -181,8 +181,14 @@ public class MotionsDB extends ContentProvider {
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
-		Log.i("update", ":)");
-		// TODO Auto-generated method stub
+		values.put(MotionColumns.MODIFIED_DATE, System.currentTimeMillis());
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        long rowId = db.update(TABLE_NAME, values, selection, selectionArgs);//(TABLE_NAME, "motion", values);
+        if (rowId > 0) {
+            Uri motionUri = ContentUris.withAppendedId(CONTENT_URI, rowId);
+            getContext().getContentResolver().notifyChange(motionUri, null);
+            //return noteUri;
+        }
 		return 0;
 	}
 
