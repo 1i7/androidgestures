@@ -1,6 +1,8 @@
 package org.sadko.gestures;
 
 
+
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,6 +19,8 @@ import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -28,6 +32,35 @@ import android.widget.AdapterView.OnItemClickListener;
 public class Manager extends Activity {
 	ListView lv;
 	Cursor c;
+	private static final int ADD_NEW_ID=0;
+	private static final int EXIT_ID=1;
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, ADD_NEW_ID, 0, "Add new");
+		menu.add(0, EXIT_ID, 0, "Exit");
+		return super.onCreateOptionsMenu(menu);
+		
+	}
+	
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		switch(item.getItemId()){
+		case ADD_NEW_ID:{
+			Intent i=new Intent(Manager.this, MotionEditor.class);
+			i.setAction(android.content.Intent.ACTION_MAIN);
+			startActivity(i);
+			break;
+		}
+		case EXIT_ID:{
+			Manager.this.finish();
+			break;
+		}
+		}
+		return super.onMenuItemSelected(featureId, item);
+	}
+
+
 	SimpleCursorAdapter motions;
 	int selectedItem=-1;
 	ListnerBinder lb=null;
@@ -42,37 +75,37 @@ public class Manager extends Activity {
 				null, null, null); 
 		startManagingCursor(c);
 		motions = new SimpleCursorAdapter(this,
-				 android.R.layout.simple_list_item_single_choice, c, new String[] { MotionColumns.NAME},
-				new int[] { android.R.id.text1});
-		lv = (ListView) findViewById(R.id.ListView01);
+				 R.layout.motions_row, c, new String[] { MotionColumns.NAME},
+				new int[] { R.id.motion_name});
+		lv = (ListView) findViewById(R.id.motions_list);
 		lv.setAdapter(motions);
         lv.setItemsCanFocus(false);
         lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		lv.setOnItemClickListener(new OnItemClickListener() {
-			public void onClick(View v) {
-				Log.i("list",""+((ListView)lv).getCheckedItemPosition());
-			}
+
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				selectedItem=arg2;
-				
+				Intent i=new Intent(Manager.this, MotionEditor.class);
+				i.setAction(android.content.Intent.ACTION_EDIT);
+				i.putExtra("id", motions.getItemId(arg2));
+				startActivity(i);
 			}
 
 		});
 		
-		Button addNew = (Button) findViewById(R.id.add_new);
-		Button delete = (Button) findViewById(R.id.delete);
-		Button modify = (Button) findViewById(R.id.modify);
-		Button exit = (Button) findViewById(R.id.exit);
+	//	Button addNew = (Button) findViewById(R.id.add_new);
+		//Button delete = (Button) findViewById(R.id.delete);
+		//Button modify = (Button) findViewById(R.id.modify);
+		//Button exit = (Button) findViewById(R.id.exit);
 		final Button startMyService = (Button) findViewById(R.id.service_start);
-		exit.setOnClickListener(new OnClickListener(){
+/*		exit.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
-				Manager.this.finish();
+				
 			}
 			
-		});
+		});*/
 		startMyService.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
@@ -85,7 +118,7 @@ public class Manager extends Activity {
 						lb.ms=new MotionListener(){
 
 							public void onMotionRecieved(int motion) {
-								Cursor c=getContentResolver().query(MotionsDB.TASKS_CONTENT_URI, new String [] {"package","activity"}, ActivityColumns.MOTION_ID+"="+motion, null, null);
+								Cursor c=getContentResolver().query(MotionsDB.TASKS_CONTENT_URI, new String [] {ActivityColumns.PACK,ActivityColumns.ACTIVITY}, ActivityColumns.MOTION_ID+"="+motion, null, null);
 								while(!c.isLast()){
 									c.moveToNext();
 									Intent i=new Intent();
@@ -119,70 +152,30 @@ public class Manager extends Activity {
 			
 			
 		});
-		addNew.setOnClickListener(new OnClickListener() {
+	/*	addNew.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				Intent i=new Intent(Manager.this, MotionEditor.class);
-				i.setAction(android.content.Intent.ACTION_MAIN);
-				
-				startActivity(i);
+
 
 			}
 
 		});
 		delete.setOnClickListener(new OnClickListener() {
 
-			public void onClick(View v) {
-				showDialog(DIALOG_YES_NO_MESSAGE);
 
-			}
 
 		});
 		modify.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
-				Intent i=new Intent(Manager.this, MotionEditor.class);
-				i.setAction(android.content.Intent.ACTION_EDIT);
-				i.putExtra("id", motions.getItemId(selectedItem));
-			//	Log.i("mana",""+i.getExtras().get)
-				startActivity(i);
+
 				
 			}
 			
 		});
-		
+		*/
 	}
 	
-	static final int DIALOG_YES_NO_MESSAGE = 999;
 
-	protected Dialog onCreateDialog(int id) {
 
-		switch (id) {
-		case DIALOG_YES_NO_MESSAGE:
-			return new AlertDialog.Builder(Manager.this).setTitle("are you sure to remove")
-					.setPositiveButton("OK",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-
-									// User clicked OK so do some stuff
-									Log.i("selected", lv.getSelectedItemPosition()+ "!!!");
-									long id=motions.getItemId(selectedItem);
-									getContentResolver().delete(Uri.withAppendedPath(MotionColumns.CONTENT_URI, ""+id), null, null);
-									c.requery();
-									
-								}
-							}).setNegativeButton("Cancel",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-
-									// User clicked Cancel so do some stuff
-
-									System.out.println("cancel clicked.");
-								}
-							}).create();
-		}
-		return null;
-	}
 }

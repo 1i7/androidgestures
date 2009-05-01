@@ -116,8 +116,10 @@ public class MotionsDB extends ContentProvider {
 		case TASKS: {
 			long rowId = mOpenHelper.getWritableDatabase().insert(
 					TASKS_TABLE_NAME, null, initialValues);
+			
 			Uri taskUri = ContentUris.withAppendedId(TASKS_CONTENT_URI, rowId);
 			getContext().getContentResolver().notifyChange(taskUri, null);
+			Log.i("DB","TASK inserted "+rowId);
 			if(rowId<0) 
 				throw new SQLException("Failed to insert row into " + uri);
 			return taskUri;
@@ -128,6 +130,7 @@ public class MotionsDB extends ContentProvider {
 			long rowId = db.insert(MOTIONS_TABLE_NAME, null, initialValues);
 			Uri motionUri = ContentUris.withAppendedId(TASKS_CONTENT_URI, rowId);
 			getContext().getContentResolver().notifyChange(motionUri, null);
+			Log.i("DB","MOTION inserted "+rowId);
 			if(rowId<0) 
 				throw new SQLException("Failed to insert row into " + uri);
 			return motionUri;
@@ -174,6 +177,7 @@ public class MotionsDB extends ContentProvider {
 		}
 
 		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+		//Log.i("query",qb.buildQuery(projection, selection, selectionArgs, null, null, null, null));
 		Cursor c = qb.query(db, projection, selection, selectionArgs, null,
 				null, null, null);
 		

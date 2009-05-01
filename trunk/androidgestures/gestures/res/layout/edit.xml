@@ -3,4 +3,5 @@
 <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/pick" android:text="pick app"></Button>
 <Button  android:layout_height="wrap_content" android:id="@+id/sSandE" android:text="save and exit" android:layout_width="fill_parent"></Button>
 
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/delete" android:text="delete"></Button>
 </LinearLayout>

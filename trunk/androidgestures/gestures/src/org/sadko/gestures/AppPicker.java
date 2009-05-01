@@ -27,7 +27,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class AppPicker extends ListActivity {
 	int packChosen = 0;
 	int actChosen = 0;
-
+	public static final String RESULT_CONTENT_VALUES_NAME="org.sadko.gestures.AppPicker/val"; 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,9 +35,7 @@ public class AppPicker extends ListActivity {
 		// int x=R.layout.main;
 		final PackageManager pm = getPackageManager();
 
-		List<ApplicationInfo> apinfs = pm
-				.getInstalledApplications(PackageManager.GET_ACTIVITIES);
-
+		
 		List<PackageInfo> apps = pm
 				.getInstalledPackages(PackageManager.GET_ACTIVITIES);
 		Iterator<PackageInfo> i = apps.iterator();
@@ -73,7 +71,7 @@ public class AppPicker extends ListActivity {
 						cv.put(ActivityColumns.PACK, needPackageName);
 						cv.put(ActivityColumns.ACTIVITY,info.activityInfo.name);
 						Intent intent = new Intent();
-						i.putExtra("vala", cv);
+						i.putExtra(RESULT_CONTENT_VALUES_NAME, cv);
 						setResult(1, i);
 						finish();
 					}

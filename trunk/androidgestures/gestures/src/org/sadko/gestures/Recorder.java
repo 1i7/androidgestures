@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.SeekBar;
 
 public class Recorder extends Activity {
+	public static final String RESULT_CONTENT_VALUES_NAME="org.sadko.gestures.Recorder/val"; 
 	public static double[][] math(double yaw2, double pitch2, double roll2,
 			double yaw, double pitch, double roll) {
 
@@ -153,13 +154,13 @@ public class Recorder extends Activity {
 
 			}
 		});
-		// mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
-		// Hardware.mContentResolver=getContentResolver();
-		// mSensorManager= new SensorManagerSimulator((SensorManager)
-		// getSystemService(SENSOR_SERVICE));
-		// SensorManagerSimulator.connectSimulator();
+		//mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
+		Hardware.mContentResolver=getContentResolver();
+		mSensorManager= new SensorManagerSimulator((SensorManager)
+		getSystemService(SENSOR_SERVICE));
+		SensorManagerSimulator.connectSimulator();
 		mSensorManager.registerListener(r,
-				SensorManager.SENSOR_ORIENTATION_RAW,
+				SensorManager.SENSOR_ORIENTATION,
 				SensorManager.SENSOR_DELAY_UI);
 	}
 
@@ -236,7 +237,7 @@ public class Recorder extends Activity {
 					for (int j = 0; j < 3; j++)
 						val.put(MotionColumns.MATRIX[i][j], maxMatrix[i][j]);
 				val.put(MotionColumns.TIME, time);
-				rez.putExtra("val", val);
+				rez.putExtra(RESULT_CONTENT_VALUES_NAME, val);
 				Log.i("rec", "i am here");
 				setResult(1, rez);
 				Recorder.this.finish();
