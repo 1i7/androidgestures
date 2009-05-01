@@ -4,7 +4,11 @@ import java.util.Iterator;
 import java.util.List;
 //import org.sadko.gestures.*;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
@@ -20,20 +24,24 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class MotionEditor extends Activity {
-	ContentValues values=new ContentValues();
+	ContentValues motionValues=new ContentValues();
+	ContentValues activityValues=new ContentValues();
 	String action;
 	long motionId;
+	long taskId;
+	private static final int RECORD_REQEST_CODE=1;
+	private static final int PICK_APP_REQUEST_CODE=2;
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==1)
-			if(resultCode==1){
-				ContentValues v=data.getParcelableExtra("val");
-				values.putAll(v);
+			if(resultCode==RECORD_REQEST_CODE){
+				ContentValues v=data.getParcelableExtra(Recorder.RESULT_CONTENT_VALUES_NAME);
+				motionValues.putAll(v);
 			}
-		if(requestCode==17){
+		if(requestCode==PICK_APP_REQUEST_CODE){
 			if(resultCode==1){
-				ContentValues v=data.getParcelableExtra("vala");
-				values.putAll(v);
+				ContentValues v=data.getParcelableExtra(AppPicker.RESULT_CONTENT_VALUES_NAME);
+				activityValues.putAll(v);
 			}
 		}
 		//super.onActivityResult(requestCode, resultCode, data);
@@ -48,7 +56,10 @@ public class MotionEditor extends Activity {
 		action=getIntent().getAction();
 		if(action.equals(android.content.Intent.ACTION_EDIT)){
 			motionId=getIntent().getExtras().getLong("id");
-			Cursor c=getContentResolver().query(Uri.withAppendedPath(MotionColumns.CONTENT_URI, motionId+""), new String[] {MotionColumns.NAME,ActivityColumns.PACK,ActivityColumns.ACTIVITY},null, null, null);
+			Cursor c1=getContentResolver().query(MotionsDB.TASKS_CONTENT_URI, null, ActivityColumns.MOTION_ID+"="+motionId, null, null);
+			c1.moveToFirst();
+			taskId=c1.getLong(c1.getColumnIndex(ActivityColumns.MOTION_ID));
+			Cursor c=getContentResolver().query(ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI, motionId), new String[] {MotionColumns.NAME},null, null, null);
 			;
 			
 			c.moveToFirst();
@@ -59,7 +70,7 @@ public class MotionEditor extends Activity {
 		record.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
 				Intent i=new Intent(MotionEditor.this,Recorder.class);
-				startActivityForResult(i,1);
+				startActivityForResult(i,RECORD_REQEST_CODE);
 			}
 			
 		});
@@ -67,11 +78,19 @@ public class MotionEditor extends Activity {
 		saveExit.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
-				values.put(MotionColumns.NAME, ((EditText)findViewById(R.id.EditText01)).getText().toString());
-				if(action.equals(android.content.Intent.ACTION_EDIT))
-					getContentResolver().update(Uri.withAppendedPath(MotionsDB.CONTENT_URI, "motions"), values, "_ID="+motionId, null);
-				else
-				getContentResolver().insert(Uri.withAppendedPath(MotionsDB.CONTENT_URI, "motions"), values);
+				motionValues.put(MotionColumns.NAME, ((EditText)findViewById(R.id.EditText01)).getText().toString());
+				if(action.equals(android.content.Intent.ACTION_EDIT)){
+					if(motionValues.size()>0)getContentResolver().update(MotionsDB.MOTIONS_CONTENT_URI, motionValues, "_ID="+motionId, null);
+					if(activityValues.size()>0)getContentResolver().update(MotionsDB.TASKS_CONTENT_URI, activityValues, "_ID="+taskId, null);
+					
+					}
+				else{
+					
+					motionId=ContentUris.parseId(getContentResolver().insert(MotionsDB.MOTIONS_CONTENT_URI, motionValues));
+					activityValues.put(ActivityColumns.MOTION_ID, motionId);
+					getContentResolver().insert(MotionsDB.TASKS_CONTENT_URI, activityValues);
+					
+				}
 				
 				finish();
 			}
@@ -82,15 +101,53 @@ public class MotionEditor extends Activity {
 
 			public void onClick(View v) {
 				Intent i=new Intent(MotionEditor.this,AppPicker.class);
-				
-				//i.setClassName("com.android.development", "com.android.development.AppPicker");
-				startActivityForResult(i,17);
+				startActivityForResult(i,PICK_APP_REQUEST_CODE);
 
 
 			}
 		});
+		Button delete=(Button)findViewById(R.id.delete);
+		if(!action.equals(android.content.Intent.ACTION_EDIT))
+			delete.setVisibility(android.widget.Button.INVISIBLE);
+		delete.setOnClickListener(new OnClickListener(){
+		public void onClick(View v) {
+			showDialog(DIALOG_YES_NO_MESSAGE);
+			}
 		
+		});
+							
 
+	}
+	static final int DIALOG_YES_NO_MESSAGE = 999;
+	protected Dialog onCreateDialog(int id) {
+
+		switch (id) {
+		case DIALOG_YES_NO_MESSAGE:
+			return new AlertDialog.Builder(MotionEditor.this).setTitle("are you sure to remove")
+					.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+
+									// User clicked OK so do some stuff
+									long id=motionId;
+									getContentResolver().delete(Uri.withAppendedPath(MotionColumns.CONTENT_URI, ""+id), null, null);
+									MotionEditor.this.finish();
+									//c.requery();
+									
+								}
+							}).setNegativeButton("Cancel",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+
+									// User clicked Cancel so do some stuff
+
+									//System.out.println("cancel clicked.");
+								}
+							}).create();
+		}
+		return null;
 	}
 
 }
