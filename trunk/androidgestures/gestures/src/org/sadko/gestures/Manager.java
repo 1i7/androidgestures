@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,9 +34,10 @@ public class Manager extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.main);
 		c = getContentResolver().query(
-				Uri.withAppendedPath(MotionsDB.CONTENT_URI, "motions"),
+				MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "_id", MotionColumns.NAME },
 				null, null, null); 
 		startManagingCursor(c);
@@ -83,11 +85,13 @@ public class Manager extends Activity {
 						lb.ms=new MotionListener(){
 
 							public void onMotionRecieved(int motion) {
-								Cursor c=getContentResolver().query(Uri.withAppendedPath(MotionsDB.CONTENT_URI,"motions/"+motion), new String [] {"package","activity"}, null, null, null);
-								c.moveToFirst();
-								Intent i=new Intent();
-								i.setClassName(c.getString(0),c.getString(1));
-								startActivity(i);
+								Cursor c=getContentResolver().query(MotionsDB.TASKS_CONTENT_URI, new String [] {"package","activity"}, ActivityColumns.MOTION_ID+"="+motion, null, null);
+								while(!c.isLast()){
+									c.moveToNext();
+									Intent i=new Intent();
+									i.setClassName(c.getString(0),c.getString(1));
+									startActivity(i);
+								}
 							}
 							
 						};

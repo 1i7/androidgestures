@@ -17,81 +17,89 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 public class MotionsDB extends ContentProvider {
-	public static final Uri CONTENT_URI =Uri.parse("content://org.sadko.gestures.content"); 
-        //Uri.parse("content://net.panda.motionrecorder.MotionsDB");
-	//public static final String A[][]=new String[3][3];
-    private static final UriMatcher sUriMatcher;
-    private static final int MOTIONS = 1;
-    private static final int MOTION_ID = 2;
-	//public static final String DURATION="time";
-	public static final String DATABASE_NAME="MOTION_DB8";
-	public static final String TABLE_NAME="MOTIONS_last";
+	public static final Uri CONTENT_URI = Uri
+			.parse("content://org.sadko.gestures.content");
+	public static final Uri MOTIONS_CONTENT_URI=Uri.withAppendedPath(CONTENT_URI, "motions");
+	public static final Uri TASKS_CONTENT_URI=Uri.withAppendedPath(CONTENT_URI, "tasks");
+	private static final UriMatcher sUriMatcher;
+	private static final int MOTIONS = 1;
+	private static final int MOTION_ID = 2;
+	private static final int TASKS = 3;
+	private static final int TASK_ID = 4;
+	public static final String DATABASE_NAME = "MOTION_DB8";
+	public static final String MOTIONS_TABLE_NAME = "MOTIONS";
+	public static final String TASKS_TABLE_NAME = "TASKS";
 	private static final int DATABASE_VERSION = 2;
-	private static class MOTION_COL implements BaseColumns{
-		
-	}
-    private static HashMap<String, String> sNotesProjectionMap;
-    
-	static{
+
+
+	static {
 		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI("org.sadko.gestures.content", "motions", MOTIONS);
-        sUriMatcher.addURI("org.sadko.gestures.content", "motions/#", MOTION_ID);
-        
-        sNotesProjectionMap = new HashMap<String, String>();
-        sNotesProjectionMap.put("_id","_id");
-        for(int i=0;i<3;i++)
-        	for(int j=0;j<3;j++)
-        		sNotesProjectionMap.put(MotionColumns.MATRIX[i][j], MotionColumns.MATRIX[i][j]);
-        sNotesProjectionMap.put(MotionColumns.TIME, MotionColumns.TIME);
-        sNotesProjectionMap.put(MotionColumns.NAME, MotionColumns.NAME);
-        //sNotesProjectionMap.put(MotionColumns.PATH, MotionColumns.PATH);
-        sNotesProjectionMap.put(MotionColumns.PACK, MotionColumns.PACK);
-        sNotesProjectionMap.put(MotionColumns.ACTIVITY, MotionColumns.ACTIVITY);
-        
+		sUriMatcher.addURI("org.sadko.gestures.content", "motions", MOTIONS);
+		sUriMatcher.addURI("org.sadko.gestures.content", "motions/#", MOTION_ID);
+		sUriMatcher.addURI("org.sadko.gestures.content", "tasks", TASKS);
+		sUriMatcher.addURI("org.sadko.gestures.content", "tasks/#", TASK_ID);
 	}
 
-	    private static class DatabaseHelper extends SQLiteOpenHelper {
+	private static class DatabaseHelper extends SQLiteOpenHelper {
 
-	        DatabaseHelper(Context context) {
-	            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-	            
-	            Log.i("database created","yes");
-	        }
-	        @Override
-	        public void onCreate(SQLiteDatabase db) {
-	        	Log.i("Dcreate",":)");
-	        	String script="CREATE TABLE " + TABLE_NAME + " (" +BaseColumns._ID+" integer primary key autoincrement, ";
-	        	for(int i=0;i<3;i++)
-	        		for(int j=0;j<3;j++){
-	        			script=script+ MotionColumns.MATRIX[i][j]+ " float,";
-	        		}
-	        	
-	        	script=script+MotionColumns.TIME+" integer, "+
-	        	MotionColumns.NAME+" VARCHAR(20), "+
-	        	MotionColumns.MODIFIED_DATE+ " INTEGER, "+
-	        	MotionColumns.PACK+ " VARCHAR(256), "+
-	        	MotionColumns.ACTIVITY+ " VARCHAR(256) "+
-	        	");";
-	        	Log.i("script",script+":)");
-	            db.execSQL(script);
-	        }
+		DatabaseHelper(Context context) {
+			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		}
 
-	        @Override
-	        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-	            Log.w("db", "Upgrading database from version " + oldVersion + " to "
-	                    + newVersion + ", which will destroy all old data");
-	            db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
-	            onCreate(db);
-	        }
-	    }
+		@Override
+		public void onCreate(SQLiteDatabase db) {
+			Log.i("Dcreate", ":)");
+			String script = "CREATE TABLE " + MOTIONS_TABLE_NAME + " ("
+					+ MotionColumns._ID
+					+ " integer primary key autoincrement, ";
+			for (int i = 0; i < 3; i++)
+				for (int j = 0; j < 3; j++) {
+					script = script + MotionColumns.MATRIX[i][j] + " float,";
+				}
+
+			script = script + MotionColumns.TIME + " integer, "
+					+ MotionColumns.NAME + " VARCHAR(20), "
+					+ MotionColumns.MODIFIED_DATE + " INTEGER, " + ");";
+			db.execSQL(script);
+			script = "CREATE TABLE " + TASKS_TABLE_NAME + " ("
+					+ ActivityColumns._ID
+					+ " integer primary key autoincrement, ";
+			script = script + ActivityColumns.PACK + " VARCHAR(256), ";
+			script = script + ActivityColumns.ACTIVITY + " VARCHAR(256), ";
+			script = script + ActivityColumns.MOTION_ID + " integer, ";
+			script = script + " FOREIGN KEY(" + ActivityColumns.MOTION_ID
+					+ ")  REFERENCES " + MOTIONS_TABLE_NAME + "("
+					+ MotionColumns._ID + ") ON DELETE CASCADE);";
+			db.execSQL(script);
+		}
+
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			Log
+					.w("db", "Upgrading database from version " + oldVersion
+							+ " to " + newVersion
+							+ ", which will destroy all old data");
+			db.execSQL("DROP TABLE IF EXISTS " + MOTIONS_TABLE_NAME);
+			onCreate(db);
+		}
+	}
+
 	@Override
 	public int delete(Uri arg0, String arg1, String[] arg2) {
-		long id=Long.parseLong(arg0.getLastPathSegment());
-		
-		Log.i("delete",""+mOpenHelper.getWritableDatabase().delete(TABLE_NAME,"_id="+id,null));
-		
-		// TODO Auto-generated method stub
-		Log.i("delete", ":)");
+		long id = Long.parseLong(arg0.getLastPathSegment());
+		switch (sUriMatcher.match(arg0)) {
+		case TASK_ID: {
+			mOpenHelper.getWritableDatabase().delete(TASKS_TABLE_NAME,
+					"_id=" + id, null);
+			break;
+		}
+		case MOTION_ID: {
+			mOpenHelper.getWritableDatabase().delete(MOTIONS_TABLE_NAME,
+					"_id=" + id, null);
+			break;
+		}
+
+		}
 		return 0;
 	}
 
@@ -103,93 +111,102 @@ public class MotionsDB extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues initialValues) {
-		//Log.i("contentprov","method invoked");
-	    /*if (sUriMatcher.match(uri) != MOTIONS) {
-            throw new IllegalArgumentException("Unknown URI " + uri);
-        }
-        ContentValues values;
-        if (initialValues != null) {
-            values = new ContentValues(initialValues);
-        } else {
-            values = new ContentValues();
-        }
-
-        Long now = Long.valueOf(System.currentTimeMillis());*/
-        // Make sure that the fields are all set
-		initialValues.put(MotionColumns.MODIFIED_DATE, System.currentTimeMillis());
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        long rowId = db.insert(TABLE_NAME, "motion", initialValues);
-        if (rowId > 0) {
-            Uri noteUri = ContentUris.withAppendedId(CONTENT_URI, rowId);
-            getContext().getContentResolver().notifyChange(noteUri, null);
-            return noteUri;
-        }
-
-        throw new SQLException("Failed to insert row into " + uri);
+		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		switch (sUriMatcher.match(uri)) {
+		case TASKS: {
+			long rowId = mOpenHelper.getWritableDatabase().insert(
+					TASKS_TABLE_NAME, null, initialValues);
+			Uri taskUri = ContentUris.withAppendedId(TASKS_CONTENT_URI, rowId);
+			getContext().getContentResolver().notifyChange(taskUri, null);
+			if(rowId<0) 
+				throw new SQLException("Failed to insert row into " + uri);
+			return taskUri;
+		}
+		case MOTIONS: {
+			initialValues.put(MotionColumns.MODIFIED_DATE, System
+					.currentTimeMillis());
+			long rowId = db.insert(MOTIONS_TABLE_NAME, null, initialValues);
+			Uri motionUri = ContentUris.withAppendedId(TASKS_CONTENT_URI, rowId);
+			getContext().getContentResolver().notifyChange(motionUri, null);
+			if(rowId<0) 
+				throw new SQLException("Failed to insert row into " + uri);
+			return motionUri;
+		}
+		default:{
+			throw new IllegalArgumentException("Unknown URI " + uri);
+		}
+		}
+		
 	}
 
-    private DatabaseHelper mOpenHelper;
+	private DatabaseHelper mOpenHelper;
 
-    @Override
-    public boolean onCreate() {
-    	Log.i("create", ":)");
-        mOpenHelper = new DatabaseHelper(getContext());
-        return true;
-    }
+	@Override
+	public boolean onCreate() {
+		mOpenHelper = new DatabaseHelper(getContext());
+		return true;
+	}
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
 		Log.i("query", ":)");
-	      SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
-	        switch (sUriMatcher.match(uri)) {
-	        case MOTIONS:
-	            qb.setTables(TABLE_NAME);
-	            qb.setProjectionMap(sNotesProjectionMap);
-	            break;
+		switch (sUriMatcher.match(uri)) {
+		case MOTIONS:
+			qb.setTables(MOTIONS_TABLE_NAME);
+			break;
 
-	        case MOTION_ID:
-	            qb.setTables(TABLE_NAME);
-	            qb.setProjectionMap(sNotesProjectionMap);
-	            qb.appendWhere("_id" + "=" + uri.getPathSegments().get(1));
-	            Log.i("sdf","here i am "+ uri.getPathSegments());
-	            break;
+		case MOTION_ID:
+			qb.setTables(MOTIONS_TABLE_NAME);
+			qb.appendWhere("_id" + "=" + ContentUris.parseId(uri));
+			break;
+		case TASKS:
+			qb.setTables(TASKS_TABLE_NAME);
+			break;
+		case TASK_ID:
+			qb.setTables(TASKS_TABLE_NAME);
+			qb.appendWhere("_id" + "=" + ContentUris.parseId(uri));
 
-	        default:
-	            throw new IllegalArgumentException("Unknown URI " + uri);
-	        }
+		default:
+			throw new IllegalArgumentException("Unknown URI " + uri);
+		}
 
-	        // If no sort order is specified use the default
-
-
-	        // Get the database and run the query
-	        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-	        //Log.i("database",db.getPath());
-	        
-	        //String s=qb.buildQuery(projection, selection, selectionArgs, null, null, null, null);
-	        //Log.i("query",s);
-	        
-	        Cursor c=qb.query(db,projection, selection, selectionArgs, null, null, null, null);
-	        //Log.i("query",s);
-	        // Tell the cursor what uri to watch, so it knows when its source data changes
-	       //c.setNotificationUri(getContext().getContentResolver(), uri);
-	        return c;
+		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+		Cursor c = qb.query(db, projection, selection, selectionArgs, null,
+				null, null, null);
 		
+		return c;
 	}
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
-		values.put(MotionColumns.MODIFIED_DATE, System.currentTimeMillis());
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        long rowId = db.update(TABLE_NAME, values, selection, selectionArgs);//(TABLE_NAME, "motion", values);
-        if (rowId > 0) {
-            Uri motionUri = ContentUris.withAppendedId(CONTENT_URI, rowId);
-            getContext().getContentResolver().notifyChange(motionUri, null);
-            //return noteUri;
-        }
-		return 0;
+		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		int rez=0;
+		switch (sUriMatcher.match(uri)) {
+		case MOTIONS:
+			values.put(MotionColumns.MODIFIED_DATE, System.currentTimeMillis());
+			rez=db.update(MOTIONS_TABLE_NAME, values, selection,selectionArgs);
+			break;
+
+		case MOTION_ID:
+			values.put(MotionColumns.MODIFIED_DATE, System.currentTimeMillis());
+			rez=db.update(MOTIONS_TABLE_NAME, values, "_id="+ContentUris.parseId(uri),null);
+			break;
+		case TASKS:
+			rez=db.update(TASKS_TABLE_NAME, values, selection,selectionArgs);
+			break;
+		case TASK_ID:
+			rez=db.update(TASKS_TABLE_NAME, values, "_id="+ContentUris.parseId(uri),null);
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown URI " + uri);
+		}
+			getContext().getContentResolver().notifyChange(uri, null);
+		
+		return rez;
 	}
 
 }

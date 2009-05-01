@@ -26,8 +26,6 @@ public final class MotionColumns implements BaseColumns {
      * The default sort order for this table
      */
     public static final String DEFAULT_SORT_ORDER = "modified DESC";
-    public static final String PACK="package";
-    public static final String ACTIVITY="activity";
     /**
      * The title of the note
      * <P>Type: TEXT</P>
@@ -38,7 +36,7 @@ public final class MotionColumns implements BaseColumns {
      * The note itself
      * <P>Type: TEXT</P>
      */
-    public static final String PATH = "path";
+    //public static final String PATH = "path";
     public static final String [][] MATRIX=new String[3][3];
 
     /**
