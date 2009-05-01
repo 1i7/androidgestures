@@ -109,8 +109,8 @@ public class AppPicker extends Activity {
 
 			public void onClick(View v) {
 				ContentValues cv=new ContentValues();
-				cv.put(MotionColumns.PACK,lst.get(packChosen));
-				cv.put(MotionColumns.ACTIVITY, (String) activs[packChosen].get(actChosen));
+				cv.put(ActivityColumns.PACK,lst.get(packChosen));
+				cv.put(ActivityColumns.ACTIVITY, (String) activs[packChosen].get(actChosen));
 				Intent i=new Intent();
 				i.putExtra("vala", cv);
 				setResult(1,i);
