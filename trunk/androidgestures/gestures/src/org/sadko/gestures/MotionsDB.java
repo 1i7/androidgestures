@@ -26,7 +26,7 @@ public class MotionsDB extends ContentProvider {
 	private static final int MOTION_ID = 2;
 	private static final int TASKS = 3;
 	private static final int TASK_ID = 4;
-	public static final String DATABASE_NAME = "MOTION_DB8";
+	public static final String DATABASE_NAME = "MOTION_DB9";
 	public static final String MOTIONS_TABLE_NAME = "MOTIONS";
 	public static final String TASKS_TABLE_NAME = "TASKS";
 	private static final int DATABASE_VERSION = 2;
@@ -59,7 +59,7 @@ public class MotionsDB extends ContentProvider {
 
 			script = script + MotionColumns.TIME + " integer, "
 					+ MotionColumns.NAME + " VARCHAR(20), "
-					+ MotionColumns.MODIFIED_DATE + " INTEGER, " + ");";
+					+ MotionColumns.MODIFIED_DATE + " INTEGER" + ");";
 			db.execSQL(script);
 			script = "CREATE TABLE " + TASKS_TABLE_NAME + " ("
 					+ ActivityColumns._ID

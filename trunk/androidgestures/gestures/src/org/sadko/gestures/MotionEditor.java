@@ -48,7 +48,7 @@ public class MotionEditor extends Activity {
 		action=getIntent().getAction();
 		if(action.equals(android.content.Intent.ACTION_EDIT)){
 			motionId=getIntent().getExtras().getLong("id");
-			Cursor c=getContentResolver().query(Uri.withAppendedPath(MotionColumns.CONTENT_URI, motionId+""), new String[] {MotionColumns.NAME,MotionColumns.PACK,MotionColumns.ACTIVITY},null, null, null);
+			Cursor c=getContentResolver().query(Uri.withAppendedPath(MotionColumns.CONTENT_URI, motionId+""), new String[] {MotionColumns.NAME,ActivityColumns.PACK,ActivityColumns.ACTIVITY},null, null, null);
 			;
 			
 			c.moveToFirst();
