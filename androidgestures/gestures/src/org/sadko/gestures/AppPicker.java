@@ -46,6 +46,7 @@ public class AppPicker extends Activity {
 		int l=0;
 		while(i.hasNext()){
 			PackageInfo ai=i.next();
+			
 			Map<String,Object> tmp=new HashMap<String,Object>();
 			if(ai!=null && ai.packageName!=null)
 					lst.add(ai.packageName);

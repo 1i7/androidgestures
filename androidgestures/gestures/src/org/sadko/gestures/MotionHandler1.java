@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 public class MotionHandler1 extends MotionHandler {
 	long needTime = 0;// максимальное время движения(из записанных)
@@ -84,19 +85,20 @@ public class MotionHandler1 extends MotionHandler {
 	public void onCreate() {
 		// File f=new File("/sdcard/motions.txt");
 		Cursor c = getContentResolver().query(
-				Uri.parse("content://org.sadko.gestures.content/motions"),
+				MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
-						"A21", "A22", "time", "package", "activity", "_id" },
+						"A21", "A22", "time", "_id" },
 				null, null, null);
+		if(c.getCount()==0){
+			Toast.makeText(this, "service is useless", 1000);
+			this.stopSelf();
+			}
 		while (!c.isLast()) {
 			c.moveToNext();
 			Motion motion = new Motion();
 			for (int i = 0; i < 3; i++)
 				for (int j = 0; j < 3; j++)
 					motion.matrix[i][j] = c.getFloat(c.getColumnIndex("A"+i+""+j));
-			motion.path = c.getString(c.getColumnIndex(MotionColumns.PACK));
-			motion.activity = c.getString(c
-					.getColumnIndex(MotionColumns.ACTIVITY));
 			motion.time = c.getLong(c.getColumnIndex(MotionColumns.TIME));
 			motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
 			addMotion(motion);
