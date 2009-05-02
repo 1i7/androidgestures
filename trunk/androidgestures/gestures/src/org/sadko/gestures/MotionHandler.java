@@ -97,4 +97,8 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		mNM.notify(0, m_currentNotification);
 
 	}
+	protected void killNotification(){
+		NotificationManager mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		mNM.cancel(0);
+	}
 }

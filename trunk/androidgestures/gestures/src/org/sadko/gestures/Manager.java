@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class Manager extends Activity {
@@ -31,11 +32,13 @@ public class Manager extends Activity {
 	Cursor c;
 	private static final int ADD_NEW_ID = 0;
 	private static final int EXIT_ID = 1;
+	private static final int KILL_SERVICE_ID = 2;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ADD_NEW_ID, 0, "Add new");
 		menu.add(0, EXIT_ID, 0, "Exit");
+		menu.add(0, KILL_SERVICE_ID, 0, "Kill handling service");
 		return super.onCreateOptionsMenu(menu);
 
 	}
@@ -51,6 +54,13 @@ public class Manager extends Activity {
 		}
 		case EXIT_ID: {
 			Manager.this.finish();
+			break;
+		}
+		case KILL_SERVICE_ID: {
+			//Manager.this.finish();
+			lb.mh.killNotification();
+			stopService(new Intent(Manager.this, MotionHandler1.class));
+			lb=null;
 			break;
 		}
 		}
@@ -116,7 +126,12 @@ public class Manager extends Activity {
 										Intent i = new Intent();
 										i.setClassName(c.getString(0), c
 												.getString(1));
+										try{
 										startActivity(i);
+										}catch(Exception e){
+											Toast.makeText(lb.mh, "cant't start activity", 1000).show();
+										}
+										
 									}
 								}
 							};
