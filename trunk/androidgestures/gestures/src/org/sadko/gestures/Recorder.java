@@ -154,14 +154,14 @@ public class Recorder extends Activity {
 
 			}
 		});
-		//mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
-		Hardware.mContentResolver=getContentResolver();
-		mSensorManager= new SensorManagerSimulator((SensorManager)
-		getSystemService(SENSOR_SERVICE));
-		SensorManagerSimulator.connectSimulator();
-		mSensorManager.registerListener(r,
-				SensorManager.SENSOR_ORIENTATION,
-				SensorManager.SENSOR_DELAY_UI);
+		mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
+		//Hardware.mContentResolver=getContentResolver();
+		//mSensorManager= new SensorManagerSimulator((SensorManager)
+		//getSystemService(SENSOR_SERVICE));
+		//SensorManagerSimulator.connectSimulator();
+		//mSensorManager.registerListener(r,
+			//	SensorManager.SENSOR_ORIENTATION,
+				//SensorManager.SENSOR_DELAY_UI);
 	}
 
 	private class recordListener implements SensorListener {

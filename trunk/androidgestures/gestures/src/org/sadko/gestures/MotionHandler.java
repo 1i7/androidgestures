@@ -49,10 +49,10 @@ public abstract class MotionHandler extends Service implements SensorListener{
 				return super.onTransact(code, data, reply, flags);
 			}};
 		if(listners.isEmpty()){
-			Hardware.mContentResolver=getContentResolver();
-			SensorManager mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
-			SensorManagerSimulator.connectSimulator();
-			//SensorManager mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
+			//Hardware.mContentResolver=getContentResolver();
+			//SensorManager mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
+			//SensorManagerSimulator.connectSimulator();
+			SensorManager mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
 			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		}
 		ListnerBinder lb=new ListnerBinder();
