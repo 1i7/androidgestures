@@ -89,11 +89,9 @@ public class MotionHandler1 extends MotionHandler {
 				new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
 						"A21", "A22", "time", "_id" },
 				null, null, null);
-		if(c.getCount()==0){
-			Toast.makeText(this, "service is useless", 1000);
-			this.stopSelf();
-			}
+
 		while (!c.isLast()) {
+			
 			c.moveToNext();
 			Motion motion = new Motion();
 			for (int i = 0; i < 3; i++)

@@ -8,7 +8,6 @@ import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -21,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -34,18 +34,20 @@ public class AppPicker extends ListActivity {
 		setContentView(R.layout.picker);
 		// int x=R.layout.main;
 		final PackageManager pm = getPackageManager();
+		//RelativeLayout rl=(RelativeLayout) findViewById(R.id.item_layout);
+		//rl.s
+		Intent i=new Intent();
+		i.setAction(android.content.Intent.ACTION_MAIN);
+		i.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
+		Iterator<ResolveInfo> iter=pm.queryIntentActivities(i,0).iterator();
 
-		
-		List<PackageInfo> apps = pm
-				.getInstalledPackages(PackageManager.GET_ACTIVITIES);
-		Iterator<PackageInfo> i = apps.iterator();
 		final List<AppRow> lst = new ArrayList<AppRow>();
-		while (i.hasNext()) {
-			PackageInfo ai = i.next();
+		while (iter.hasNext()) {
+			ResolveInfo ai = iter.next();
 			AppRow ar=new AppRow();
-			ar.name = ai.applicationInfo.loadLabel(pm);
-			ar.icon= pm.getApplicationIcon(ai.applicationInfo);
-			ar.packName=ai.packageName;
+			ar.name = ai.activityInfo.applicationInfo.loadLabel(pm);
+			ar.icon= pm.getApplicationIcon(ai.activityInfo.applicationInfo);
+			ar.packName=ai.activityInfo.packageName;
 			lst.add(ar);
 		}
 		final myAdapter ad = new myAdapter(AppPicker.this, R.layout.picker_item, lst);
@@ -62,7 +64,6 @@ public class AppPicker extends ListActivity {
 				i.setAction(android.content.Intent.ACTION_MAIN);
 				i.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
 				Iterator<ResolveInfo> iter=pm.queryIntentActivities(i,0).iterator();
-				
 				String needPackageName=lst.get(arg2).packName;
 				while(iter.hasNext()){
 					ResolveInfo info=iter.next();
@@ -71,8 +72,8 @@ public class AppPicker extends ListActivity {
 						cv.put(ActivityColumns.PACK, needPackageName);
 						cv.put(ActivityColumns.ACTIVITY,info.activityInfo.name);
 						Intent intent = new Intent();
-						i.putExtra(RESULT_CONTENT_VALUES_NAME, cv);
-						setResult(1, i);
+						intent.putExtra(RESULT_CONTENT_VALUES_NAME, cv);
+						setResult(1, intent);
 						finish();
 					}
 					finish();

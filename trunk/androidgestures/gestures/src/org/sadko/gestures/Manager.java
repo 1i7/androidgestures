@@ -1,8 +1,5 @@
 package org.sadko.gestures;
 
-
-
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -32,27 +29,27 @@ import android.widget.AdapterView.OnItemClickListener;
 public class Manager extends Activity {
 	ListView lv;
 	Cursor c;
-	private static final int ADD_NEW_ID=0;
-	private static final int EXIT_ID=1;
+	private static final int ADD_NEW_ID = 0;
+	private static final int EXIT_ID = 1;
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ADD_NEW_ID, 0, "Add new");
 		menu.add(0, EXIT_ID, 0, "Exit");
 		return super.onCreateOptionsMenu(menu);
-		
+
 	}
-	
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		switch(item.getItemId()){
-		case ADD_NEW_ID:{
-			Intent i=new Intent(Manager.this, MotionEditor.class);
+		switch (item.getItemId()) {
+		case ADD_NEW_ID: {
+			Intent i = new Intent(Manager.this, MotionEditor.class);
 			i.setAction(android.content.Intent.ACTION_MAIN);
 			startActivity(i);
 			break;
 		}
-		case EXIT_ID:{
+		case EXIT_ID: {
 			Manager.this.finish();
 			break;
 		}
@@ -60,122 +57,93 @@ public class Manager extends Activity {
 		return super.onMenuItemSelected(featureId, item);
 	}
 
-
 	SimpleCursorAdapter motions;
-	int selectedItem=-1;
-	ListnerBinder lb=null;
+	int selectedItem = -1;
+	ListnerBinder lb = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.main);
-		c = getContentResolver().query(
-				MotionsDB.MOTIONS_CONTENT_URI,
-				new String[] { "_id", MotionColumns.NAME },
-				null, null, null); 
+		c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
+				new String[] { "_id", MotionColumns.NAME }, null, null, null);
 		startManagingCursor(c);
-		motions = new SimpleCursorAdapter(this,
-				 R.layout.motions_row, c, new String[] { MotionColumns.NAME},
-				new int[] { R.id.motion_name});
+		motions = new SimpleCursorAdapter(this, R.layout.motions_row, c,
+				new String[] { MotionColumns.NAME },
+				new int[] { R.id.motion_name });
 		lv = (ListView) findViewById(R.id.motions_list);
 		lv.setAdapter(motions);
-        lv.setItemsCanFocus(false);
-        lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		lv.setItemsCanFocus(false);
+		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		lv.setOnItemClickListener(new OnItemClickListener() {
-
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				Intent i=new Intent(Manager.this, MotionEditor.class);
+				Intent i = new Intent(Manager.this, MotionEditor.class);
 				i.setAction(android.content.Intent.ACTION_EDIT);
 				i.putExtra("id", motions.getItemId(arg2));
 				startActivity(i);
 			}
-
 		});
-		
-	//	Button addNew = (Button) findViewById(R.id.add_new);
-		//Button delete = (Button) findViewById(R.id.delete);
-		//Button modify = (Button) findViewById(R.id.modify);
-		//Button exit = (Button) findViewById(R.id.exit);
 		final Button startMyService = (Button) findViewById(R.id.service_start);
-/*		exit.setOnClickListener(new OnClickListener(){
-
+		startMyService.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				
-			}
-			
-		});*/
-		startMyService.setOnClickListener(new OnClickListener(){
+				Cursor c = getContentResolver().query(
+						MotionsDB.MOTIONS_CONTENT_URI,
+						new String[] { "count(_ID)" }, null, null, null);
+				c.moveToFirst();
 
-			public void onClick(View v) {
-				if(lb==null){
-				ServiceConnection sc=new ServiceConnection(){
-		        	
-					public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-						lb=(ListnerBinder) arg1;
+				if (c.getInt(0) == 0 && (lb==null ||!lb.mh.isEnabled))
+					return;
 
-						lb.ms=new MotionListener(){
-
-							public void onMotionRecieved(int motion) {
-								Cursor c=getContentResolver().query(MotionsDB.TASKS_CONTENT_URI, new String [] {ActivityColumns.PACK,ActivityColumns.ACTIVITY}, ActivityColumns.MOTION_ID+"="+motion, null, null);
-								while(!c.isLast()){
-									c.moveToNext();
-									Intent i=new Intent();
-									i.setClassName(c.getString(0),c.getString(1));
-									startActivity(i);
+				if (lb == null) {
+					ServiceConnection sc = new ServiceConnection() {
+						public void onServiceConnected(ComponentName arg0,
+								IBinder arg1) {
+							lb = (ListnerBinder) arg1;
+							lb.ms = new MotionListener() {
+								public void onMotionRecieved(int motion) {
+									Cursor c = getContentResolver().query(
+											MotionsDB.TASKS_CONTENT_URI,
+											new String[] {
+													ActivityColumns.PACK,
+													ActivityColumns.ACTIVITY },
+											ActivityColumns.MOTION_ID + "="
+													+ motion, null, null);
+									while (!c.isLast()) {
+										c.moveToNext();
+										Intent i = new Intent();
+										i.setClassName(c.getString(0), c
+												.getString(1));
+										startActivity(i);
+									}
 								}
-							}
-							
-						};
-					}
-					public void onServiceDisconnected(ComponentName arg0) {}
-		        };
-		        Intent i=new Intent(Manager.this, MotionHandler1.class);
-		        bindService(i,sc,Context.BIND_AUTO_CREATE);
-		        startMyService.setText("stop service");
-				}
-				else {
+							};
+						}
+						public void onServiceDisconnected(ComponentName arg0) {
+						}
+					};
+					Intent i = new Intent(Manager.this, MotionHandler1.class);
+					bindService(i, sc, Context.BIND_AUTO_CREATE);
+					startMyService.setText("stop service");
+				} else {
 					try {
-						Parcel p=Parcel.obtain();
+						Parcel p = Parcel.obtain();
 						lb.transact(ListnerBinder.ENABLE_DISABLE, null, p, 0);
-						startMyService.setText(p.readBundle().getBoolean("on/off")?"stop":"start");
+						startMyService.setText(p.readBundle().getBoolean(
+								"on/off") ? "stop" : "resume");
 						lb.mh.showNotification();
 					} catch (RemoteException e) {
-						
+
 						e.printStackTrace();
 					}
-					//lb.mh.isEnabled
 				}
-		        
-		    }
-			
-			
-		});
-	/*	addNew.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-
 
 			}
 
 		});
-		delete.setOnClickListener(new OnClickListener() {
 
-
-
-		});
-		modify.setOnClickListener(new OnClickListener(){
-
-			public void onClick(View v) {
-
-				
-			}
-			
-		});
-		*/
 	}
-	
-
 
 }
