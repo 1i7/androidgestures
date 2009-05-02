@@ -1,8 +1,7 @@
 package org.sadko.gestures;
 
 import java.util.Iterator;
-import java.util.List;
-//import org.sadko.gestures.*;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,18 +9,16 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 public class MotionEditor extends Activity {
 	ContentValues motionValues=new ContentValues();
@@ -58,12 +55,23 @@ public class MotionEditor extends Activity {
 			motionId=getIntent().getExtras().getLong("id");
 			Cursor c1=getContentResolver().query(MotionsDB.TASKS_CONTENT_URI, null, ActivityColumns.MOTION_ID+"="+motionId, null, null);
 			c1.moveToFirst();
+			PackageManager pm=getPackageManager();
+			Iterator<PackageInfo> iter=pm.getInstalledPackages(PackageManager.GET_ACTIVITIES).iterator();
+			while(iter.hasNext()){
+				PackageInfo info=iter.next();
+				if(info.packageName.equals(c1.getString(c1.getColumnIndex(ActivityColumns.PACK)))){
+					((ImageView)findViewById(R.id.iconka)).setImageDrawable(pm.getApplicationIcon(info.applicationInfo));
+				}
+			}
 			taskId=c1.getLong(c1.getColumnIndex(ActivityColumns.MOTION_ID));
-			Cursor c=getContentResolver().query(ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI, motionId), new String[] {MotionColumns.NAME},null, null, null);
+			Cursor c=getContentResolver().query(ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI, motionId), new String[] {MotionColumns.NAME,MotionColumns.MATRIX[0][0]},null, null, null);
 			;
 			
 			c.moveToFirst();
 			((EditText)findViewById(R.id.EditText01)).setText(c.getString(0));
+			
+			if(c.getString(c.getColumnIndex(MotionColumns.MATRIX[0][0]))!=null)
+				record.setText("Record another gesture");
 			
 		}
 			

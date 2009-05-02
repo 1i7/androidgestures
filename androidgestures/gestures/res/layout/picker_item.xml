@@ -2,4 +2,5 @@
 
 <RelativeLayout android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent" android:id="@+id/item_layout"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/app_icon" android:layout_alignParentRight="true"></ImageView>
 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/app_name" android:layout_alignParentLeft="true"></TextView>
+
 </RelativeLayout>
