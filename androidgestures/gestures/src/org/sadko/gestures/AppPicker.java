@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import android.app.ExpandableListActivity;
+import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -14,21 +14,23 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.AdapterView.OnItemClickListener;
 
-public class AppPicker extends ExpandableListActivity {
+public class AppPicker extends ListActivity {
 	int packChosen = 0;
 	int actChosen = 0;
 	public static final String RESULT_CONTENT_VALUES_NAME="org.sadko.gestures.AppPicker/val"; 
@@ -67,26 +69,51 @@ public class AppPicker extends ExpandableListActivity {
 			lst.add(ar);
 		}*/
 		//final MyExpandableListAdapter ad = new MyExpandableListAdapter();
-		ExpandableListView applications = getExpandableListView();//this.getListView()
+		ListView applications = getListView();//this.getListView()
 		applications.setAdapter(mAdapter);
 		applications.setItemsCanFocus(false);
 		applications.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		applications.setItemChecked(0, true);
-		applications.setOnChildClickListener(new OnChildClickListener(){
+		applications.setOnItemClickListener(new OnItemClickListener(){
 
-			public boolean onChildClick(ExpandableListView arg0, View arg1,
-					int arg2, int arg3, long arg4) {
-						ContentValues cv = new ContentValues();
-						cv.put(ActivityColumns.PACK, activities.get(arg2)[arg3].packageName);
-						cv.put(ActivityColumns.ACTIVITY,activities.get(arg2)[arg3].name);
-						Intent intent = new Intent();
+
+
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+			/*	ContentValues cv = new ContentValues();
+				cv.put(ActivityColumns.PACK, activities.get(arg2)[arg3].packageName);
+				cv.put(ActivityColumns.ACTIVITY,activities.get(arg2)[arg3].name);
+				Intent intent = new Intent();
+				intent.putExtra(RESULT_CONTENT_VALUES_NAME, cv);
+				setResult(1, intent);
+				finish();
+			
+			finish();
+		
+	*/
+				Intent i=new Intent();
+				i.setAction(android.content.Intent.ACTION_MAIN);
+				i.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
+				Iterator<ResolveInfo> iter=pm.queryIntentActivities(i,0).iterator();
+				String needPackageName=apps.get(arg2).packageName;
+				ContentValues cv = new ContentValues();
+				cv.put(ActivityColumns.PACK, needPackageName);
+				Intent intent = new Intent();
+				while(iter.hasNext()){
+					ResolveInfo info=iter.next();
+					if(info.activityInfo.packageName.equals(needPackageName)){
+						cv.put(ActivityColumns.ACTIVITY,info.activityInfo.name);
+						Log.i("add app", needPackageName+"/"+info.activityInfo.name);
 						intent.putExtra(RESULT_CONTENT_VALUES_NAME, cv);
 						setResult(1, intent);
 						finish();
-					
-					finish();
-				
-				return true;
+						return;
+					}
+					//finish();
+				}
+				intent.putExtra(RESULT_CONTENT_VALUES_NAME, cv);
+				setResult(1, intent);
+				finish();
 			}
 			
 		});
@@ -135,7 +162,7 @@ public class AppPicker extends ExpandableListActivity {
 		@Override
 
 	}*/
-    public class MyExpandableListAdapter extends BaseExpandableListAdapter {
+    public class MyExpandableListAdapter extends BaseAdapter {
         // Sample data set.  children[i] contains the children (String[]) for groups[i].
         List<PackageInfo> groups;
         List<ActivityInfo[]> children;
@@ -144,21 +171,21 @@ public class AppPicker extends ExpandableListActivity {
         	this.groups=groups;
         	this.children=children;
         }
-        public Object getChild(int groupPosition, int childPosition) {
+   /*     public Object getChild(int groupPosition, int childPosition) {
             return children.get(groupPosition)[childPosition];
-        }
+        }*/
 
-        public long getChildId(int groupPosition, int childPosition) {
+        /*public long getChildId(int groupPosition, int childPosition) {
             return childPosition;
-        }
+        }*/
 
-        public int getChildrenCount(int groupPosition) {
+      /*  public int getChildrenCount(int groupPosition) {
         	try{
             return children.get(groupPosition).length;
         	}catch(NullPointerException e){
         		return 0;
         	}
-        }
+        }*/
 
         public RelativeLayout getGenericView() {
             // Layout parameters for the ExpandableListView
@@ -175,7 +202,7 @@ public class AppPicker extends ExpandableListActivity {
         }
 
 
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
+      /*  public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                 View convertView, ViewGroup parent) {
 			View childItem = null;
 			if (convertView == null) {
@@ -191,21 +218,21 @@ public class AppPicker extends ExpandableListActivity {
             ImageView iv=(ImageView)childItem.findViewById(R.id.app_icon);
             iv.setImageDrawable(children.get(groupPosition)[childPosition].loadIcon(pm));
 			return childItem;
-        }
+        }*/
 
-        public Object getGroup(int groupPosition) {
+        public Object getItem(int groupPosition) {
             return groups.get(groupPosition);
         }
 
-        public int getGroupCount() {
+        public int getCount() {
             return groups.size();
         }
 
-        public long getGroupId(int groupPosition) {
+        /*public long getItemId(int groupPosition) {
             return groupPosition;
-        }
+        }*/
 
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
+        public View getView(int groupPosition, View convertView,
                 ViewGroup parent) {
 			View groupItem = null;
 			if (convertView == null) {
@@ -235,6 +262,22 @@ public class AppPicker extends ExpandableListActivity {
         public boolean hasStableIds() {
             return true;
         }
+	/*	public int getCount() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+	/*	public Object getItem(int arg0) {
+			// TODO Auto-generated method stub
+			return null;
+		}*/
+		public long getItemId(int arg0) {
+			// TODO Auto-generated method stub
+			return arg0;
+		}
+	/*	public View getView(int arg0, View arg1, ViewGroup arg2) {
+			// TODO Auto-generated method stub
+			return null;
+		}*/
 
     }
 }
