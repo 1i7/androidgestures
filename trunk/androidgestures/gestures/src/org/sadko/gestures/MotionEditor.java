@@ -11,7 +11,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -26,6 +28,9 @@ public class MotionEditor extends Activity {
 	String action;
 	long motionId;
 	long taskId;
+	//Drawable appIcon;
+	String appName;
+	String appPackage;
 	private static final int RECORD_REQEST_CODE=1;
 	private static final int PICK_APP_REQUEST_CODE=2;
 	@Override
@@ -38,6 +43,7 @@ public class MotionEditor extends Activity {
 		if(requestCode==PICK_APP_REQUEST_CODE){
 			if(resultCode==1){
 				ContentValues v=data.getParcelableExtra(AppPicker.RESULT_CONTENT_VALUES_NAME);
+				if(v.containsKey(ActivityColumns.ACTIVITY))
 				activityValues.putAll(v);
 			}
 		}
@@ -157,5 +163,11 @@ public class MotionEditor extends Activity {
 		}
 		return null;
 	}
-
+	private void setPickedApp(){
+		PackageManager pm=getPackageManager();
+		try {
+			((ImageView)findViewById(R.id.iconka)).setImageDrawable(pm.getApplicationIcon(appPackage));
+			
+		} catch (NameNotFoundException e) {}
+	}
 }
