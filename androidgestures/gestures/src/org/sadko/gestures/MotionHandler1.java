@@ -52,7 +52,7 @@ public class MotionHandler1 extends MotionHandler {
 		rolls[position] = values[2] * Math.PI / 180;
 		int i = position;
 		boolean detected = false;
-		while (isEnabled && !detected && i != (position + 1) % ARRAY_SIZE) {
+		while (!detected && i != (position + 1) % ARRAY_SIZE) {
 			Iterator<Motion> j = motions.iterator();
 			int s = 0;
 			while (j.hasNext()) {
@@ -106,5 +106,11 @@ public class MotionHandler1 extends MotionHandler {
 		super.onCreate();
 	}
 
+	@Override
+	public void switchMe() {
+		// TODO Auto-generated method stub
+		super.switchMe();
+	}
+	
 
 }

@@ -27,6 +27,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	public static final int START_STOP=359;
 	protected List<Motion> motions;
 	boolean isEnabled=true;
+	SensorManager mgr;
 	public void addMotion(Motion motion){
 		motions.add(motion);
 	}
@@ -50,9 +51,9 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			}};
 		if(listners.isEmpty()){
 			//Hardware.mContentResolver=getContentResolver();
-			//SensorManager mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
+			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
 			//SensorManagerSimulator.connectSimulator();
-			SensorManager mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
+			mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
 			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		}
 		ListnerBinder lb=new ListnerBinder();
@@ -100,5 +101,13 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	protected void killNotification(){
 		NotificationManager mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mNM.cancel(0);
+	}
+	public void switchMe() {
+		if(isEnabled)
+			mgr.unregisterListener(this);
+		else
+			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+		// TODO Auto-generated method stub
+		
 	}
 }

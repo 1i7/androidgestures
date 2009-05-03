@@ -145,7 +145,7 @@ public class Manager extends Activity {
 				} else {
 					try {
 						Parcel p = Parcel.obtain();
-						lb.transact(ListnerBinder.ENABLE_DISABLE, null, p, 0);
+						lb.transact(ListnerBinder.GET_STATUS, null, p, 0);
 						startMyService.setText(p.readBundle().getBoolean(
 								"on/off") ? "stop" : "resume");
 						lb.mh.showNotification();
@@ -158,7 +158,11 @@ public class Manager extends Activity {
 			}
 
 		});
-
+		
 	}
-
+	void switchService(){
+		try {
+			lb.transact(ListnerBinder.SWITCH_CODE, null, null, 0);
+		} catch (RemoteException e) {}
+	}
 }
