@@ -73,9 +73,27 @@ public class Manager extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
+		
 		setContentView(R.layout.main);
+		super.onCreate(savedInstanceState);
+		final Button startMyService = (Button) findViewById(R.id.service_start);
+		bindService(new Intent(this,MotionHandler1.class),new ServiceConnection(){
+
+			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
+				if(lb!=null) return;
+				lb=((ListnerBinder)arg1);
+				startMyService.setText(isServiceEnabled()? "stop" : "resume");
+				lb.mh.showNotification();
+				lb=null;
+				
+			}
+
+			public void onServiceDisconnected(ComponentName arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		},0);
 		c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "_id", MotionColumns.NAME }, null, null, null);
 		startManagingCursor(c);
@@ -96,7 +114,7 @@ public class Manager extends Activity {
 				startActivity(i);
 			}
 		});
-		final Button startMyService = (Button) findViewById(R.id.service_start);
+		
 		startMyService.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				Cursor c = getContentResolver().query(
