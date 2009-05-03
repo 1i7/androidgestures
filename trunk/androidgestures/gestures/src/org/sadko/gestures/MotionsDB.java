@@ -122,6 +122,7 @@ public class MotionsDB extends ContentProvider {
 			Log.i("DB","TASK inserted "+rowId);
 			if(rowId<0) 
 				throw new SQLException("Failed to insert row into " + uri);
+			getContext().getContentResolver().notifyChange(uri, null);
 			return taskUri;
 		}
 		case MOTIONS: {
@@ -133,12 +134,14 @@ public class MotionsDB extends ContentProvider {
 			Log.i("DB","MOTION inserted "+rowId);
 			if(rowId<0) 
 				throw new SQLException("Failed to insert row into " + uri);
+			getContext().getContentResolver().notifyChange(uri, null);
 			return motionUri;
 		}
 		default:{
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 		}
+		
 		
 	}
 
