@@ -19,7 +19,7 @@
 		<TableRow android:id="@+id/TableRow02" android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
 			<ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:src="@drawable/rec" android:layout_weight="0" android:id="@+id/Record"></ImageButton>
+				android:src="@drawable/rec" android:layout_weight="0" android:id="@+id/Record" android:background="@drawable/recfone"></ImageButton>
 			<EditText android:layout_height="wrap_content" android:layout_width="fill_parent"
 				android:layout_weight="1" android:id="@+id/NameInput"></EditText>
 		</TableRow>
