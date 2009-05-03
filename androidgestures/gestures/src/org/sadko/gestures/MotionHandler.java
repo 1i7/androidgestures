@@ -37,6 +37,9 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	MotionHandler(){
 		motions=new ArrayList<Motion>();
 	}
+	protected void deleteAllMotions(){
+		motions.clear();
+	}
 	@Override
 	public IBinder onBind(Intent arg0) {
 		//Log.i("serv","binding");
@@ -85,13 +88,17 @@ public abstract class MotionHandler extends Service implements SensorListener{
     	 
     }
 	protected void showNotification() {
+		if(!isEnabled) {
+			killNotification();
+			return;
+		}
 		Intent m_clickIntent = new Intent();
 		m_clickIntent.setClass(this, Manager.class);
 		m_clickIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
 				| Intent.FLAG_ACTIVITY_NEW_TASK);
 		NotificationManager mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		Notification m_currentNotification = new Notification(isEnabled?R.drawable.iphone:R.drawable.iphone_icons,
-				isEnabled?"Service is running":"Service is idle", System.currentTimeMillis());
+		Notification m_currentNotification = new Notification(R.drawable.icon,
+				"Service is running", System.currentTimeMillis());
 		m_currentNotification.setLatestEventInfo(this, "Service is running",
 				"click here to change state", PendingIntent.getActivity(this, 0,
 						m_clickIntent, PendingIntent.FLAG_CANCEL_CURRENT));
@@ -107,6 +114,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			mgr.unregisterListener(this);
 		else
 			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+		isEnabled= !isEnabled;
 		// TODO Auto-generated method stub
 		
 	}

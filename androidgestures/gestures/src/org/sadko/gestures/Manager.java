@@ -38,7 +38,7 @@ public class Manager extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ADD_NEW_ID, 0, "Add new");
 		menu.add(0, EXIT_ID, 0, "Exit");
-		menu.add(0, KILL_SERVICE_ID, 0, "Kill handling service");
+		//menu.add(0, KILL_SERVICE_ID, 0, "Kill handling service");
 		return super.onCreateOptionsMenu(menu);
 
 	}
@@ -56,13 +56,13 @@ public class Manager extends Activity {
 			Manager.this.finish();
 			break;
 		}
-		case KILL_SERVICE_ID: {
+		/*case KILL_SERVICE_ID: {
 			//Manager.this.finish();
 			lb.mh.killNotification();
 			stopService(new Intent(Manager.this, MotionHandler1.class));
 			lb=null;
 			break;
-		}
+		}*/
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
@@ -141,18 +141,12 @@ public class Manager extends Activity {
 					};
 					Intent i = new Intent(Manager.this, MotionHandler1.class);
 					bindService(i, sc, Context.BIND_AUTO_CREATE);
-					startMyService.setText("stop service");
+					startMyService.setText("stop");
 				} else {
-					try {
-						Parcel p = Parcel.obtain();
-						lb.transact(ListnerBinder.GET_STATUS, null, p, 0);
-						startMyService.setText(p.readBundle().getBoolean(
-								"on/off") ? "stop" : "resume");
-						lb.mh.showNotification();
-					} catch (RemoteException e) {
+					switchService();
+					startMyService.setText(isServiceEnabled()? "stop" : "resume");
+					lb.mh.showNotification();
 
-						e.printStackTrace();
-					}
 				}
 
 			}
@@ -160,9 +154,17 @@ public class Manager extends Activity {
 		});
 		
 	}
+	boolean isServiceEnabled(){
+		//Parcel p = Parcel.obtain();
+		//try {
+			return lb.mh.isEnabled;//.transact(ListnerBinder.GET_STATUS, null, p, 0);
+//		} catch (RemoteException e) {}
+	//	return p.readBundle().getBoolean("on/off");
+		
+	}
 	void switchService(){
-		try {
-			lb.transact(ListnerBinder.SWITCH_CODE, null, null, 0);
-		} catch (RemoteException e) {}
+		//try {
+			lb.mh.switchMe();//transact(ListnerBinder.SWITCH_CODE, null, null, 0);
+		//} catch (RemoteException e) {}
 	}
 }

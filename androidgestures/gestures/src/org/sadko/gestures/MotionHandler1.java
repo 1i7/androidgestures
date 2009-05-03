@@ -2,15 +2,10 @@ package org.sadko.gestures;
 
 import java.util.Iterator;
 
-
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
-import android.net.Uri;
-import android.util.Log;
-import android.widget.Toast;
+import android.hardware.SensorManager;
+import android.os.Handler;
 
 public class MotionHandler1 extends MotionHandler {
 	long needTime = 0;// максимальное время движения(из записанных)
@@ -37,7 +32,6 @@ public class MotionHandler1 extends MotionHandler {
 		pitchs = new double[ARRAY_SIZE];
 		times = new long[ARRAY_SIZE];
 	}
-
 	public void onAccuracyChanged(int sensor, int accuracy) {
 	}
 
@@ -84,7 +78,7 @@ public class MotionHandler1 extends MotionHandler {
 	@Override
 	public void onCreate() {
 		// File f=new File("/sdcard/motions.txt");
-		Cursor c = getContentResolver().query(
+		final Cursor c = getContentResolver().query(
 				MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
 						"A21", "A22", "time", "_id" },
@@ -101,6 +95,34 @@ public class MotionHandler1 extends MotionHandler {
 			motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
 			addMotion(motion);
 		}
+		c.registerContentObserver(new ContentObserver(new Handler(){
+			
+		}){
+
+			@Override
+			public void onChange(boolean selfChange) {
+				/*Cursor c = getContentResolver().query(
+						MotionsDB.MOTIONS_CONTENT_URI,
+						new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
+								"A21", "A22", "time", "_id" },
+						null, null, null);*/
+				if(isEnabled)mgr.unregisterListener(MotionHandler1.this);
+				deleteAllMotions();
+				while (!c.isLast()) {
+					c.moveToNext();
+					Motion motion = new Motion();
+					for (int i = 0; i < 3; i++)
+						for (int j = 0; j < 3; j++)
+							motion.matrix[i][j] = c.getFloat(c.getColumnIndex("A"+i+""+j));
+					motion.time = c.getLong(c.getColumnIndex(MotionColumns.TIME));
+					motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
+					addMotion(motion);
+				}
+				if(isEnabled)mgr.registerListener(MotionHandler1.this,SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+				super.onChange(selfChange);
+			}
+			
+		});
 		showNotification();
 
 		super.onCreate();
@@ -108,8 +130,8 @@ public class MotionHandler1 extends MotionHandler {
 
 	@Override
 	public void switchMe() {
-		// TODO Auto-generated method stub
 		super.switchMe();
+		
 	}
 	
 
