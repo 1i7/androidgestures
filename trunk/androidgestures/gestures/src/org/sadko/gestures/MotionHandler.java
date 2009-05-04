@@ -6,8 +6,8 @@ import java.util.List;
 
 
 
-import org.openintents.hardware.SensorManagerSimulator;
-import org.openintents.provider.Hardware;
+//import org.openintents.hardware.SensorManagerSimulator;
+//import org.openintents.provider.Hardware;
 
 //import android.R;
 import android.app.Notification;
