@@ -163,7 +163,7 @@ public class Manager extends Activity {
 					startMyService.setText("stop");
 				} else {
 					switchService();
-					startMyService.setText(isServiceEnabled()? "stop" : "resume");
+					startMyService.setText(isServiceEnabled()? "stop" : "start");
 					lb.mh.showNotification();
 
 				}
