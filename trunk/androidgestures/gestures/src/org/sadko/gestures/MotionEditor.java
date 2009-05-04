@@ -218,6 +218,7 @@ public class MotionEditor extends Activity {
 			PackageInfo pi=pm.getPackageInfo(appPackage,PackageManager.GET_ACTIVITIES);
 			spinner.setAdapter(new MySpinnerAdapter(pi.activities));
 			spinner.setEnabled(true);
+			spinner.setVisibility(Spinner.VISIBLE);
 		} catch (NameNotFoundException e) {
 
 			e.printStackTrace();
