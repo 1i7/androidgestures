@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="D:/dev/eclipse/openintents/openintents-binary-0.9.0/lib/openintents-lib.jar"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="lib/openintents-lib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
