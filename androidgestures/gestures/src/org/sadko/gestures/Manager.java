@@ -100,6 +100,7 @@ public class Manager extends Activity {
 		motions = new SimpleCursorAdapter(this, R.layout.motions_row, c,
 				new String[] { MotionColumns.NAME },
 				new int[] { R.id.motion_name });
+		
 		lv = (ListView) findViewById(R.id.motions_list);
 		lv.setAdapter(motions);
 		lv.setItemsCanFocus(false);
