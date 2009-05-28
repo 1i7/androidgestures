@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.openintents.hardware.SensorManagerSimulator;
+import org.openintents.provider.Hardware;
 
-
-//import org.openintents.hardware.SensorManagerSimulator;
-//import org.openintents.provider.Hardware;
-
-//import android.R;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -26,7 +23,7 @@ import android.util.Log;
 public abstract class MotionHandler extends Service implements SensorListener{
 	public static final int START_STOP=359;
 	protected List<Motion> motions;
-	boolean isEnabled=true;
+	boolean isEnabled=false;
 	SensorManager mgr;
 	public void addMotion(Motion motion){
 		motions.add(motion);
@@ -43,7 +40,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	@Override
 	public IBinder onBind(Intent arg0) {
 		//Log.i("serv","binding");
-		if(arg0.getAction()!=null && arg0.getAction().equals("CONTROL")) return new Binder(){
+/*		if(arg0.getAction()!=null && arg0.getAction().equals("CONTROL")) return new Binder(){
 
 			@Override
 			protected boolean onTransact(int code, Parcel data, Parcel reply,
@@ -51,12 +48,13 @@ public abstract class MotionHandler extends Service implements SensorListener{
 				isEnabled=!isEnabled;
 				Log.i("binder","here!");
 				return super.onTransact(code, data, reply, flags);
-			}};
+			}};*/
 		if(listners.isEmpty()){
-			//Hardware.mContentResolver=getContentResolver();
-			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
-			//SensorManagerSimulator.connectSimulator();
-			mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
+			Hardware.mContentResolver=getContentResolver();
+			mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
+			SensorManagerSimulator.connectSimulator();
+			//mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
+			if(isEnabled)
 			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		}
 		ListnerBinder lb=new ListnerBinder();
@@ -107,7 +105,6 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	}
 	protected void killNotification(){
 		NotificationManager mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		mNM.cancel(0);
 	}
 	public void switchMe() {
 		if(isEnabled)

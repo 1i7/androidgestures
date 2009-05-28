@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,14 +79,38 @@ public class Manager extends Activity {
 		super.onCreate(savedInstanceState);
 		final Button startMyService = (Button) findViewById(R.id.service_start);
 		bindService(new Intent(this,MotionHandler1.class),new ServiceConnection(){
-
 			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-				if(lb!=null) return;
-				lb=((ListnerBinder)arg1);
-				startMyService.setText(isServiceEnabled()? "stop" : "resume");
-				lb.mh.showNotification();
-				lb=null;
-				
+				lb = (ListnerBinder) arg1;
+				startMyService.setText(lb.mh.isEnabled? "stop" : "start");
+				Cursor c = getContentResolver().query(
+						MotionsDB.MOTIONS_CONTENT_URI,
+						new String[] { "count(_ID)" }, null, null, null);
+				c.moveToFirst();
+				if(c.getInt(0) == 0) return;
+				lb.ms = new MotionListener() {
+					public void onMotionRecieved(int motion) {
+						Cursor c = getContentResolver().query(
+								MotionsDB.TASKS_CONTENT_URI,
+								new String[] {
+										ActivityColumns.PACK,
+										ActivityColumns.ACTIVITY },
+								ActivityColumns.MOTION_ID + "="
+										+ motion, null, null);
+						while (!c.isLast()) {
+							c.moveToNext();
+							Intent i = new Intent();
+							i.setClassName(c.getString(0), c
+									.getString(1));
+							try{
+							startActivity(i);
+							}catch(Exception e){
+								Toast.makeText(lb.mh, "cant't start activity", 1000).show();
+							}
+							
+						}
+					}
+				};
+
 			}
 
 			public void onServiceDisconnected(ComponentName arg0) {
@@ -93,15 +118,34 @@ public class Manager extends Activity {
 				
 			}
 			
-		},0);
+		},BIND_AUTO_CREATE);
+	
+		/*if(savedInstanceState!=null && savedInstanceState.containsKey("process"))
+			startMyService.setText(savedInstanceState.getBoolean("process")?"stop":"start");*/
+
+		lv = (ListView) findViewById(R.id.motions_list);
+		fillListView();
+		startMyService.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+					switchService();
+					startMyService.setText(isServiceEnabled()? "stop" : "start");
+					lb.mh.showNotification();
+
+				}
+
+			
+
+		});
+		
+	}
+	
+	private void fillListView(){
 		c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "_id", MotionColumns.NAME }, null, null, null);
 		startManagingCursor(c);
 		motions = new SimpleCursorAdapter(this, R.layout.motions_row, c,
 				new String[] { MotionColumns.NAME },
 				new int[] { R.id.motion_name });
-		
-		lv = (ListView) findViewById(R.id.motions_list);
 		lv.setAdapter(motions);
 		lv.setItemsCanFocus(false);
 		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -115,64 +159,18 @@ public class Manager extends Activity {
 				startActivity(i);
 			}
 		});
-		
-		startMyService.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				Cursor c = getContentResolver().query(
-						MotionsDB.MOTIONS_CONTENT_URI,
-						new String[] { "count(_ID)" }, null, null, null);
-				c.moveToFirst();
-
-				if (c.getInt(0) == 0 && (lb==null ||!lb.mh.isEnabled))
-					return;
-
-				if (lb == null) {
-					ServiceConnection sc = new ServiceConnection() {
-						public void onServiceConnected(ComponentName arg0,
-								IBinder arg1) {
-							lb = (ListnerBinder) arg1;
-							lb.ms = new MotionListener() {
-								public void onMotionRecieved(int motion) {
-									Cursor c = getContentResolver().query(
-											MotionsDB.TASKS_CONTENT_URI,
-											new String[] {
-													ActivityColumns.PACK,
-													ActivityColumns.ACTIVITY },
-											ActivityColumns.MOTION_ID + "="
-													+ motion, null, null);
-									while (!c.isLast()) {
-										c.moveToNext();
-										Intent i = new Intent();
-										i.setClassName(c.getString(0), c
-												.getString(1));
-										try{
-										startActivity(i);
-										}catch(Exception e){
-											Toast.makeText(lb.mh, "cant't start activity", 1000).show();
-										}
-										
-									}
-								}
-							};
-						}
-						public void onServiceDisconnected(ComponentName arg0) {
-						}
-					};
-					Intent i = new Intent(Manager.this, MotionHandler1.class);
-					bindService(i, sc, Context.BIND_AUTO_CREATE);
-					startMyService.setText("stop");
-				} else {
-					switchService();
-					startMyService.setText(isServiceEnabled()? "stop" : "start");
-					lb.mh.showNotification();
-
-				}
-
-			}
-
-		});
-		
+		LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View empty=inflater.inflate(R.layout.start_view, null);
+		lv.setEmptyView(empty);
 	}
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		
+		super.onSaveInstanceState(outState);
+		if(lb!=null)
+			outState.putBoolean("process",isServiceEnabled() );
+	}
+
 	boolean isServiceEnabled(){
 		//Parcel p = Parcel.obtain();
 		//try {
