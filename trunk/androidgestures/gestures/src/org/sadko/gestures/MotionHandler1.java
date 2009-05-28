@@ -6,6 +6,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.hardware.SensorManager;
 import android.os.Handler;
+import android.widget.Toast;
 
 public class MotionHandler1 extends MotionHandler {
 	long needTime = 0;// максимальное время движения(из записанных)
@@ -64,6 +65,7 @@ public class MotionHandler1 extends MotionHandler {
 							&& System.currentTimeMillis() - lastRegisterTime > timeBetweenRegistering
 							) {
 						notifyListeners((int) m.id);
+						Toast.makeText(MotionHandler1.this, "motion!", 500).show();
 						lastRegisterTime = System.currentTimeMillis();
 						detected = true;
 					}

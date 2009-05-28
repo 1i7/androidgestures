@@ -29,7 +29,8 @@
 
 	
 
-	<LinearLayout android:id="@+id/LinearLayout03" android:layout_height="wrap_content" android:layout_width="fill_parent"><ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/pick"></ImageButton><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/app_name_in_edit" android:text="&lt;-Press here"></TextView></LinearLayout><Spinner android:layout_height="wrap_content" android:id="@+id/activity_spinner" android:layout_weight="0" android:layout_width="fill_parent"></Spinner><LinearLayout android:id="@+id/LinearLayout02"
+	<LinearLayout android:id="@+id/LinearLayout03" android:layout_height="wrap_content" android:layout_width="fill_parent"><ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/pick"></ImageButton><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/app_name_in_edit" android:text="&lt;-Press here"></TextView><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="launch now" android:id="@+id/launch_now"></Button>
+</LinearLayout><Spinner android:layout_height="wrap_content" android:id="@+id/activity_spinner" android:layout_weight="0" android:layout_width="fill_parent"></Spinner><LinearLayout android:id="@+id/LinearLayout02"
 		android:layout_height="wrap_content" android:layout_width="fill_parent"
 		android:orientation="horizontal" android:layout_gravity="bottom"
 		android:layout_weight="1">

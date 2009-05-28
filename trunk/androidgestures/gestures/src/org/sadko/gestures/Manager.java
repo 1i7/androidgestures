@@ -99,6 +99,7 @@ public class Manager extends Activity {
 						while (!c.isLast()) {
 							c.moveToNext();
 							Intent i = new Intent();
+							
 							i.setClassName(c.getString(0), c
 									.getString(1));
 							try{
