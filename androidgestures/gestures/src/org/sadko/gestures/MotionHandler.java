@@ -64,9 +64,11 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	}
 	protected void notifyListeners(int motion){
 		Iterator<ListnerBinder> iter=listners.iterator();
+		Log.i("Listeners", listners.size()+"");
 		while(iter.hasNext()){
 			ListnerBinder lb=iter.next();
-			if(lb.ms!=null) lb.ms.onMotionRecieved(motion);
+			if(lb.ms!=null) lb.ms.onMotionRecieved(motion); else Log.i("ms", "is null");
+			
 		}
 	}
 	public static double[][] math(double yaw2, double pitch2, double roll2, double yaw,
