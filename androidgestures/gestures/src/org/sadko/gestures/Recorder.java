@@ -3,12 +3,14 @@ package org.sadko.gestures;
 //import org.openintents.hardware.SensorManagerSimulator;
 //import org.openintents.provider.Hardware;
 
+import org.openintents.hardware.SensorManagerSimulator;
+import org.openintents.provider.Hardware;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -154,14 +156,14 @@ public class Recorder extends Activity {
 
 			}
 		});
-		mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
-		//Hardware.mContentResolver=getContentResolver();
-		//mSensorManager= new SensorManagerSimulator((SensorManager)
-		//getSystemService(SENSOR_SERVICE));
-		//SensorManagerSimulator.connectSimulator();
-		//mSensorManager.registerListener(r,
-			//	SensorManager.SENSOR_ORIENTATION,
-				//SensorManager.SENSOR_DELAY_UI);
+		//mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
+		Hardware.mContentResolver=getContentResolver();
+		mSensorManager= new SensorManagerSimulator((SensorManager)
+		getSystemService(SENSOR_SERVICE));
+		SensorManagerSimulator.connectSimulator();
+		mSensorManager.registerListener(r,
+				SensorManager.SENSOR_ORIENTATION,
+				SensorManager.SENSOR_DELAY_UI);
 	}
 
 	private class recordListener implements SensorListener {
@@ -237,9 +239,11 @@ public class Recorder extends Activity {
 					for (int j = 0; j < 3; j++)
 						val.put(MotionColumns.MATRIX[i][j], maxMatrix[i][j]);
 				val.put(MotionColumns.TIME, time);
+				
 				rez.putExtra(RESULT_CONTENT_VALUES_NAME, val);
 				Log.i("rec", "i am here");
 				setResult(1, rez);
+				mSensorManager.unregisterListener(this);
 				Recorder.this.finish();
 				position = 0;
 				stage = BEGIN;
