@@ -1,6 +1,7 @@
 package org.sadko.gestures;
 
 import java.util.Iterator;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -41,11 +43,13 @@ public class MotionEditor extends Activity {
 	String action;
 	long motionId;
 	long taskId;
+	Button launch;
 	String appActivity;
 	//Drawable appIcon;
 	String appName;
 	String appPackage;
 	Spinner spinner;
+	List<ResolveInfo> launchers;
 	private static final int RECORD_REQEST_CODE=1;
 	private static final int PICK_APP_REQUEST_CODE=2;
 	@Override
@@ -74,12 +78,31 @@ public class MotionEditor extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
+		Intent intent=new Intent(Intent.ACTION_MAIN, null);;
+		intent.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
+		launchers=getPackageManager().queryIntentActivities(intent, 0);
 		spinner=(Spinner)findViewById(R.id.activity_spinner);
 		spinner.setEnabled(false);
 		((TextView)findViewById(R.id.app_name_in_edit)).setTextSize(20);
 		ImageButton record=(ImageButton) findViewById(R.id.Record);
 		action=getIntent().getAction();
-		
+		launch=(Button)findViewById(R.id.launch_now);
+		launch.setEnabled(false);
+		launch.setOnClickListener(new OnClickListener(){
+
+			public void onClick(View arg0) {
+				Intent i=new Intent();
+				PackageManager pm=getPackageManager();
+				try {
+					i.setClassName(appPackage, pm.getPackageInfo(appPackage,PackageManager.GET_ACTIVITIES).activities[(int) spinner.getSelectedItemId()].name);
+					startActivity(i);
+				} catch (Exception e) {
+					Toast.makeText(MotionEditor.this, "cannot start this activity", 1000).show();
+				}
+				
+			}
+			
+		});
 		if(action.equals(android.content.Intent.ACTION_EDIT)){
 			motionId=getIntent().getExtras().getLong("id");
 			Cursor c1=getContentResolver().query(MotionsDB.TASKS_CONTENT_URI, null, ActivityColumns.MOTION_ID+"="+motionId, null, null);
@@ -104,6 +127,7 @@ public class MotionEditor extends Activity {
 			}
 			
 		});
+		
 		Button saveExit=(Button) findViewById(R.id.sSandE);
 		saveExit.setOnClickListener(new OnClickListener(){
 
@@ -115,6 +139,7 @@ public class MotionEditor extends Activity {
 						
 						PackageManager pm=getPackageManager();
 						try {
+							
 							activityValues.put(ActivityColumns.ACTIVITY,pm.getPackageInfo(appPackage,PackageManager.GET_ACTIVITIES).activities[(int) spinner.getSelectedItemId()].name);
 							Log.i("chosen",activityValues.getAsString(ActivityColumns.ACTIVITY)+"^)");
 						} catch (NameNotFoundException e) {
@@ -218,7 +243,9 @@ public class MotionEditor extends Activity {
 			PackageInfo pi=pm.getPackageInfo(appPackage,PackageManager.GET_ACTIVITIES);
 			spinner.setAdapter(new MySpinnerAdapter(pi.activities));
 			spinner.setEnabled(true);
-			spinner.setVisibility(Spinner.VISIBLE);
+
+			launch.setEnabled(true);
+
 		} catch (NameNotFoundException e) {
 
 			e.printStackTrace();
@@ -263,7 +290,7 @@ public class MotionEditor extends Activity {
 					LayoutInflater inflater = (LayoutInflater) parent.getContext()
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					groupItem = inflater.inflate(R.layout.picker_item,null);
-					groupItem.setPadding(36, 0, 0, 0);
+					//groupItem.setPadding(36, 0, 0, 0);
 				} else {
 					groupItem = convertView;
 				}
@@ -275,7 +302,23 @@ public class MotionEditor extends Activity {
 				destinationTypeText.setTextSize(15);
 				ImageView typeSelectedImage = (ImageView) groupItem
 						.findViewById(R.id.app_icon);
+
+				boolean isLauncher=false;
+				Iterator<ResolveInfo> lst=launchers.iterator();
+				while (lst.hasNext()){
+					ResolveInfo info=lst.next();
+					if(info.activityInfo.name.equals(groups[groupPosition].name)) 
+					isLauncher=true;
+				}
+				Log.i("achtung!!!", groups[groupPosition].name);
+				//TextView pack=(TextView) groupItem.findViewById(R.id.app_package);
+				//pack.setText(groups[groupPosition].name);
+				if(isLauncher)
+					((ImageView)groupItem.findViewById(R.id.info_img)).setImageResource(R.drawable.iphone);
+				
+				else ((ImageView)groupItem.findViewById(R.id.info_img)).setImageResource(R.drawable.iphone_icons);			
 				typeSelectedImage.setImageDrawable(groups[groupPosition].loadIcon(pm));
+				
 				return groupItem;
 	        }
 
@@ -294,7 +337,7 @@ public class MotionEditor extends Activity {
 					LayoutInflater inflater = (LayoutInflater) spinner.getContext()
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					groupItem = inflater.inflate(R.layout.picker_item,null);
-					groupItem.setPadding(36, 0, 0, 0);
+					//groupItem.setPadding(36, 0, 0, 0);
 				} else {
 					groupItem = convertView;
 				}
@@ -302,10 +345,31 @@ public class MotionEditor extends Activity {
 				//String destinationType = (String) getItem(position);
 				TextView destinationTypeText = (TextView) groupItem
 						.findViewById(R.id.app_name);
+				boolean needPackName=false;
+				CharSequence label=groups[position].loadLabel(pm);
+				for(int i=0;i<groups.length;i++){
+					if(groups[i].loadLabel(pm).equals(label) &&position!=i)
+						needPackName=true;
+				}
+				if(needPackName){
+					TextView pack=(TextView) groupItem.findViewById(R.id.app_package);
+					pack.setText(groups[position].name);
+				}
 				destinationTypeText.setText(groups[position].loadLabel(pm));
 				destinationTypeText.setTextSize(15);
 				ImageView typeSelectedImage = (ImageView) groupItem
 						.findViewById(R.id.app_icon);
+				Iterator<ResolveInfo> lst=launchers.iterator();
+				boolean isLauncher=false;
+				while (lst.hasNext()){
+					ResolveInfo info=lst.next();
+					if(info.activityInfo.name.equals(groups[position].name)) 
+					isLauncher=true;
+				}
+				if(isLauncher)
+					((ImageView)groupItem.findViewById(R.id.info_img)).setImageResource(R.drawable.iphone);
+				else ((ImageView)groupItem.findViewById(R.id.info_img)).setImageResource(R.drawable.iphone_icons); 
+
 				typeSelectedImage.setImageDrawable(groups[position].loadIcon(pm));
 				return groupItem;
 				
