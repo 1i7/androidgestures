@@ -71,16 +71,19 @@ public class Manager extends Activity {
 	SimpleCursorAdapter motions;
 	int selectedItem = -1;
 	ListnerBinder lb = null;
-
+	ServiceConnection con;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		setContentView(R.layout.main);
 		super.onCreate(savedInstanceState);
 		final Button startMyService = (Button) findViewById(R.id.service_start);
-		bindService(new Intent(this,MotionHandler1.class),new ServiceConnection(){
+		startService(new Intent(this,MotionHandler1.class));
+		
+		bindService(new Intent(this,MotionHandler1.class),con=new ServiceConnection(){
 			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
 				lb = (ListnerBinder) arg1;
+				Log.i("handler", lb.mh+"");
 				startMyService.setText(lb.mh.isEnabled? "stop" : "start");
 				Cursor c = getContentResolver().query(
 						MotionsDB.MOTIONS_CONTENT_URI,
@@ -102,9 +105,14 @@ public class Manager extends Activity {
 							
 							i.setClassName(c.getString(0), c
 									.getString(1));
+							
 							try{
+								Log.i("startActivity", "begin");
 							startActivity(i);
+							
+							Log.i("startActivity", "end");
 							}catch(Exception e){
+								Log.i("startActivity", "failed");
 								Toast.makeText(lb.mh, "cant't start activity", 1000).show();
 							}
 							
@@ -119,7 +127,7 @@ public class Manager extends Activity {
 				
 			}
 			
-		},BIND_AUTO_CREATE);
+		},0);
 	
 		/*if(savedInstanceState!=null && savedInstanceState.containsKey("process"))
 			startMyService.setText(savedInstanceState.getBoolean("process")?"stop":"start");*/
@@ -170,6 +178,7 @@ public class Manager extends Activity {
 		super.onSaveInstanceState(outState);
 		if(lb!=null)
 			outState.putBoolean("process",isServiceEnabled() );
+		unbindService(con);
 	}
 
 	boolean isServiceEnabled(){
