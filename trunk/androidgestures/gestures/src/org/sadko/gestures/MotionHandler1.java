@@ -85,8 +85,8 @@ public class MotionHandler1 extends MotionHandler {
 				new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
 						"A21", "A22", "time", "_id" },
 				null, null, null);
-
-		while (!c.isLast()) {
+		
+		while (c.getCount()!=0 && !c.isLast()) {
 			
 			c.moveToNext();
 			Motion motion = new Motion();
@@ -120,7 +120,7 @@ public class MotionHandler1 extends MotionHandler {
 					motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
 					addMotion(motion);
 				}
-				if(isEnabled)mgr.registerListener(MotionHandler1.this,SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+				if(isEnabled)mgr.registerListener(MotionHandler1.this,SensorManager.SENSOR_ORIENTATION_RAW,SensorManager.SENSOR_DELAY_UI);
 				super.onChange(selfChange);
 			}
 			
