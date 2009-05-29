@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openintents.hardware.SensorManagerSimulator;
-import org.openintents.provider.Hardware;
+//import org.openintents.hardware.SensorManagerSimulator;
+//import org.openintents.provider.Hardware;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -65,12 +65,12 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			}};*/
 		Log.i("searvice", "i am bound "+this);
 		if(listners.isEmpty()){
-			Hardware.mContentResolver=getContentResolver();
-			mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
-			SensorManagerSimulator.connectSimulator();
-			//mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
+			//Hardware.mContentResolver=getContentResolver();
+			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
+			//SensorManagerSimulator.connectSimulator();
+			mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
 			if(isEnabled)
-			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION_RAW,SensorManager.SENSOR_DELAY_UI);
 		}
 		ListnerBinder lb=new ListnerBinder();
 		lb.mh=this;
@@ -133,7 +133,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		if(isEnabled)
 			mgr.unregisterListener(this);
 		else
-			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION_RAW,SensorManager.SENSOR_DELAY_UI);
 		isEnabled= !isEnabled;
 		// TODO Auto-generated method stub
 		
