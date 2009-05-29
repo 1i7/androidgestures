@@ -1,6 +1,7 @@
 package org.sadko.gestures;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -34,6 +35,7 @@ public class Manager extends Activity {
 	private static final int ADD_NEW_ID = 0;
 	private static final int EXIT_ID = 1;
 	private static final int KILL_SERVICE_ID = 2;
+	Button startMyService;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,10 +79,40 @@ public class Manager extends Activity {
 		
 		setContentView(R.layout.main);
 		super.onCreate(savedInstanceState);
-		final Button startMyService = (Button) findViewById(R.id.service_start);
+		startMyService = (Button) findViewById(R.id.service_start);
 		startService(new Intent(this,MotionHandler1.class));
+		startMyService.setEnabled(false);
 		
-		bindService(new Intent(this,MotionHandler1.class),con=new ServiceConnection(){
+		/*if(savedInstanceState!=null && savedInstanceState.containsKey("process"))
+			startMyService.setText(savedInstanceState.getBoolean("process")?"stop":"start");*/
+
+		lv = (ListView) findViewById(R.id.motions_list);
+		fillListView();
+		startMyService.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+					switchService();
+					startMyService.setText(isServiceEnabled()? "stop" : "start");
+					lb.mh.showNotification();
+
+				}
+
+			
+
+		});
+		
+	}
+	
+	@Override
+	protected void onPause() {
+		
+		super.onPause();
+		unbindService(con);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		con=new ServiceConnection(){
 			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
 				lb = (ListnerBinder) arg1;
 				Log.i("handler", lb.mh+"");
@@ -105,49 +137,38 @@ public class Manager extends Activity {
 							
 							i.setClassName(c.getString(0), c
 									.getString(1));
+							i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 							
 							try{
 								Log.i("startActivity", "begin");
-							startActivity(i);
+							lb.mh.startActivity(i);
 							
 							Log.i("startActivity", "end");
 							}catch(Exception e){
+								
 								Log.i("startActivity", "failed");
 								Toast.makeText(lb.mh, "cant't start activity", 1000).show();
+								e.printStackTrace();
 							}
 							
 						}
 					}
+					
 				};
+				startMyService.setEnabled(true);
 
 			}
 
 			public void onServiceDisconnected(ComponentName arg0) {
-				// TODO Auto-generated method stub
+				startMyService.setEnabled(false);
 				
 			}
+		};
 			
-		},0);
+		bindService(new Intent(this,MotionHandler1.class),con,0);
 	
-		/*if(savedInstanceState!=null && savedInstanceState.containsKey("process"))
-			startMyService.setText(savedInstanceState.getBoolean("process")?"stop":"start");*/
-
-		lv = (ListView) findViewById(R.id.motions_list);
-		fillListView();
-		startMyService.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-					switchService();
-					startMyService.setText(isServiceEnabled()? "stop" : "start");
-					lb.mh.showNotification();
-
-				}
-
-			
-
-		});
-		
 	}
-	
+
 	private void fillListView(){
 		c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "_id", MotionColumns.NAME }, null, null, null);
@@ -178,7 +199,7 @@ public class Manager extends Activity {
 		super.onSaveInstanceState(outState);
 		if(lb!=null)
 			outState.putBoolean("process",isServiceEnabled() );
-		unbindService(con);
+		//unbindService(con);
 	}
 
 	boolean isServiceEnabled(){

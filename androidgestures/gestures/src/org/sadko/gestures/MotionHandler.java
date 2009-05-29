@@ -29,6 +29,20 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		motions.add(motion);
 	}
 	
+	public void onAccuracyChanged(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void onSensorChanged(int sensor, float[] values) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onDestroy() {
+		Log.w("service dead",this+"");
+		super.onDestroy();
+	}
+
 	protected List<ListnerBinder> listners=new ArrayList<ListnerBinder>();
 	
 	MotionHandler(){
@@ -49,6 +63,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 				Log.i("binder","here!");
 				return super.onTransact(code, data, reply, flags);
 			}};*/
+		Log.i("searvice", "i am bound "+this);
 		if(listners.isEmpty()){
 			Hardware.mContentResolver=getContentResolver();
 			mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
@@ -62,6 +77,12 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		listners.add(lb);
 		return lb;
 	}
+	@Override
+	public void onStart(Intent intent, int startId) {
+		Log.i("searvice", "i am started "+this);
+		super.onStart(intent, startId);
+	}
+
 	protected void notifyListeners(int motion){
 		Iterator<ListnerBinder> iter=listners.iterator();
 		Log.i("Listeners", listners.size()+"");
