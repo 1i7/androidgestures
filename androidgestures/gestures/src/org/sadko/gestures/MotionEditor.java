@@ -86,6 +86,15 @@ public class MotionEditor extends Activity {
 		((TextView)findViewById(R.id.app_name_in_edit)).setTextSize(20);
 		ImageButton record=(ImageButton) findViewById(R.id.Record);
 		action=getIntent().getAction();
+		Button discard=(Button)findViewById(R.id.discard);
+		discard.setOnClickListener(new OnClickListener(){
+
+			public void onClick(View v) {
+				finish();
+				
+			}
+			
+		});
 		launch=(Button)findViewById(R.id.launch_now);
 		launch.setEnabled(false);
 		launch.setOnClickListener(new OnClickListener(){

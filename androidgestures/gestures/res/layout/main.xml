@@ -20,29 +20,34 @@
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		style="?android:attr/listSeparatorTextViewStyle"
-		android:text="Gestures service control" android:id="@+id/control_area"/>
+		android:text="Gestures service control" android:id="@+id/control_area"
+		android:layout_margin="3px"/>
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="Gestures Service is running"
 		android:id="@+id/text_about_service_state"
-		android:layout_below="@+id/control_area"></TextView>
+		android:layout_below="@+id/control_area"
+		android:layout_margin="3px"></TextView>
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="Gestures service listens to your phone movements and launches specified application, if recognized action matches the gesture recorded earlier by you."
 		android:id="@+id/program_description"
 		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_below="@+id/text_about_service_state" android:layout_toLeftOf="@+id/service_start"></TextView>
+		android:layout_below="@+id/text_about_service_state" android:layout_toLeftOf="@+id/service_start"
+		android:layout_margin="3px"></TextView>
 	<Button android:layout_height="wrap_content"
 		android:id="@+id/service_start"
 		android:layout_width="wrap_content"
 		android:layout_alignParentRight="true"
 		android:layout_below="@+id/control_area"
+		android:layout_margin="3px"
 		android:text="start"></Button>
 </RelativeLayout>
 <TextView android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		style="?android:attr/listSeparatorTextViewStyle"
-		android:text="List of gestures" android:id="@+id/list_of_gestures_area"/>
+		android:text="List of gestures" android:id="@+id/list_of_gestures_area"
+		android:layout_margin="3px"/>
 	
 <LinearLayout android:id="@+id/LinearLayout02"
 		android:layout_width="fill_parent"

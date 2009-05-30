@@ -34,13 +34,15 @@
 		android:layout_height="wrap_content" android:layout_width="fill_parent"
 		android:orientation="horizontal" android:layout_gravity="bottom"
 		android:layout_weight="1">
+		<Button android:layout_height="wrap_content" android:id="@+id/discard"
+			android:text="discard" android:layout_margin="3px" android:layout_gravity="bottom" android:layout_weight="1" android:layout_width="wrap_content"></Button>
 		<Button android:id="@+id/sSandE" android:text="save and exit"
-			android:layout_width="fill_parent" android:layout_gravity="bottom|center_horizontal"
-			android:layout_height="wrap_content" android:layout_weight="1"></Button>
+			android:layout_height="wrap_content" android:layout_weight="1"
+			android:layout_margin="3px" android:layout_gravity="bottom" android:layout_width="wrap_content"></Button>
+			
 		<Button android:layout_height="wrap_content" android:id="@+id/delete"
-			android:text="delete" android:layout_width="fill_parent"
-			android:layout_gravity="bottom|center_horizontal"
-			android:layout_weight="1"></Button>
+			android:text="delete gesture" android:layout_weight="1"
+			android:layout_margin="3px" android:layout_gravity="bottom" android:layout_width="wrap_content"></Button>
 	
 
 </LinearLayout>
