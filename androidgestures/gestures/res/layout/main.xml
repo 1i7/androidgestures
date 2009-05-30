@@ -66,18 +66,21 @@
 		<TextView android:id="@+id/TextView01"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_margin="3px"
 				android:text="Welcome to Gestures. With our app you can record and match simple motions of your phone to any events on your phone. It is the first version, so you can only start other apps with it.">
 		</TextView>
 		<Button android:id="@+id/add_first"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
+			android:layout_margin="3px"
 			android:text="Add my first gesture">
 		</Button>
 		<ImageView android:id="@+id/ImageView01"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:src="@drawable/android_icon_125"
+			android:layout_margin="3px"
 			android:layout_gravity="center_horizontal">
 		</ImageView>
 
