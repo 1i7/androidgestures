@@ -3,13 +3,70 @@
 <LinearLayout android:id="@+id/LinearLayout01"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:focusable="true" android:clickable="true"
-	android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical">
-<ImageView android:layout_height="wrap_content" android:layout_width="wrap_content"
-		android:layout_weight="0" android:layout_gravity="center_horizontal" android:src="@drawable/banner" android:id="@+id/banner"></ImageView>
+	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:orientation="vertical">
+	<ImageView android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_weight="0"
+		android:layout_gravity="center_horizontal" android:src="@drawable/banner"
+		android:id="@+id/banner"></ImageView>
 	
 
 
-	<Button android:layout_height="wrap_content" android:id="@+id/service_start" android:layout_width="fill_parent" android:text="start service"></Button>
 	
-<LinearLayout android:id="@+id/LinearLayout02" android:layout_width="fill_parent" android:layout_height="fill_parent"><ListView android:choiceMode="singleChoice" android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@+id/motions_list"></ListView></LinearLayout>
+	
+<RelativeLayout android:id="@+id/RelativeLayout01"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		style="?android:attr/listSeparatorTextViewStyle"
+		android:text="control" android:id="@+id/caption"/>
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Gestures Service is running"
+		android:id="@+id/text_about_service_state"
+		android:layout_below="@+id/caption"></TextView>
+	<Button android:layout_height="wrap_content"
+		android:id="@+id/service_start"
+		android:layout_width="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_below="@+id/caption"
+		android:text="start"></Button>
+</RelativeLayout>
+<LinearLayout android:id="@+id/LinearLayout02"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+	<ListView android:choiceMode="singleChoice"
+			android:layout_height="fill_parent"
+			android:layout_width="fill_parent"
+			android:id="@android:id/list"></ListView>
+	<LinearLayout android:id="@android:id/empty"
+			xmlns:android="http://schemas.android.com/apk/res/android"
+			android:focusable="true"
+			android:clickable="true"
+			android:layout_height="fill_parent"
+			android:layout_width="fill_parent"
+			android:orientation="vertical">
+		<TextView android:id="@+id/TextView01"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Welcome to Gestures. With our app you can record and match simple motions of your phone to any events on your phone. It is the first version, so you can only start other apps with it.">
+		</TextView>
+		<Button android:id="@+id/Button01"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:text="Add my first gesture">
+		</Button>
+		<ImageView android:id="@+id/ImageView01"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/android_icon_125"
+			android:layout_gravity="center_horizontal">
+		</ImageView>
+
+	</LinearLayout>
+</LinearLayout>
+
+
 </LinearLayout>
