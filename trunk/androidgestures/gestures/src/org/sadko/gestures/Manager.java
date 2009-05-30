@@ -1,6 +1,6 @@
 package org.sadko.gestures;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class Manager extends Activity {
+public class Manager extends ListActivity {
 	ListView lv;
 	Cursor c;
 	private static final int ADD_NEW_ID = 0;
@@ -76,11 +76,12 @@ public class Manager extends Activity {
 		startMyService = (Button) findViewById(R.id.service_start);
 		startService(new Intent(this,MotionHandler1.class));
 		startMyService.setEnabled(false);
+		startMyService.setTextSize(20);
 		
 		/*if(savedInstanceState!=null && savedInstanceState.containsKey("process"))
 			startMyService.setText(savedInstanceState.getBoolean("process")?"stop":"start");*/
 
-		lv = (ListView) findViewById(R.id.motions_list);
+		lv = getListView();
 		fillListView();
 		startMyService.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
