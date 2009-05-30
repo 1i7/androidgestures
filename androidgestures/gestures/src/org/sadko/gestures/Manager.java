@@ -30,7 +30,7 @@ public class Manager extends ListActivity {
 	private static final int EXIT_ID = 1;
 	private static final int KILL_SERVICE_ID = 2;
 	Button startMyService;
-
+	TextView serviceState;
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ADD_NEW_ID, 0, "Add new");
@@ -77,7 +77,7 @@ public class Manager extends ListActivity {
 		startService(new Intent(this,MotionHandler1.class));
 		startMyService.setEnabled(false);
 		startMyService.setTextSize(20);
-		
+		serviceState=(TextView)findViewById(R.id.text_about_service_state);
 		/*if(savedInstanceState!=null && savedInstanceState.containsKey("process"))
 			startMyService.setText(savedInstanceState.getBoolean("process")?"stop":"start");*/
 
@@ -87,6 +87,7 @@ public class Manager extends ListActivity {
 			public void onClick(View v) {
 					switchService();
 					startMyService.setText(isServiceEnabled()? "stop" : "start");
+					serviceState.setText("Gestures service is"+ (lb.mh.isEnabled? " running" : " idle"));
 					lb.mh.showNotification();
 
 				}
@@ -112,6 +113,7 @@ public class Manager extends ListActivity {
 				lb = (ListnerBinder) arg1;
 				Log.i("handler", lb.mh+"");
 				startMyService.setText(lb.mh.isEnabled? "stop" : "start");
+				serviceState.setText("Gestures service is"+ (lb.mh.isEnabled? " running" : " idle"));
 				Cursor c = getContentResolver().query(
 						MotionsDB.MOTIONS_CONTENT_URI,
 						new String[] { "count(_ID)" }, null, null, null);
@@ -215,6 +217,7 @@ public class Manager extends ListActivity {
 			// TODO Auto-generated method stub
 			 TextView tv=(TextView)super.getView(position, convertView, parent);
 			 tv.setTextSize(30);
+			 tv.setPadding(0, 3, 0, 3);
 			 return tv;
 			
 		}
