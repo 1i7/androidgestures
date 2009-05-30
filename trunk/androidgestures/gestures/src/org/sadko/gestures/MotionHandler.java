@@ -116,7 +116,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 				| Intent.FLAG_ACTIVITY_NEW_TASK);
 		NotificationManager mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		Notification m_currentNotification = new Notification(R.drawable.icon2,
-				"Service is running", System.currentTimeMillis());
+				"Gestures service is running", System.currentTimeMillis());
 		m_currentNotification.setLatestEventInfo(this, "Service is running",
 				"click here to change state", PendingIntent.getActivity(this, 0,
 						m_clickIntent, PendingIntent.FLAG_CANCEL_CURRENT));
