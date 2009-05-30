@@ -14,10 +14,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
-import android.os.Binder;
 import android.os.IBinder;
-import android.os.Parcel;
-import android.os.RemoteException;
 import android.util.Log;
 
 public abstract class MotionHandler extends Service implements SensorListener{
@@ -70,7 +67,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			//SensorManagerSimulator.connectSimulator();
 			mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
 			if(isEnabled)
-			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION_RAW,SensorManager.SENSOR_DELAY_UI);
+			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		}
 		ListnerBinder lb=new ListnerBinder();
 		lb.mh=this;
@@ -133,7 +130,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		if(isEnabled)
 			mgr.unregisterListener(this);
 		else
-			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION_RAW,SensorManager.SENSOR_DELAY_UI);
+			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		isEnabled= !isEnabled;
 		// TODO Auto-generated method stub
 		
