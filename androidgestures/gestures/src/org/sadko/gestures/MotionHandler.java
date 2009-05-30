@@ -127,8 +127,10 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		NotificationManager mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 	}
 	public void switchMe() {
-		if(isEnabled)
+		if(isEnabled){
 			mgr.unregisterListener(this);
+			killNotification();
+		}
 		else
 			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		isEnabled= !isEnabled;

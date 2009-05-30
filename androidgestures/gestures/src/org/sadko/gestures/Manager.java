@@ -1,31 +1,25 @@
 package org.sadko.gestures;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ComponentName;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Parcel;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -173,9 +167,11 @@ public class Manager extends Activity {
 		c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "_id", MotionColumns.NAME }, null, null, null);
 		startManagingCursor(c);
-		motions = new SimpleCursorAdapter(this, R.layout.motions_row, c,
+		
+		motions = new MySimpleAdapter(this, R.layout.motions_row, c,
 				new String[] { MotionColumns.NAME },
 				new int[] { R.id.motion_name });
+		
 		lv.setAdapter(motions);
 		lv.setItemsCanFocus(false);
 		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -192,6 +188,24 @@ public class Manager extends Activity {
 		LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View empty=inflater.inflate(R.layout.start_view, null);
 		lv.setEmptyView(empty);
+	}
+	class MySimpleAdapter extends SimpleCursorAdapter{
+
+		public MySimpleAdapter(Context context, int layout, Cursor c,
+				String[] from, int[] to) {
+			super(context, layout, c, from, to);
+			
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			// TODO Auto-generated method stub
+			 TextView tv=(TextView)super.getView(position, convertView, parent);
+			 tv.setTextSize(30);
+			 return tv;
+			
+		}
+		
 	}
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
