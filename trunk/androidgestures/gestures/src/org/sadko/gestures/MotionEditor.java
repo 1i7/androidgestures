@@ -298,7 +298,7 @@ public class MotionEditor extends Activity {
 				if (convertView == null) {
 					LayoutInflater inflater = (LayoutInflater) parent.getContext()
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-					groupItem = inflater.inflate(R.layout.picker_item,null);
+					groupItem = inflater.inflate(R.layout.activity_picker_item,null);
 					//groupItem.setPadding(36, 0, 0, 0);
 				} else {
 					groupItem = convertView;
@@ -309,9 +309,7 @@ public class MotionEditor extends Activity {
 						.findViewById(R.id.app_name);
 				destinationTypeText.setText(groups[groupPosition].loadLabel(pm));
 				destinationTypeText.setTextSize(15);
-				ImageView typeSelectedImage = (ImageView) groupItem
-						.findViewById(R.id.app_icon);
-
+				
 				boolean isLauncher=false;
 				Iterator<ResolveInfo> lst=launchers.iterator();
 				while (lst.hasNext()){
@@ -326,7 +324,6 @@ public class MotionEditor extends Activity {
 					((ImageView)groupItem.findViewById(R.id.info_img)).setImageResource(R.drawable.iphone);
 				
 				else ((ImageView)groupItem.findViewById(R.id.info_img)).setImageResource(R.drawable.iphone_icons);			
-				typeSelectedImage.setImageDrawable(groups[groupPosition].loadIcon(pm));
 				
 				return groupItem;
 	        }
@@ -345,7 +342,7 @@ public class MotionEditor extends Activity {
 				if (convertView == null) {
 					LayoutInflater inflater = (LayoutInflater) spinner.getContext()
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-					groupItem = inflater.inflate(R.layout.picker_item,null);
+					groupItem = inflater.inflate(R.layout.activity_picker_item,null);
 					//groupItem.setPadding(36, 0, 0, 0);
 				} else {
 					groupItem = convertView;
@@ -366,8 +363,6 @@ public class MotionEditor extends Activity {
 				}
 				destinationTypeText.setText(groups[position].loadLabel(pm));
 				destinationTypeText.setTextSize(15);
-				ImageView typeSelectedImage = (ImageView) groupItem
-						.findViewById(R.id.app_icon);
 				Iterator<ResolveInfo> lst=launchers.iterator();
 				boolean isLauncher=false;
 				while (lst.hasNext()){
@@ -379,7 +374,6 @@ public class MotionEditor extends Activity {
 					((ImageView)groupItem.findViewById(R.id.info_img)).setImageResource(R.drawable.iphone);
 				else ((ImageView)groupItem.findViewById(R.id.info_img)).setImageResource(R.drawable.iphone_icons); 
 
-				typeSelectedImage.setImageDrawable(groups[position].loadIcon(pm));
 				return groupItem;
 				
 			}
