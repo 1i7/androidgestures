@@ -26,6 +26,12 @@
 		android:text="Gestures Service is running"
 		android:id="@+id/text_about_service_state"
 		android:layout_below="@+id/control_area"></TextView>
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Gestures service listens to your phone movements and launches specified application, if recognized action matches the gesture recorded earlier by you."
+		android:id="@+id/program_description"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:layout_below="@+id/text_about_service_state" android:layout_toLeftOf="@+id/service_start"></TextView>
 	<Button android:layout_height="wrap_content"
 		android:id="@+id/service_start"
 		android:layout_width="wrap_content"
