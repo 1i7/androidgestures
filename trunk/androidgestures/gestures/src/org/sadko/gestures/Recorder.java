@@ -6,6 +6,9 @@ package org.sadko.gestures;
 //import org.openintents.hardware.SensorManagerSimulator;
 //import org.openintents.provider.Hardware;
 
+//import org.openintents.hardware.SensorManagerSimulator;
+//import org.openintents.provider.Hardware;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -162,7 +165,7 @@ public class Recorder extends Activity {
 		//getSystemService(SENSOR_SERVICE));
 		//SensorManagerSimulator.connectSimulator();
 		mSensorManager.registerListener(r,
-				SensorManager.SENSOR_ORIENTATION_RAW,
+				SensorManager.SENSOR_ORIENTATION,
 				SensorManager.SENSOR_DELAY_UI);
 	}
 

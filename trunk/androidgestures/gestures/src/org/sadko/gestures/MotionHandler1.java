@@ -120,7 +120,7 @@ public class MotionHandler1 extends MotionHandler {
 					motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
 					addMotion(motion);
 				}
-				if(isEnabled)mgr.registerListener(MotionHandler1.this,SensorManager.SENSOR_ORIENTATION_RAW,SensorManager.SENSOR_DELAY_UI);
+				if(isEnabled)mgr.registerListener(MotionHandler1.this,SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 				super.onChange(selfChange);
 			}
 			
