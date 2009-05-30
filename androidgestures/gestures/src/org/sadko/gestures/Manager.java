@@ -188,7 +188,19 @@ public class Manager extends ListActivity {
 		});
 		LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View empty=inflater.inflate(R.layout.start_view, null);
-		lv.setEmptyView(empty);
+		//lv.setEmptyView(empty);
+		Button addFirst=(Button) findViewById(R.id.add_first);
+		addFirst.setOnClickListener(new OnClickListener(){
+
+			public void onClick(View arg0) {
+				Intent i = new Intent(Manager.this, MotionEditor.class);
+				i.setAction(android.content.Intent.ACTION_MAIN);
+				startActivity(i);
+			}
+			
+		});
+		
+		
 	}
 	class MySimpleAdapter extends SimpleCursorAdapter{
 
