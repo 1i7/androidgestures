@@ -54,6 +54,7 @@ public class MotionEditor extends Activity {
 	Spinner spinner;
 	Button testGesture;
 	Button saveExit;
+	boolean discarding=false;
 	List<ResolveInfo> launchers;
 	private static final int RECORD_REQEST_CODE = 1;
 	private static final int PICK_APP_REQUEST_CODE = 2;
@@ -65,17 +66,16 @@ public class MotionEditor extends Activity {
 	protected void onPause() {
 		super.onPause();
 		if(isFinishing()){
-			saveGesture();
+			if(!discarding)
+				saveGesture();
 		}
 	}
 	void saveGesture(){
 		PackageManager pm = getPackageManager();
-		if (!(((EditText) findViewById(R.id.NameInput)).getText()
+		/*if (!(((EditText) findViewById(R.id.NameInput)).getText()
 				.toString().equals("") || (oldAppName != null && ((EditText) findViewById(R.id.NameInput))
 				.getText().toString().equals(oldAppName))))
-			motionValues.put(MotionColumns.NAME,
-					((EditText) findViewById(R.id.NameInput)).getText()
-							.toString());
+			
 		else {
 			//Log.i("naming", "tuta");
 			try {
@@ -87,8 +87,11 @@ public class MotionEditor extends Activity {
 			} catch (NameNotFoundException e1) {
 				motionValues.put(MotionColumns.NAME, "no name");
 			}
-		}
+		}*/
 
+		motionValues.put(MotionColumns.NAME,
+				((EditText) findViewById(R.id.NameInput)).getText()
+						.toString());
 		if (action.equals(android.content.Intent.ACTION_EDIT)) {
 			if (motionValues.size() > 0)
 				getContentResolver().update(
@@ -132,6 +135,7 @@ public class MotionEditor extends Activity {
 													appPackage,
 													PackageManager.GET_ACTIVITIES).activities[(int) spinner
 											.getSelectedItemId()].name);
+					//Log.i("spinner","");
 				} catch (NameNotFoundException e) {
 					Toast.makeText(MotionEditor.this,
 							"An error ocuured", 1000).show();
@@ -186,6 +190,7 @@ public class MotionEditor extends Activity {
 		discard.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+				discarding=true;
 				finish();
 
 			}
@@ -227,9 +232,7 @@ public class MotionEditor extends Activity {
 					i
 							.setClassName(
 									appPackage,
-									pm.getPackageInfo(appPackage,
-											PackageManager.GET_ACTIVITIES).activities[(int) spinner
-											.getSelectedItemId()].name);
+									appActivity);
 					startActivity(i);
 				} catch (Exception e) {
 					Toast.makeText(MotionEditor.this,
@@ -253,10 +256,19 @@ public class MotionEditor extends Activity {
 			appActivity = c1.getString(c1
 					.getColumnIndex(ActivityColumns.ACTIVITY));
 			}catch(CursorIndexOutOfBoundsException e){
+				Log.e("error","with cursor");
+			}
+			try {
+				if(((EditText)findViewById(R.id.NameInput)).equals(pm
+						.getApplicationLabel(pm.getApplicationInfo(appPackage, 0))))
+				nameWasAsPickedApp=true;
+			} catch (NameNotFoundException e1) {
 				
 			}
-			setPickedApp();
+			//if()
 			makeSpinner();
+			setPickedApp();
+			
 			taskId = c1.getLong(c1.getColumnIndex(ActivityColumns.MOTION_ID));
 			Cursor c = getContentResolver().query(
 					ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI,
@@ -295,7 +307,7 @@ public class MotionEditor extends Activity {
 
 
 				//Log.i("spin", spinner.getSelectedItemId() + "");
-				saveGesture();
+				//saveGesture();
 				finish();
 			}
 
@@ -357,8 +369,10 @@ public class MotionEditor extends Activity {
 	}
 
 	private void setPickedApp() {
+		if(((EditText)findViewById(R.id.NameInput)).getText().toString().equals("No name")) nameWasAsPickedApp=true;
 		PackageManager pm = getPackageManager();
 		try {
+			Log.i("appact", appActivity+"^)");
 			ImageButton pickButton = ((ImageButton) findViewById(R.id.pick));
 			// pickButton.setAdjustViewBounds(true);
 			pickButton.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
@@ -374,8 +388,12 @@ public class MotionEditor extends Activity {
 				if (pi.activities[j].name.equals(appActivity))
 					i = j;
 			}
-			// Log.i("activit",appActivity+") "+i);
+			//if()
+			Log.i("activit",appActivity+") "+i);
 			spinner.setSelection(i);
+			if(nameWasAsPickedApp)
+				((EditText)findViewById(R.id.NameInput)).setText(pm
+					.getApplicationLabel(pm.getApplicationInfo(appPackage, 0)));
 			// spinner.
 			// Log.i("activit",appActivity+") "+i+" "+spinner.getSelectedItemPosition());
 
@@ -432,7 +450,7 @@ public class MotionEditor extends Activity {
 			return groups.length;
 		}
 
-		public View getView(int groupPosition, View convertView,
+		public View getView(int position, View convertView,
 				ViewGroup parent) {
 			View groupItem = null;
 			if (convertView == null) {
@@ -446,13 +464,13 @@ public class MotionEditor extends Activity {
 			}
 
 			// String destinationType = (String) getItem(position);
-			TextView destinationTypeText = (TextView) groupItem
-					.findViewById(R.id.app_name);
-			destinationTypeText.setText(groups[groupPosition].loadLabel(pm));
-			destinationTypeText.setTextSize(15);
+			TextView activityName = (TextView) groupItem
+					.findViewById(R.id.activity_name);
+			activityName.setText(groups[position].loadLabel(pm));
+			activityName.setTextSize(15);
 
-			boolean isLauncher = false;
-			Iterator<ResolveInfo> lst = launchers.iterator();
+			//boolean isLauncher = false;
+			/*Iterator<ResolveInfo> lst = launchers.iterator();
 			while (lst.hasNext()) {
 				ResolveInfo info = lst.next();
 				if (info.activityInfo.name.equals(groups[groupPosition].name))
@@ -469,7 +487,7 @@ public class MotionEditor extends Activity {
 			else
 				((ImageView) groupItem.findViewById(R.id.info_img))
 						.setImageResource(R.drawable.iphone_icons);
-
+*/
 			return groupItem;
 		}
 
@@ -496,23 +514,26 @@ public class MotionEditor extends Activity {
 			}
 
 			// String destinationType = (String) getItem(position);
-			TextView destinationTypeText = (TextView) groupItem
-					.findViewById(R.id.app_name);
+			TextView activityName = (TextView) groupItem
+					.findViewById(R.id.activity_name);
 			// destinationTypeText.setHeight(30);
 			boolean needPackName = false;
 			CharSequence label = groups[position].loadLabel(pm);
+			
 			for (int i = 0; i < groups.length; i++) {
-				if (groups[i].loadLabel(pm).equals(label) && position != i)
+				if (i != position && groups[i].loadLabel(pm).equals(label))
 					needPackName = true;
 			}
+			TextView pack = (TextView) groupItem
+			.findViewById(R.id.app_package);
+	
 			if (needPackName) {
-				TextView pack = (TextView) groupItem
-						.findViewById(R.id.app_package);
-				pack.setText(groups[position].name);
-			}
-			destinationTypeText.setText(groups[position].loadLabel(pm));
-			destinationTypeText.setTextSize(15);
-			Iterator<ResolveInfo> lst = launchers.iterator();
+				pack.setText(groups[position].name.toString());
+			}else
+				pack.setText(" ");
+			activityName.setText(label);
+			activityName.setTextSize(15);
+			/*Iterator<ResolveInfo> lst = launchers.iterator();
 			boolean isLauncher = false;
 			while (lst.hasNext()) {
 				ResolveInfo info = lst.next();
@@ -525,7 +546,7 @@ public class MotionEditor extends Activity {
 			else
 				((ImageView) groupItem.findViewById(R.id.info_img))
 						.setImageResource(R.drawable.iphone_icons);
-			// ((ImageView)groupItem.findViewById(R.id.info_img`))
+			// ((ImageView)groupItem.findViewById(R.id.info_img`))*/
 			return groupItem;
 
 		}
