@@ -3,12 +3,11 @@
 <RelativeLayout android:layout_height="wrap_content"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_margin="3px"
-	android:id="@+id/item_layout" android:minHeight="50px">
+	android:id="@+id/item_layout" android:minHeight="60px">
 	<ImageView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:id="@+id/app_icon"
 		android:layout_alignParentRight="true" android:src="@drawable/iphone"
-		android:adjustViewBounds="true" android:maxHeight="60px"
-		android:maxWidth="60px" android:minHeight="60px" android:minWidth="60px" android:scaleType="fitXY"></ImageView>
+		android:adjustViewBounds="true" android:scaleType="fitXY" android:maxHeight="50px" android:maxWidth="50px" android:minHeight="50px" android:minWidth="50px" android:layout_margin="3px"></ImageView>
 	<TextView android:layout_width="wrap_content" android:id="@+id/app_name"
 		android:layout_toRightOf="@+id/info_img" android:text="123"
 		android:layout_height="wrap_content"></TextView>

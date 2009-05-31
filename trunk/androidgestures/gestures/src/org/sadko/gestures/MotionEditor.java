@@ -372,7 +372,7 @@ public class MotionEditor extends Activity {
 		if(((EditText)findViewById(R.id.NameInput)).getText().toString().equals("No name")) nameWasAsPickedApp=true;
 		PackageManager pm = getPackageManager();
 		try {
-			Log.i("appact", appActivity+"^)");
+			//Log.i("appact", appActivity+"^)");
 			ImageButton pickButton = ((ImageButton) findViewById(R.id.pick));
 			// pickButton.setAdjustViewBounds(true);
 			pickButton.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
@@ -389,7 +389,7 @@ public class MotionEditor extends Activity {
 					i = j;
 			}
 			//if()
-			Log.i("activit",appActivity+") "+i);
+			//Log.i("activit",appActivity+") "+i);
 			spinner.setSelection(i);
 			if(nameWasAsPickedApp)
 				((EditText)findViewById(R.id.NameInput)).setText(pm
@@ -469,11 +469,11 @@ public class MotionEditor extends Activity {
 			activityName.setText(groups[position].loadLabel(pm));
 			activityName.setTextSize(15);
 
-			//boolean isLauncher = false;
-			/*Iterator<ResolveInfo> lst = launchers.iterator();
+			boolean isLauncher = false;
+			Iterator<ResolveInfo> lst = launchers.iterator();
 			while (lst.hasNext()) {
 				ResolveInfo info = lst.next();
-				if (info.activityInfo.name.equals(groups[groupPosition].name))
+				if (info.activityInfo.name.equals(groups[position].name))
 					isLauncher = true;
 			}
 			// Log.i("achtung!!!", groups[groupPosition].name);
@@ -487,7 +487,7 @@ public class MotionEditor extends Activity {
 			else
 				((ImageView) groupItem.findViewById(R.id.info_img))
 						.setImageResource(R.drawable.iphone_icons);
-*/
+
 			return groupItem;
 		}
 
@@ -533,7 +533,7 @@ public class MotionEditor extends Activity {
 				pack.setText(" ");
 			activityName.setText(label);
 			activityName.setTextSize(15);
-			/*Iterator<ResolveInfo> lst = launchers.iterator();
+			Iterator<ResolveInfo> lst = launchers.iterator();
 			boolean isLauncher = false;
 			while (lst.hasNext()) {
 				ResolveInfo info = lst.next();
@@ -546,7 +546,7 @@ public class MotionEditor extends Activity {
 			else
 				((ImageView) groupItem.findViewById(R.id.info_img))
 						.setImageResource(R.drawable.iphone_icons);
-			// ((ImageView)groupItem.findViewById(R.id.info_img`))*/
+			// ((ImageView)groupItem.findViewById(R.id.info_img`))
 			return groupItem;
 
 		}
