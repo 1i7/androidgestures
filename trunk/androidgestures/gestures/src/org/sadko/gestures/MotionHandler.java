@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-//import org.openintents.hardware.SensorManagerSimulator;
-//import org.openintents.provider.Hardware;
+import org.openintents.hardware.SensorManagerSimulator;
+import org.openintents.provider.Hardware;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -24,6 +24,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	SensorManager mgr;
 	public void addMotion(Motion motion){
 		motions.add(motion);
+		Log.i("motion","added!");
 	}
 	
 	public void onAccuracyChanged(int arg0, int arg1) {
@@ -62,10 +63,10 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			}};*/
 		Log.i("searvice", "i am bound "+this);
 		if(listners.isEmpty()){
-			//Hardware.mContentResolver=getContentResolver();
-			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
-			//SensorManagerSimulator.connectSimulator();
-			mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
+			Hardware.mContentResolver=getContentResolver();
+			mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
+			SensorManagerSimulator.connectSimulator();
+			//mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
 			if(isEnabled)
 			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		}
@@ -106,10 +107,10 @@ public abstract class MotionHandler extends Service implements SensorListener{
     	 
     }
 	protected void showNotification() {
-		if(!isEnabled) {
+	/*	if(!isEnabled) {
 			killNotification();
 			return;
-		}
+		}*/
 		Intent m_clickIntent = new Intent();
 		m_clickIntent.setClass(this, Manager.class);
 		m_clickIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -132,8 +133,10 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			mgr.unregisterListener(this);
 			killNotification();
 		}
-		else
+		else{
 			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+			showNotification();
+		}
 		isEnabled= !isEnabled;
 		// TODO Auto-generated method stub
 		

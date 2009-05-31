@@ -26,7 +26,7 @@ public class MotionsDB extends ContentProvider {
 	private static final int MOTION_ID = 2;
 	private static final int TASKS = 3;
 	private static final int TASK_ID = 4;
-	public static final String DATABASE_NAME = "MOTION_DB9";
+	public static final String DATABASE_NAME = "MOTION_DB11";
 	public static final String MOTIONS_TABLE_NAME = "MOTIONS";
 	public static final String TASKS_TABLE_NAME = "TASKS";
 	private static final int DATABASE_VERSION = 2;
@@ -114,7 +114,7 @@ public class MotionsDB extends ContentProvider {
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		switch (sUriMatcher.match(uri)) {
 		case TASKS: {
-			long rowId = mOpenHelper.getWritableDatabase().insert(
+			long rowId = db.insert(
 					TASKS_TABLE_NAME, null, initialValues);
 			
 			Uri taskUri = ContentUris.withAppendedId(TASKS_CONTENT_URI, rowId);
@@ -129,12 +129,13 @@ public class MotionsDB extends ContentProvider {
 			initialValues.put(MotionColumns.MODIFIED_DATE, System
 					.currentTimeMillis());
 			long rowId = db.insert(MOTIONS_TABLE_NAME, null, initialValues);
-			Uri motionUri = ContentUris.withAppendedId(TASKS_CONTENT_URI, rowId);
+			Uri motionUri = ContentUris.withAppendedId(MOTIONS_CONTENT_URI, rowId);
 			getContext().getContentResolver().notifyChange(motionUri, null);
 			Log.i("DB","MOTION inserted "+rowId);
 			if(rowId<0) 
 				throw new SQLException("Failed to insert row into " + uri);
-			getContext().getContentResolver().notifyChange(uri, null);
+			getContext().getContentResolver().notifyChange(MOTIONS_CONTENT_URI,null);
+			
 			return motionUri;
 		}
 		default:{

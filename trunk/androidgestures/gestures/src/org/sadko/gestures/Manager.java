@@ -93,7 +93,7 @@ public class Manager extends ListActivity {
 					switchService();
 					startMyService.setText(isServiceEnabled()? "stop" : "start");
 					serviceState.setText("Gestures service is"+ (lb.mh.isEnabled? " running" : " idle"));
-					lb.mh.showNotification();
+					
 					Cursor c = getContentResolver().query(
 							MotionsDB.MOTIONS_CONTENT_URI,
 							new String[] { "count(_ID)" }, null, null, null);
