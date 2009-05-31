@@ -53,6 +53,7 @@ public class MotionEditor extends Activity {
 	String appPackage;
 	Spinner spinner;
 	Button testGesture;
+	Button saveExit;
 	List<ResolveInfo> launchers;
 	private static final int RECORD_REQEST_CODE = 1;
 	private static final int PICK_APP_REQUEST_CODE = 2;
@@ -60,6 +61,88 @@ public class MotionEditor extends Activity {
 	boolean nameWasAsPickedApp = false;
 	String oldAppName;
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if(isFinishing()){
+			saveGesture();
+		}
+	}
+	void saveGesture(){
+		PackageManager pm = getPackageManager();
+		if (!(((EditText) findViewById(R.id.NameInput)).getText()
+				.toString().equals("") || (oldAppName != null && ((EditText) findViewById(R.id.NameInput))
+				.getText().toString().equals(oldAppName))))
+			motionValues.put(MotionColumns.NAME,
+					((EditText) findViewById(R.id.NameInput)).getText()
+							.toString());
+		else {
+			//Log.i("naming", "tuta");
+			try {
+				//Log.i("nameWasPA", nameWasAsPickedApp + "");
+				motionValues.put(MotionColumns.NAME, pm
+						.getApplicationLabel(
+								pm.getApplicationInfo(appPackage, 0))
+						.toString());
+			} catch (NameNotFoundException e1) {
+				motionValues.put(MotionColumns.NAME, "no name");
+			}
+		}
+
+		if (action.equals(android.content.Intent.ACTION_EDIT)) {
+			if (motionValues.size() > 0)
+				getContentResolver().update(
+						MotionsDB.MOTIONS_CONTENT_URI, motionValues,
+						"_ID=" + motionId, null);
+			// if(activityValues.size()>0){
+
+			try {
+
+				activityValues
+						.put(
+								ActivityColumns.ACTIVITY,
+								pm.getPackageInfo(appPackage,
+										PackageManager.GET_ACTIVITIES).activities[(int) spinner
+										.getSelectedItemId()].name);
+				Log.i("chosen", activityValues
+						.getAsString(ActivityColumns.ACTIVITY)
+						+ "^)");
+			} catch (NameNotFoundException e) {
+				// Log.e("error","no name!");
+				// Toast.makeText(MotionEditor.this, "An error ocuured",
+				// 1000).show();
+				// e.printStackTrace();
+			}
+			if (activityValues.size() > 0)
+				getContentResolver().update(
+						MotionsDB.TASKS_CONTENT_URI, activityValues,
+						"_ID=" + taskId, null);
+			// }
+		} else {
+			motionId = ContentUris.parseId(getContentResolver().insert(
+					MotionsDB.MOTIONS_CONTENT_URI, motionValues));
+			if (activityValues.size() > 0) {
+
+				try {
+					activityValues
+							.put(
+									ActivityColumns.ACTIVITY,
+									pm
+											.getPackageInfo(
+													appPackage,
+													PackageManager.GET_ACTIVITIES).activities[(int) spinner
+											.getSelectedItemId()].name);
+				} catch (NameNotFoundException e) {
+					Toast.makeText(MotionEditor.this,
+							"An error ocuured", 1000).show();
+					// e.printStackTrace();
+				}
+			}
+			activityValues.put(ActivityColumns.MOTION_ID, motionId);
+			getContentResolver().insert(MotionsDB.TASKS_CONTENT_URI,
+					activityValues);
+		}
+	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 1)
@@ -205,85 +288,14 @@ public class MotionEditor extends Activity {
 
 		});
 
-		Button saveExit = (Button) findViewById(R.id.sSandE);
+		saveExit= (Button) findViewById(R.id.sSandE);
 		saveExit.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				PackageManager pm = getPackageManager();
-				if (!(((EditText) findViewById(R.id.NameInput)).getText()
-						.toString().equals("") || (oldAppName != null && ((EditText) findViewById(R.id.NameInput))
-						.getText().toString().equals(oldAppName))))
-					motionValues.put(MotionColumns.NAME,
-							((EditText) findViewById(R.id.NameInput)).getText()
-									.toString());
-				else {
-					//Log.i("naming", "tuta");
-					try {
-						//Log.i("nameWasPA", nameWasAsPickedApp + "");
-						motionValues.put(MotionColumns.NAME, pm
-								.getApplicationLabel(
-										pm.getApplicationInfo(appPackage, 0))
-								.toString());
-					} catch (NameNotFoundException e1) {
-						motionValues.put(MotionColumns.NAME, "no name");
-					}
-				}
 
-				if (action.equals(android.content.Intent.ACTION_EDIT)) {
-					if (motionValues.size() > 0)
-						getContentResolver().update(
-								MotionsDB.MOTIONS_CONTENT_URI, motionValues,
-								"_ID=" + motionId, null);
-					// if(activityValues.size()>0){
 
-					try {
-
-						activityValues
-								.put(
-										ActivityColumns.ACTIVITY,
-										pm.getPackageInfo(appPackage,
-												PackageManager.GET_ACTIVITIES).activities[(int) spinner
-												.getSelectedItemId()].name);
-						Log.i("chosen", activityValues
-								.getAsString(ActivityColumns.ACTIVITY)
-								+ "^)");
-					} catch (NameNotFoundException e) {
-						// Log.e("error","no name!");
-						// Toast.makeText(MotionEditor.this, "An error ocuured",
-						// 1000).show();
-						// e.printStackTrace();
-					}
-					if (activityValues.size() > 0)
-						getContentResolver().update(
-								MotionsDB.TASKS_CONTENT_URI, activityValues,
-								"_ID=" + taskId, null);
-					// }
-				} else {
-					motionId = ContentUris.parseId(getContentResolver().insert(
-							MotionsDB.MOTIONS_CONTENT_URI, motionValues));
-					if (activityValues.size() > 0) {
-
-						try {
-							activityValues
-									.put(
-											ActivityColumns.ACTIVITY,
-											pm
-													.getPackageInfo(
-															appPackage,
-															PackageManager.GET_ACTIVITIES).activities[(int) spinner
-													.getSelectedItemId()].name);
-						} catch (NameNotFoundException e) {
-							Toast.makeText(MotionEditor.this,
-									"An error ocuured", 1000).show();
-							// e.printStackTrace();
-						}
-					}
-					activityValues.put(ActivityColumns.MOTION_ID, motionId);
-					getContentResolver().insert(MotionsDB.TASKS_CONTENT_URI,
-							activityValues);
-				}
-
-				Log.i("spin", spinner.getSelectedItemId() + "");
+				//Log.i("spin", spinner.getSelectedItemId() + "");
+				saveGesture();
 				finish();
 			}
 
