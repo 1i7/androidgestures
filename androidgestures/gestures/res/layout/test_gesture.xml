@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/LinearLayout01"
+	xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_height="fill_parent" android:layout_width="fill_parent">
+	<TextView android:id="@+id/TextView01" android:layout_width="wrap_content"
+		android:text="Move your phone to reproduce recorded gesture to check how it works"
+		android:layout_height="wrap_content"
+		android:layout_margin="3px"></TextView>
+	<LinearLayout android:id="@+id/match_count_layout"
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	android:layout_margin="10px" android:layout_weight="0" android:layout_gravity="center">
+		<TextView android:id="@+id/text" android:layout_width="wrap_content"
+		android:text="Match count: "
+		android:layout_height="wrap_content" android:layout_gravity="center"></TextView>
+		<TextView android:id="@+id/match_count" android:layout_width="wrap_content"
+		android:layout_height="wrap_content"></TextView>
+	</LinearLayout>
+<Button
+	android:id="@+id/tested"
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:text="Ok" android:gravity="center" android:layout_weight="0" android:layout_gravity="bottom|center_horizontal">
+</Button>
+</LinearLayout>
+

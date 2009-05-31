@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -51,6 +52,7 @@ public class MotionEditor extends Activity {
 	String appName;
 	String appPackage;
 	Spinner spinner;
+	Button testGesture;
 	List<ResolveInfo> launchers;
 	private static final int RECORD_REQEST_CODE = 1;
 	private static final int PICK_APP_REQUEST_CODE = 2;
@@ -65,6 +67,8 @@ public class MotionEditor extends Activity {
 				ContentValues v = data
 						.getParcelableExtra(Recorder.RESULT_CONTENT_VALUES_NAME);
 				motionValues.putAll(v);
+				testGesture.setEnabled(true);
+				
 			}
 		if (requestCode == PICK_APP_REQUEST_CODE) {
 			if (resultCode == 1) {
@@ -104,12 +108,18 @@ public class MotionEditor extends Activity {
 			}
 
 		});
-		Button testGesture=(Button)findViewById(R.id.test_gesture);
+		testGesture=(Button)findViewById(R.id.test_gesture);
 		testGesture.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
+				Bundle b=new Bundle();
+				for(int j=0;j<3;j++)
+					for(int k=0;k<3;k++)
+						b.putDouble(MotionColumns.MATRIX[j][k], motionValues.getAsDouble(MotionColumns.MATRIX[j][k]));
 				Intent i=new Intent(MotionEditor.this,TestGestureActivity.class);
+				i.putExtras(b);
 				startActivity(i);
+				
 				
 			}
 			
@@ -146,10 +156,13 @@ public class MotionEditor extends Activity {
 			PackageManager pm = getPackageManager();
 			//Iterator<PackageInfo> iter = pm.getInstalledPackages(
 			//		PackageManager.GET_ACTIVITIES).iterator();
+			try{
 			appPackage = c1.getString(c1.getColumnIndex(ActivityColumns.PACK));
 			appActivity = c1.getString(c1
 					.getColumnIndex(ActivityColumns.ACTIVITY));
-
+			}catch(CursorIndexOutOfBoundsException e){
+				
+			}
 			setPickedApp();
 			makeSpinner();
 			taskId = c1.getLong(c1.getColumnIndex(ActivityColumns.MOTION_ID));

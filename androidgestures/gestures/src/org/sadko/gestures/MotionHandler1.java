@@ -6,6 +6,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.hardware.SensorManager;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 public class MotionHandler1 extends MotionHandler {
@@ -115,6 +116,7 @@ public class MotionHandler1 extends MotionHandler {
 						new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
 								"A21", "A22", "time", "_id" },
 						null, null, null);*/
+				Log.i("i am called","ugu!!");
 				if(isEnabled)mgr.unregisterListener(MotionHandler1.this);
 				deleteAllMotions();
 				while (!c.isLast()) {
@@ -132,7 +134,7 @@ public class MotionHandler1 extends MotionHandler {
 			}
 			
 		});
-		showNotification();
+		//showNotification();
 
 		super.onCreate();
 	}
