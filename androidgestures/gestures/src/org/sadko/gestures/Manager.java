@@ -1,12 +1,17 @@
 package org.sadko.gestures;
 
+
+
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.ContentObserver;
 import android.database.Cursor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -89,6 +94,15 @@ public class Manager extends ListActivity {
 					startMyService.setText(isServiceEnabled()? "stop" : "start");
 					serviceState.setText("Gestures service is"+ (lb.mh.isEnabled? " running" : " idle"));
 					lb.mh.showNotification();
+					Cursor c = getContentResolver().query(
+							MotionsDB.MOTIONS_CONTENT_URI,
+							new String[] { "count(_ID)" }, null, null, null);
+					c.moveToFirst();
+					if(lb==null || lb.mh==null ) return;
+					if(c.getInt(0) == 0 && lb.mh.isEnabled)
+						startMyService.setEnabled(true);
+					if(c.getInt(0) == 0 && !lb.mh.isEnabled)
+						startMyService.setEnabled(false);
 
 				}
 
@@ -118,7 +132,10 @@ public class Manager extends ListActivity {
 						MotionsDB.MOTIONS_CONTENT_URI,
 						new String[] { "count(_ID)" }, null, null, null);
 				c.moveToFirst();
+				if(c.getInt(0) == 0 && lb.mh.isEnabled)
+					startMyService.setEnabled(true);
 				if(c.getInt(0) == 0) return;
+				c.close();
 				lb.ms = new MotionListener() {
 					public void onMotionRecieved(int motion) {
 						Cursor c = getContentResolver().query(
@@ -149,6 +166,7 @@ public class Manager extends ListActivity {
 							}
 							
 						}
+						c.close();
 					}
 					
 				};
@@ -166,11 +184,37 @@ public class Manager extends ListActivity {
 	
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Cursor c = getContentResolver().query(
+				MotionsDB.MOTIONS_CONTENT_URI,
+				new String[] { "count(_ID)" }, null, null, null);
+		c.moveToFirst();
+		if(lb==null || lb.mh==null ) return;
+		if(c.getInt(0) == 0 && lb.mh.isEnabled)
+			startMyService.setEnabled(true);
+		if(c.getInt(0) == 0 && !lb.mh.isEnabled)
+			startMyService.setEnabled(false);
+		
+	}
+
 	private void fillListView(){
 		c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "_id", MotionColumns.NAME }, null, null, null);
 		startManagingCursor(c);
-		
+		c.registerContentObserver(new ContentObserver(new Handler(){
+			
+		}){
+
+			@Override
+			public void onChange(boolean selfChange) {
+				if(c.getCount()==0 && !lb.mh.isEnabled) startMyService.setEnabled(false);
+				else startMyService.setEnabled(true);
+				
+			}
+			
+		});
 		motions = new MySimpleAdapter(this, R.layout.motions_row, c,
 				new String[] { MotionColumns.NAME },
 				new int[] { R.id.motion_name });
@@ -225,11 +269,18 @@ public class Manager extends ListActivity {
 	}
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		
+		//c.close();
 		super.onSaveInstanceState(outState);
 		if(lb!=null)
 			outState.putBoolean("process",isServiceEnabled() );
 		//unbindService(con);
+	}
+
+	@Override
+	protected void onDestroy() {
+		stopManagingCursor(c);
+		c.close();
+		super.onDestroy();
 	}
 
 	boolean isServiceEnabled(){

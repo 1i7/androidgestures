@@ -31,11 +31,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView.ScaleType;
 
 public class MotionEditor extends Activity {
 	ContentValues motionValues=new ContentValues();
@@ -78,6 +80,7 @@ public class MotionEditor extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
+		((LinearLayout)findViewById(R.id.editor_whole_layout)).setVerticalScrollBarEnabled(true);
 		Intent intent=new Intent(Intent.ACTION_MAIN, null);;
 		intent.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
 		launchers=getPackageManager().queryIntentActivities(intent, 0);
@@ -126,6 +129,8 @@ public class MotionEditor extends Activity {
 			Cursor c=getContentResolver().query(ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI, motionId), new String[] {MotionColumns.NAME,MotionColumns.MATRIX[0][0]},null, null, null);
 			c.moveToFirst();
 			((EditText)findViewById(R.id.NameInput)).setText(c.getString(0));
+			c.close();
+			c1.close();
 			
 		}
 			
@@ -231,7 +236,12 @@ public class MotionEditor extends Activity {
 	private void setPickedApp(){
 		PackageManager pm=getPackageManager();
 		try {
-			((ImageView)findViewById(R.id.pick)).setImageDrawable(pm.getApplicationIcon(appPackage));
+			ImageButton pickButton=((ImageButton)findViewById(R.id.pick));
+			//pickButton.setAdjustViewBounds(true);
+			pickButton.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
+			//pickButton.setMaxHeight(45);
+			pickButton.setImageDrawable(pm.getApplicationIcon(appPackage));
+			
 			((TextView)findViewById(R.id.app_name_in_edit)).setText(pm.getApplicationLabel(pm.getApplicationInfo(appPackage, 0)));
 			PackageInfo pi=pm.getPackageInfo(appPackage, PackageManager.GET_ACTIVITIES);
 			int i=1;
@@ -308,7 +318,7 @@ public class MotionEditor extends Activity {
 				TextView destinationTypeText = (TextView) groupItem
 						.findViewById(R.id.app_name);
 				destinationTypeText.setText(groups[groupPosition].loadLabel(pm));
-				destinationTypeText.setTextSize(15);
+				destinationTypeText.setTextSize(20);
 				
 				boolean isLauncher=false;
 				Iterator<ResolveInfo> lst=launchers.iterator();
@@ -317,7 +327,7 @@ public class MotionEditor extends Activity {
 					if(info.activityInfo.name.equals(groups[groupPosition].name)) 
 					isLauncher=true;
 				}
-				Log.i("achtung!!!", groups[groupPosition].name);
+				//Log.i("achtung!!!", groups[groupPosition].name);
 				//TextView pack=(TextView) groupItem.findViewById(R.id.app_package);
 				//pack.setText(groups[groupPosition].name);
 				if(isLauncher)
@@ -347,10 +357,11 @@ public class MotionEditor extends Activity {
 				} else {
 					groupItem = convertView;
 				}
-
+			
 				//String destinationType = (String) getItem(position);
 				TextView destinationTypeText = (TextView) groupItem
 						.findViewById(R.id.app_name);
+				//destinationTypeText.setHeight(30);
 				boolean needPackName=false;
 				CharSequence label=groups[position].loadLabel(pm);
 				for(int i=0;i<groups.length;i++){
@@ -373,7 +384,7 @@ public class MotionEditor extends Activity {
 				if(isLauncher)
 					((ImageView)groupItem.findViewById(R.id.info_img)).setImageResource(R.drawable.iphone);
 				else ((ImageView)groupItem.findViewById(R.id.info_img)).setImageResource(R.drawable.iphone_icons); 
-
+				//((ImageView)groupItem.findViewById(R.id.info_img`))
 				return groupItem;
 				
 			}
