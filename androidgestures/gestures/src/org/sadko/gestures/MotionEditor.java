@@ -54,6 +54,8 @@ public class MotionEditor extends Activity {
 	List<ResolveInfo> launchers;
 	private static final int RECORD_REQEST_CODE=1;
 	private static final int PICK_APP_REQUEST_CODE=2;
+	
+	boolean nameWasAsPickedApp=false;
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==1)
@@ -80,7 +82,6 @@ public class MotionEditor extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
-		((LinearLayout)findViewById(R.id.editor_whole_layout)).setVerticalScrollBarEnabled(true);
 		Intent intent=new Intent(Intent.ACTION_MAIN, null);;
 		intent.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
 		launchers=getPackageManager().queryIntentActivities(intent, 0);
@@ -123,11 +124,18 @@ public class MotionEditor extends Activity {
 			Iterator<PackageInfo> iter=pm.getInstalledPackages(PackageManager.GET_ACTIVITIES).iterator();
 			appPackage=c1.getString(c1.getColumnIndex(ActivityColumns.PACK));
 			appActivity=c1.getString(c1.getColumnIndex(ActivityColumns.ACTIVITY));
+			
 			setPickedApp();
 			makeSpinner();
 			taskId=c1.getLong(c1.getColumnIndex(ActivityColumns.MOTION_ID));
 			Cursor c=getContentResolver().query(ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI, motionId), new String[] {MotionColumns.NAME,MotionColumns.MATRIX[0][0]},null, null, null);
 			c.moveToFirst();
+			try {
+				if(c.getString(0).equals(pm.getApplicationLabel(pm.getApplicationInfo(appPackage, 0))))
+						nameWasAsPickedApp=true;
+			} catch (NameNotFoundException e) {
+				nameWasAsPickedApp=false;
+			}
 			((EditText)findViewById(R.id.NameInput)).setText(c.getString(0));
 			c.close();
 			c1.close();
@@ -146,12 +154,21 @@ public class MotionEditor extends Activity {
 		saveExit.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
-				motionValues.put(MotionColumns.NAME, ((EditText)findViewById(R.id.NameInput)).getText().toString());
+				PackageManager pm=getPackageManager();
+				if(!((EditText)findViewById(R.id.NameInput)).getText().toString().equals("") && !nameWasAsPickedApp)
+					motionValues.put(MotionColumns.NAME, ((EditText)findViewById(R.id.NameInput)).getText().toString());
+				else
+					Log.i("naming", "tuta");
+					try {
+						motionValues.put(MotionColumns.NAME, pm.getApplicationLabel(pm.getApplicationInfo(appPackage, 0)).toString());
+					} catch (NameNotFoundException e1) {
+						motionValues.put(MotionColumns.NAME, "no name");
+					}
 				if(action.equals(android.content.Intent.ACTION_EDIT)){
 					if(motionValues.size()>0)getContentResolver().update(MotionsDB.MOTIONS_CONTENT_URI, motionValues, "_ID="+motionId, null);
 					//if(activityValues.size()>0){
 						
-						PackageManager pm=getPackageManager();
+						
 						try {
 							
 							activityValues.put(ActivityColumns.ACTIVITY,pm.getPackageInfo(appPackage,PackageManager.GET_ACTIVITIES).activities[(int) spinner.getSelectedItemId()].name);
@@ -161,13 +178,13 @@ public class MotionEditor extends Activity {
 							Toast.makeText(MotionEditor.this, "An error ocuured", 1000).show();
 							//e.printStackTrace();
 						}
-						getContentResolver().update(MotionsDB.TASKS_CONTENT_URI, activityValues, "_ID="+taskId, null);
+						if(activityValues.size()>0)getContentResolver().update(MotionsDB.TASKS_CONTENT_URI, activityValues, "_ID="+taskId, null);
 					//}
 				}
 				else{
 					motionId=ContentUris.parseId(getContentResolver().insert(MotionsDB.MOTIONS_CONTENT_URI, motionValues));
 					if(activityValues.size()>0){
-						PackageManager pm=getPackageManager();
+						
 						try {
 							activityValues.put(ActivityColumns.ACTIVITY,pm.getPackageInfo(appPackage,PackageManager.GET_ACTIVITIES).activities[(int) spinner.getSelectedItemId()].name);
 						} catch (NameNotFoundException e) {
@@ -178,6 +195,7 @@ public class MotionEditor extends Activity {
 					activityValues.put(ActivityColumns.MOTION_ID, motionId);
 					getContentResolver().insert(MotionsDB.TASKS_CONTENT_URI, activityValues);
 				}
+				
 				Log.i("spin",spinner.getSelectedItemId()+"");
 				finish();
 			}
@@ -245,7 +263,8 @@ public class MotionEditor extends Activity {
 			((TextView)findViewById(R.id.app_name_in_edit)).setText(pm.getApplicationLabel(pm.getApplicationInfo(appPackage, 0)));
 			PackageInfo pi=pm.getPackageInfo(appPackage, PackageManager.GET_ACTIVITIES);
 			int i=1;
-			
+			if(nameWasAsPickedApp)
+				((EditText)findViewById(R.id.NameInput)).setText(((TextView)findViewById(R.id.app_name_in_edit)).getText());
 			for(int j=0;j<pi.activities.length;j++){
 				if(pi.activities[j].name.equals(appActivity)) i=j;
 			}
@@ -318,7 +337,7 @@ public class MotionEditor extends Activity {
 				TextView destinationTypeText = (TextView) groupItem
 						.findViewById(R.id.app_name);
 				destinationTypeText.setText(groups[groupPosition].loadLabel(pm));
-				destinationTypeText.setTextSize(20);
+				destinationTypeText.setTextSize(15);
 				
 				boolean isLauncher=false;
 				Iterator<ResolveInfo> lst=launchers.iterator();
