@@ -23,6 +23,7 @@ public class TestGestureActivity extends Activity {
 	int recievedMotions=0;
 	TextView count;
 	boolean needOff=false;
+	boolean needDelete=true;
 	ServiceConnection con;
 	ListnerBinder lb;
 	@Override
@@ -43,24 +44,23 @@ public class TestGestureActivity extends Activity {
 				finish();
 			}
 		});
-		Intent i=getIntent();
-		Bundle b=i.getExtras();
-		ContentValues cv=new ContentValues();
-		for(int j=0;j<3;j++)
-			for(int k=0;k<3;k++){
-				
-				cv.put(MotionColumns.MATRIX[j][k], b.getDouble(MotionColumns.MATRIX[j][k]));
-				//cv.put(MotionColumns.NAME, "inner temporary motion");
-				
-			}
-		motionId=ContentUris.parseId(getContentResolver().insert(MotionsDB.MOTIONS_CONTENT_URI, cv));
+		//Intent i=getIntent();
+		//Bundle b=i.getExtras();
+		if(getIntent().getExtras().containsKey("motion"))
+			motionId=ContentUris.parseId(getContentResolver().insert(MotionsDB.MOTIONS_CONTENT_URI, (ContentValues)getIntent().getParcelableExtra("motion")));
+		else{
+			needDelete=false;
+			motionId=getIntent().getLongExtra("motion_id", 0);
+		}
 	}
 
 	@Override
 	protected void onPause() {
 		if(needOff)lb.mh.switchMe();
+		lb.mh.deleteListener(lb.ms);
 		unbindService(con);
-		getContentResolver().delete(ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI, motionId), null, null);
+		if(needDelete)
+				getContentResolver().delete(ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI, motionId), null, null);
 		super.onPause();
 	}
 

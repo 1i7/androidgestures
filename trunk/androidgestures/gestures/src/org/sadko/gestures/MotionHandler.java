@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openintents.hardware.SensorManagerSimulator;
-import org.openintents.provider.Hardware;
+//import org.openintents.hardware.SensorManagerSimulator;
+//import org.openintents.provider.Hardware;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -40,7 +40,9 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		Log.w("service dead",this+"");
 		super.onDestroy();
 	}
-
+	public void deleteListener(MotionListener ms){
+		listners.remove(ms);
+	}
 	protected List<ListnerBinder> listners=new ArrayList<ListnerBinder>();
 	
 	MotionHandler(){
@@ -63,10 +65,10 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			}};*/
 		Log.i("searvice", "i am bound "+this);
 		if(listners.isEmpty()){
-			Hardware.mContentResolver=getContentResolver();
-			mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
-			SensorManagerSimulator.connectSimulator();
-			//mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
+			//Hardware.mContentResolver=getContentResolver();
+			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
+			//SensorManagerSimulator.connectSimulator();
+			mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
 			if(isEnabled)
 			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		}
