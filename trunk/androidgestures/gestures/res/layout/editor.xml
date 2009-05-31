@@ -17,7 +17,7 @@
 			android:text="write name of gesture here:" android:id="@+id/TextWriteName"></TextView>
 		<EditText android:layout_height="wrap_content"
 			android:layout_width="fill_parent" android:layout_weight="1"
-			android:layout_margin="3px" android:id="@+id/NameInput"></EditText>
+			android:layout_margin="3px" android:id="@+id/NameInput" android:text="No name"></EditText>
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="wrap_content" style="?android:attr/listSeparatorTextViewStyle"
 			android:text="Motion control" />
