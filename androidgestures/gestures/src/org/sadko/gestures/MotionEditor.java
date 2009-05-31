@@ -112,12 +112,21 @@ public class MotionEditor extends Activity {
 		testGesture.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
-				Bundle b=new Bundle();
-				for(int j=0;j<3;j++)
+				//Bundle b=new Bundle();
+				/*for(int j=0;j<3;j++)
 					for(int k=0;k<3;k++)
 						b.putDouble(MotionColumns.MATRIX[j][k], motionValues.getAsDouble(MotionColumns.MATRIX[j][k]));
+				b.putDouble(MotionColumns.TIME, motionValues.getAsLong(MotionColumns.TIME));*/
 				Intent i=new Intent(MotionEditor.this,TestGestureActivity.class);
-				i.putExtras(b);
+				if(action.equals(android.content.Intent.ACTION_EDIT) && motionValues.size()==0){
+					i.putExtra("motion_id", motionId);
+					
+				}else{
+				i.putExtra("motion", motionValues);
+				}
+				
+				//i.putExtras(b);
+				
 				startActivity(i);
 				
 				
@@ -169,8 +178,8 @@ public class MotionEditor extends Activity {
 			Cursor c = getContentResolver().query(
 					ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI,
 							motionId),
-					new String[] { MotionColumns.NAME,
-							MotionColumns.MATRIX[0][0] }, null, null, null);
+					new String[] { MotionColumns.NAME, MotionColumns.TIME}, null, null, null);
+			
 			c.moveToFirst();
 			try {
 				oldAppName = pm.getApplicationLabel(
@@ -179,10 +188,13 @@ public class MotionEditor extends Activity {
 			} catch (NameNotFoundException e) {
 				oldAppName = null;
 			}
-			((EditText) findViewById(R.id.NameInput)).setText(c.getString(0));
+			if(c.getString(0)!=null)
+				((EditText) findViewById(R.id.NameInput)).setText(c.getString(0));
+			if(!c.isNull(1)) testGesture.setEnabled(true);
+
 			c.close();
 			c1.close();
-
+				
 		}
 
 		record.setOnClickListener(new OnClickListener() {
@@ -205,9 +217,9 @@ public class MotionEditor extends Activity {
 							((EditText) findViewById(R.id.NameInput)).getText()
 									.toString());
 				else {
-					Log.i("naming", "tuta");
+					//Log.i("naming", "tuta");
 					try {
-						Log.i("nameWasPA", nameWasAsPickedApp + "");
+						//Log.i("nameWasPA", nameWasAsPickedApp + "");
 						motionValues.put(MotionColumns.NAME, pm
 								.getApplicationLabel(
 										pm.getApplicationInfo(appPackage, 0))

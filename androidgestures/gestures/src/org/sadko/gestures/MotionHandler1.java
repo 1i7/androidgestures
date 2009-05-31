@@ -73,7 +73,7 @@ public class MotionHandler1 extends MotionHandler {
 							&& System.currentTimeMillis() - lastRegisterTime > timeBetweenRegistering
 							) {
 						notifyListeners((int) m.id);
-						Toast.makeText(MotionHandler1.this, "motion!", 500).show();
+						//Toast.makeText(MotionHandler1.this, "motion!", 500).show();
 						lastRegisterTime = System.currentTimeMillis();
 						detected = true;
 					}
@@ -105,7 +105,41 @@ public class MotionHandler1 extends MotionHandler {
 			motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
 			addMotion(motion);
 		}
-		c.registerContentObserver(new ContentObserver(new Handler(){
+		getContentResolver().registerContentObserver(MotionsDB.MOTIONS_CONTENT_URI, true, new ContentObserver(new Handler(){
+			
+		}){
+	        @Override 
+	        public boolean deliverSelfNotifications() { 
+	            return true; 
+	        }
+			@Override
+			public void onChange(boolean selfChange) {
+				/*Cursor c = getContentResolver().query(
+						MotionsDB.MOTIONS_CONTENT_URI,
+						new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
+								"A21", "A22", "time", "_id" },
+						null, null, null);*/
+				Log.i("i am called","ugu!!");
+				c.requery();
+				if(isEnabled)mgr.unregisterListener(MotionHandler1.this);
+				deleteAllMotions();
+				while (!c.isLast()) {
+					c.moveToNext();
+					Motion motion = new Motion();
+					for (int i = 0; i < 3; i++)
+						for (int j = 0; j < 3; j++)
+							motion.matrix[i][j] = c.getFloat(c.getColumnIndex("A"+i+""+j));
+					motion.time = c.getLong(c.getColumnIndex(MotionColumns.TIME));
+					motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
+					Log.i("motion",motion.time+" "+motion.matrix[0][0]);
+					addMotion(motion);
+				}
+				if(isEnabled)mgr.registerListener(MotionHandler1.this,SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+				super.onChange(selfChange);
+			}
+			
+		});
+		/*c.registerContentObserver(new ContentObserver(new Handler(){
 			
 		}){
 
@@ -115,7 +149,7 @@ public class MotionHandler1 extends MotionHandler {
 						MotionsDB.MOTIONS_CONTENT_URI,
 						new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
 								"A21", "A22", "time", "_id" },
-						null, null, null);*/
+						null, null, null);
 				Log.i("i am called","ugu!!");
 				if(isEnabled)mgr.unregisterListener(MotionHandler1.this);
 				deleteAllMotions();
@@ -133,7 +167,7 @@ public class MotionHandler1 extends MotionHandler {
 				super.onChange(selfChange);
 			}
 			
-		});
+		});*/
 		//showNotification();
 
 		super.onCreate();
