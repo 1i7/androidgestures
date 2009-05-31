@@ -20,7 +20,14 @@ public class MotionHandler1 extends MotionHandler {
 	protected double rolls[] = new double[ARRAY_SIZE];
 	protected double pitchs[] = new double[ARRAY_SIZE];
 	int position = 0;
-
+	Cursor c; 
+	@Override
+	public void onDestroy() {
+		//c.u
+		c.close();
+		
+		super.onDestroy();
+	}
 	@Override
 	public void addMotion(Motion motion) {
 		super.addMotion(motion);
@@ -80,7 +87,7 @@ public class MotionHandler1 extends MotionHandler {
 	@Override
 	public void onCreate() {
 		// File f=new File("/sdcard/motions.txt");
-		final Cursor c = getContentResolver().query(
+		c = getContentResolver().query(
 				MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
 						"A21", "A22", "time", "_id" },
