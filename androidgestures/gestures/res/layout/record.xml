@@ -5,8 +5,11 @@
 	<TextView android:id="@+id/instruction_record" android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 ></TextView>
-	<Button android:id="@+id/Button01" android:text="start record"
+	<ImageView android:id="@+id/ImageView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/gesture" android:layout_gravity="center_horizontal"></ImageView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/instruction_record_2"></TextView><Button android:id="@+id/Button01" android:text="start record"
 		android:layout_height="fill_parent" android:layout_width="fill_parent"></Button>
+
+
+
 
 
 

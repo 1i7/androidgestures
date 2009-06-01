@@ -26,7 +26,7 @@ public class MotionsDB extends ContentProvider {
 	private static final int MOTION_ID = 2;
 	private static final int TASKS = 3;
 	private static final int TASK_ID = 4;
-	public static final String DATABASE_NAME = "MOTION_DB13";
+	public static final String DATABASE_NAME = "MOTION_DB14";
 	public static final String MOTIONS_TABLE_NAME = "MOTIONS";
 	public static final String TASKS_TABLE_NAME = "TASKS";
 	private static final int DATABASE_VERSION = 2;
