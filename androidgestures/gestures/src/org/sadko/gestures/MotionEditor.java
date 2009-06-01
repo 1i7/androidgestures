@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -38,6 +39,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView.ScaleType;
 
 public class MotionEditor extends Activity {
@@ -71,6 +73,7 @@ public class MotionEditor extends Activity {
 		}
 	}
 	void saveGesture(){
+		Log.i("gestures","i am saved");
 		PackageManager pm = getPackageManager();
 		/*if (!(((EditText) findViewById(R.id.NameInput)).getText()
 				.toString().equals("") || (oldAppName != null && ((EditText) findViewById(R.id.NameInput))
@@ -104,14 +107,12 @@ public class MotionEditor extends Activity {
 				activityValues
 						.put(
 								ActivityColumns.ACTIVITY,
-								pm.getPackageInfo(appPackage,
-										PackageManager.GET_ACTIVITIES).activities[(int) spinner
-										.getSelectedItemId()].name);
+								appActivity);
 				Log.i("chosen", activityValues
 						.getAsString(ActivityColumns.ACTIVITY)
 						+ "^)");
-			} catch (NameNotFoundException e) {
-				// Log.e("error","no name!");
+			} catch (Exception e) {
+				Log.e("error","no name!");
 				// Toast.makeText(MotionEditor.this, "An error ocuured",
 				// 1000).show();
 				// e.printStackTrace();
@@ -164,8 +165,19 @@ public class MotionEditor extends Activity {
 				if (v.containsKey(ActivityColumns.ACTIVITY))
 					activityValues.putAll(v);
 				appPackage = v.getAsString(ActivityColumns.PACK);
-				setPickedApp();
+				
 				makeSpinner();
+				PackageInfo pi;
+				try {
+					pi = getPackageManager().getPackageInfo(appPackage,
+							PackageManager.GET_ACTIVITIES);
+					appActivity=pi.activities[0].name;
+				} catch (NameNotFoundException e) {
+					Toast.makeText(this, "cannot retrieve activities from "+appPackage, 500).show();
+				}
+
+				setPickedApp();
+				
 
 				// ((TextView)findViewById(R.id.app_name_in_edit))
 			}
@@ -408,10 +420,24 @@ public class MotionEditor extends Activity {
 	private void makeSpinner() {
 		PackageManager pm = getPackageManager();
 		try {
-			PackageInfo pi = pm.getPackageInfo(appPackage,
+			final PackageInfo pi = pm.getPackageInfo(appPackage,
 					PackageManager.GET_ACTIVITIES);
 			spinner.setAdapter(new MySpinnerAdapter(pi.activities));
 			spinner.setEnabled(true);
+			spinner.setOnItemSelectedListener(new OnItemSelectedListener(){
+
+				public void onItemSelected(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					appActivity=pi.activities[arg2].name;
+					
+				}
+
+				public void onNothingSelected(AdapterView<?> arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+			});
 
 			launch.setEnabled(true);
 
