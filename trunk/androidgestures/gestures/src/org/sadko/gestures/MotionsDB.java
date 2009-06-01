@@ -26,7 +26,7 @@ public class MotionsDB extends ContentProvider {
 	private static final int MOTION_ID = 2;
 	private static final int TASKS = 3;
 	private static final int TASK_ID = 4;
-	public static final String DATABASE_NAME = "MOTION_DB12";
+	public static final String DATABASE_NAME = "MOTION_DB13";
 	public static final String MOTIONS_TABLE_NAME = "MOTIONS";
 	public static final String TASKS_TABLE_NAME = "TASKS";
 	private static final int DATABASE_VERSION = 2;
@@ -191,30 +191,46 @@ public class MotionsDB extends ContentProvider {
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
-		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		int rez=0;
+		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		switch (sUriMatcher.match(uri)) {
-		case MOTIONS:
+		case TASKS: {
+			rez=db.update(TASKS_TABLE_NAME, values, selection, selectionArgs);
+			
+			
+			getContext().getContentResolver().notifyChange(TASKS_CONTENT_URI, null);
+			Log.i("DB","TASK updated "+rez);
+			return rez;
+		}
+		case MOTIONS: {
+			values.put(MotionColumns.MODIFIED_DATE, System
+					.currentTimeMillis());
+			rez = db.update(MOTIONS_TABLE_NAME,values,selection,selectionArgs);
+			//getContext().getContentResolver().notifyChange(motionUri, null);
+			Log.i("DB","MOTION updated "+rez);
+			getContext().getContentResolver().notifyChange(MOTIONS_CONTENT_URI,null);
+			
+			return rez;
+		}
+		case MOTION_ID:{
 			values.put(MotionColumns.MODIFIED_DATE, System.currentTimeMillis());
-			rez=db.update(MOTIONS_TABLE_NAME, values, selection,selectionArgs);
-			break;
-
-		case MOTION_ID:
-			values.put(MotionColumns.MODIFIED_DATE, System.currentTimeMillis());
-			rez=db.update(MOTIONS_TABLE_NAME, values, "_id="+ContentUris.parseId(uri),null);
-			break;
-		case TASKS:
-			rez=db.update(TASKS_TABLE_NAME, values, selection,selectionArgs);
-			break;
+			rez=db.update(MOTIONS_TABLE_NAME, values, "_ID="+ContentUris.parseId(uri),null);
+			getContext().getContentResolver().notifyChange(MOTIONS_CONTENT_URI,null);
+			
+			return rez;
+			}
+		
 		case TASK_ID:
-			rez=db.update(TASKS_TABLE_NAME, values, "_id="+ContentUris.parseId(uri),null);
-			break;
-		default:
+			rez=db.update(TASKS_TABLE_NAME, values, "_ID="+ContentUris.parseId(uri),null);
+			getContext().getContentResolver().notifyChange(TASKS_CONTENT_URI,null);
+			
+			return rez;
+		default:{
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
-			getContext().getContentResolver().notifyChange(uri, null);
+		}
 		
-		return rez;
+		
 	}
 
 }
