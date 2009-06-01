@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 public class Recorder extends Activity {
 	public static final String RESULT_CONTENT_VALUES_NAME="org.sadko.gestures.Recorder/val"; 
@@ -143,19 +144,22 @@ public class Recorder extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.record);
+		TextView instruction=(TextView)findViewById(R.id.instruction_record);
+		instruction.setText("1. Press start to start recording the gesture\n2. Make a short movement with your phone in a space and remember the gesture\n3. Press stop when finished");
 		start = (Button) findViewById(R.id.Button01);
+		start.setTextSize(50);
 		start.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				switch (stage) {
 				case BEGIN: {
 					stage = RECORD;
-					start.setText("stop record");
+					start.setText("Stop");
 					break;
 				}
 				case RECORD: {
 					stage = END;
-					start.setText("start record");
+					start.setText("Start");
 					break;
 				}
 				}
