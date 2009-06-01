@@ -236,7 +236,7 @@ public class MotionEditor extends Activity {
 					startActivity(i);
 				} catch (Exception e) {
 					Toast.makeText(MotionEditor.this,
-							"cannot start this activity", 1000).show();
+							"cannot start activity\n"+appPackage+"\n"+appActivity, 1000).show();
 				}
 
 			}
