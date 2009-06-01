@@ -432,7 +432,7 @@ public class MotionEditor extends Activity {
 		public RelativeLayout getGenericView() {
 			// Layout parameters for the ExpandableListView
 			AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
-					ViewGroup.LayoutParams.FILL_PARENT, 64);
+					ViewGroup.LayoutParams.FILL_PARENT, 30);
 
 			RelativeLayout lay = new RelativeLayout(MotionEditor.this);
 			lay.setLayoutParams(lp);
@@ -457,7 +457,7 @@ public class MotionEditor extends Activity {
 			if (convertView == null) {
 				LayoutInflater inflater = (LayoutInflater) parent.getContext()
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				groupItem = inflater.inflate(R.layout.activity_picker_item,
+				groupItem = inflater.inflate(R.layout.spinner_item,
 						null);
 			} else {
 				groupItem = convertView;
@@ -536,9 +536,11 @@ public class MotionEditor extends Activity {
 				if (info.activityInfo.name.equals(currentAppActivities[position].name))
 					isLauncher = true;
 			}*/
+			//((ImageView) groupItem.findViewById(R.id.info_img)).set
 			if (isLauncher)
 				((ImageView) groupItem.findViewById(R.id.info_img))
 						.setImageResource(R.drawable.launcher);
+			
 			else
 				((ImageView) groupItem.findViewById(R.id.info_img))
 						.setImageResource(R.drawable.not_launcher);
