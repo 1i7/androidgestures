@@ -59,7 +59,7 @@ public class MotionEditor extends Activity {
 	private static final int RECORD_REQEST_CODE = 1;
 	private static final int PICK_APP_REQUEST_CODE = 2;
 
-	boolean nameWasAsPickedApp = false;
+	
 	String oldAppName;
 
 	@Override
@@ -258,13 +258,13 @@ public class MotionEditor extends Activity {
 			}catch(CursorIndexOutOfBoundsException e){
 				Log.e("error","with cursor");
 			}
-			try {
+			/*try {
 				if(((EditText)findViewById(R.id.NameInput)).equals(pm
 						.getApplicationLabel(pm.getApplicationInfo(appPackage, 0))))
 				nameWasAsPickedApp=true;
 			} catch (NameNotFoundException e1) {
 				
-			}
+			}*/
 			//if()
 			makeSpinner();
 			setPickedApp();
@@ -369,7 +369,9 @@ public class MotionEditor extends Activity {
 	}
 
 	private void setPickedApp() {
-		if(((EditText)findViewById(R.id.NameInput)).getText().toString().equals("No name")) nameWasAsPickedApp=true;
+		boolean nameWasAsPickedApp = false;
+		EditText motionName=((EditText)findViewById(R.id.NameInput));
+		if(motionName.getText().toString().equals("No name")) nameWasAsPickedApp=true;
 		PackageManager pm = getPackageManager();
 		try {
 			//Log.i("appact", appActivity+"^)");
@@ -378,7 +380,9 @@ public class MotionEditor extends Activity {
 			pickButton.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
 			// pickButton.setMaxHeight(45);
 			pickButton.setImageDrawable(pm.getApplicationIcon(appPackage));
-
+			TextView appNameLabel=((TextView) findViewById(R.id.app_name_in_edit));
+			if(appNameLabel.getText().toString().equals(motionName.getText().toString())) 
+				nameWasAsPickedApp=true;
 			((TextView) findViewById(R.id.app_name_in_edit)).setText(pm
 					.getApplicationLabel(pm.getApplicationInfo(appPackage, 0)));
 			PackageInfo pi = pm.getPackageInfo(appPackage,
