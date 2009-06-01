@@ -1,17 +1,16 @@
 package org.sadko.gestures;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -33,6 +32,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class AppPicker extends ListActivity {
 	int packChosen = 0;
 	int actChosen = 0;
+	List<PackageInfo> apps;
 	public static final String RESULT_CONTENT_VALUES_NAME="org.sadko.gestures.AppPicker/val"; 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +42,7 @@ public class AppPicker extends ListActivity {
 		Intent launcher=new Intent();
 		launcher.setAction(android.content.Intent.ACTION_MAIN);
 		launcher.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
-		//List<ResolveInfo> launchersIter=pm.queryIntentActivities(launcher, 0).iterator();
-		Set<ApplicationInfo> appsWithLauncher=new HashSet<ApplicationInfo>();
-		//while(launchersIter.hasNext()){
-			//appsWithLauncher.add(launchersIter.next().activityInfo.applicationInfo);
-		//}
-		final List<PackageInfo> apps=pm.getInstalledPackages(PackageManager.GET_ACTIVITIES);
+		apps=pm.getInstalledPackages(PackageManager.GET_ACTIVITIES);
 		Iterator<PackageInfo> appsIter=apps.iterator();
 		final List<ActivityInfo[]> activities = new ArrayList<ActivityInfo[]>();
 		int k=0;
@@ -55,7 +50,21 @@ public class AppPicker extends ListActivity {
 			activities.add(k,appsIter.next().activities);
 			k++;
 		}
-		MyExpandableListAdapter mAdapter=new MyExpandableListAdapter(apps,activities);
+		//final PackageManager pm=getPackageManager();
+		TreeSet<PackageInfo> apssSet=new TreeSet<PackageInfo>(new Comparator<PackageInfo>(){
+
+			public int compare(PackageInfo object1, PackageInfo object2) {
+				PackageInfo arg1=(PackageInfo)object1;
+				PackageInfo arg2=(PackageInfo)object2;
+				if(arg1.applicationInfo.loadLabel(pm)==null) return -1;
+				if(arg2.applicationInfo.loadLabel(pm)==null) return 1;
+				return arg1.applicationInfo.loadLabel(pm).toString().compareTo( arg2.applicationInfo.loadLabel(pm).toString());
+			}
+			
+		});
+		apssSet.addAll(apps);
+		apps=new ArrayList<PackageInfo>(apssSet);
+		MyExpandableListAdapter mAdapter=new MyExpandableListAdapter(apps);
 		//mAdapter.groups=apps;
 		//mAdapter.children=activities;
 		/*final List<AppRow> listForView = new ArrayList<AppRow>();
@@ -165,11 +174,11 @@ public class AppPicker extends ListActivity {
     public class MyExpandableListAdapter extends BaseAdapter {
         // Sample data set.  children[i] contains the children (String[]) for groups[i].
         List<PackageInfo> groups;
-        List<ActivityInfo[]> children;
+        //List<ActivityInfo[]> children;
         PackageManager pm=getPackageManager();
-        public MyExpandableListAdapter(List<PackageInfo> groups,List<ActivityInfo[]> children){
+        public MyExpandableListAdapter(List<PackageInfo> groups){
         	this.groups=groups;
-        	this.children=children;
+        	//this.children=children;
         }
    /*     public Object getChild(int groupPosition, int childPosition) {
             return children.get(groupPosition)[childPosition];
@@ -239,7 +248,7 @@ public class AppPicker extends ListActivity {
 				LayoutInflater inflater = (LayoutInflater) parent.getContext()
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				groupItem = inflater.inflate(R.layout.picker_item,null);
-				groupItem.setPadding(36, 0, 0, 0);
+				//groupItem.setPadding(36, 0, 0, 0);
 			} else {
 				groupItem = convertView;
 			}
@@ -247,10 +256,15 @@ public class AppPicker extends ListActivity {
 			//String destinationType = (String) getItem(position);
 			TextView destinationTypeText = (TextView) groupItem
 					.findViewById(R.id.app_name);
-			destinationTypeText.setText(groups.get(groupPosition).applicationInfo.loadLabel(pm));
+			CharSequence label=groups.get(groupPosition).applicationInfo.loadLabel(pm);
+			if(label==null || label.toString().equals(""))
+				destinationTypeText.setText(groups.get(groupPosition).packageName);
+			else 
+				destinationTypeText.setText(label);
 			destinationTypeText.setTextSize(20);
 			ImageView typeSelectedImage = (ImageView) groupItem
 					.findViewById(R.id.app_icon);
+			
 			typeSelectedImage.setImageDrawable(pm.getApplicationIcon(groups.get(groupPosition).applicationInfo));
 			return groupItem;
         }
