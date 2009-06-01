@@ -20,6 +20,7 @@
 			android:layout_margin="3px" android:id="@+id/NameInput" android:text="No name"></EditText>
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="wrap_content" style="?android:attr/listSeparatorTextViewStyle"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:text="Motion control" />
 		<TableLayout android:id="@+id/TableLayout01"
 			android:layout_height="wrap_content" android:orientation="vertical"
@@ -45,7 +46,8 @@
 			</TableRow>
 			<TextView android:id="@+id/TextView02" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:layout_margin="3px"
-				style="?android:attr/listSeparatorTextViewStyle" android:text="Pick aplication"></TextView>
+				style="?android:attr/listSeparatorTextViewStyle" 
+				android:textAppearance="?android:attr/textAppearanceSmall" android:text="Pick aplication"></TextView>
 		</TableLayout>
 
 
