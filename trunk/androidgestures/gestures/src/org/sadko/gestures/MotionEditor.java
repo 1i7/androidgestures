@@ -19,6 +19,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
@@ -51,6 +52,12 @@ public class MotionEditor extends Activity {
 	long taskId;
 	Button launch;
 	String appActivity;
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		Log.i("config","chnged");
+		super.onConfigurationChanged(newConfig);
+	}
+
 	// Drawable appIcon;
 	String appName;
 	String appPackage;
@@ -115,6 +122,7 @@ public class MotionEditor extends Activity {
 			// push motion to db
 			motionId = ContentUris.parseId(getContentResolver().insert(
 					MotionsDB.MOTIONS_CONTENT_URI, motionValues));
+			//if(app)
 			activityValues.put(ActivityColumns.ACTIVITY, appActivity);
 			activityValues.put(ActivityColumns.MOTION_ID, motionId);
 			getContentResolver().insert(MotionsDB.TASKS_CONTENT_URI,
@@ -122,6 +130,21 @@ public class MotionEditor extends Activity {
 		}
 	}
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		
+		//outState.putParcelable("motionValues",motionValues);
+		//outState.putParcelable("activityValues",activityValues);
+		saveGesture();
+		action=android.content.Intent.ACTION_EDIT;
+		outState.putString("action",action);
+		outState.putLong("motionId",motionId);
+		/*outState.putLong("taskId",taskId);
+		outState.putString("appActivity",appActivity);
+		outState.putString("appName",appName);
+		outState.putString("appPackage",appPackage);*/
+		super.onSaveInstanceState(outState);
+	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 1)
@@ -161,22 +184,8 @@ public class MotionEditor extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.editor);
-		//get action of start
-		action = getIntent().getAction();
-		//GET ALL LAUNCHERS
-		Intent intent = new Intent(Intent.ACTION_MAIN, null);
-		intent.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
-		Iterator<ResolveInfo> launchersList= getPackageManager().queryIntentActivities(intent, 0).iterator();
-		launchers=new ArrayList<String>();
-		while(launchersList.hasNext()){
-			launchers.add(launchersList.next().activityInfo.name);
-		}
-		
-		
+	
+	private void initElements(){
 		//initialize spinner
 		spinner = (Spinner) findViewById(R.id.activity_spinner);
 		spinner.setEnabled(false);
@@ -239,56 +248,6 @@ public class MotionEditor extends Activity {
 				}
 			}
 		});
-		
-		//if we edit motion we should get what we are going to edit		
-		if (action.equals(android.content.Intent.ACTION_EDIT)) {
-			motionId = getIntent().getExtras().getLong("id");
-			Cursor taskCursor = getContentResolver().query(MotionsDB.TASKS_CONTENT_URI,
-					null, ActivityColumns.MOTION_ID + "=" + motionId, null,
-					null);
-			taskCursor.moveToFirst();
-			PackageManager pm = getPackageManager();
-			//retrieve app package and activity
-			try {
-				appPackage = taskCursor.getString(taskCursor
-						.getColumnIndex(ActivityColumns.PACK));
-				appActivity = taskCursor.getString(taskCursor
-						.getColumnIndex(ActivityColumns.ACTIVITY));
-			} catch (CursorIndexOutOfBoundsException e) {
-				Log.e("error", "with cursor");
-			}
-			taskId = taskCursor.getLong(taskCursor.getColumnIndex(ActivityColumns.MOTION_ID));
-			//bound spinner and app representations to retrieved info
-			makeSpinner();
-			setPickedApp();
-			
-			Cursor c = getContentResolver().query(
-					ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI,
-							motionId),
-					new String[] { MotionColumns.NAME, MotionColumns.TIME },
-					null, null, null);
-
-			c.moveToFirst();
-			/*try {
-				oldAppName = pm.getApplicationLabel(
-						pm.getApplicationInfo(appPackage, 0)).toString();
-
-			} catch (NameNotFoundException e) {
-				oldAppName = null;
-			}*/
-			//set name of motion in edit text
-			if (c.getString(0) != null)
-				((EditText) findViewById(R.id.NameInput)).setText(c
-						.getString(0));
-			//if motion was recorded let to test it
-			if (!c.isNull(1))
-				testGesture.setEnabled(true);
-			
-			c.close();
-			taskCursor.close();
-		}
-
-
 		//init save and exit button
 		saveExit = (Button) findViewById(R.id.sSandE);
 		saveExit.setOnClickListener(new OnClickListener() {
@@ -316,6 +275,91 @@ public class MotionEditor extends Activity {
 			}
 
 		});
+
+		
+	}
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.editor);
+		//get action of start
+		action = getIntent().getAction();
+		//if(action)
+		//GET ALL LAUNCHERS
+		Intent intent = new Intent(Intent.ACTION_MAIN, null);
+		intent.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
+		Iterator<ResolveInfo> launchersList= getPackageManager().queryIntentActivities(intent, 0).iterator();
+		launchers=new ArrayList<String>();
+		while(launchersList.hasNext()){
+			launchers.add(launchersList.next().activityInfo.name);
+		}
+		
+		if(savedInstanceState!=null){
+			if(savedInstanceState.containsKey("action")){
+				action=savedInstanceState.getString("action");
+				motionId=savedInstanceState.getLong("motionId");
+			}
+		}
+				
+		//if we edit motion we should get what we are going to edit		
+		if (action.equals(android.content.Intent.ACTION_EDIT)) {
+			initElements();
+			if(motionId==0)
+				motionId = getIntent().getExtras().getLong("id");
+			Cursor taskCursor = getContentResolver().query(MotionsDB.TASKS_CONTENT_URI,
+					null, ActivityColumns.MOTION_ID + "=" + motionId, null,
+					null);
+			taskCursor.moveToFirst();
+			//PackageManager pm = getPackageManager();
+			//retrieve app package and activity
+			try {
+				appPackage = taskCursor.getString(taskCursor
+						.getColumnIndex(ActivityColumns.PACK));
+				appActivity = taskCursor.getString(taskCursor
+						.getColumnIndex(ActivityColumns.ACTIVITY));
+			} catch (CursorIndexOutOfBoundsException e) {
+				Log.e("error", "with cursor");
+			}
+			taskId = taskCursor.getLong(taskCursor.getColumnIndex(ActivityColumns.MOTION_ID));
+			//bound spinner and app representations to retrieved info
+			makeSpinner();
+			setPickedApp();
+			
+			Cursor c = getContentResolver().query(
+					ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI,
+							motionId),
+					new String[] { MotionColumns.NAME, MotionColumns.TIME },
+					null, null, null);
+
+			c.moveToFirst();
+			//set name of motion in edit text
+			if (c.getString(0) != null)
+				((EditText) findViewById(R.id.NameInput)).setText(c
+						.getString(0));
+			//if motion was recorded let to test it
+			if (!c.isNull(1))
+				testGesture.setEnabled(true);
+			
+			c.close();
+			taskCursor.close();
+		}else{
+			if(savedInstanceState!=null){
+				/*motionValues=savedInstanceState.getParcelable("motionValues");
+				activityValues=savedInstanceState.getParcelable("activityValues");
+				action=savedInstanceState.getString("action");
+				motionId=savedInstanceState.getLong("motionId");
+				taskId=savedInstanceState.getLong("taskId");
+				appActivity=savedInstanceState.getString("appActivity");
+				appName=savedInstanceState.getString("appName");
+				appPackage=savedInstanceState.getString("appPackage");*/
+				
+			}
+			initElements();
+		}
+		
+
+
+
 
 	}
 

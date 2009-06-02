@@ -1,7 +1,5 @@
 package org.sadko.gestures;
 
-
-
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,11 +34,12 @@ public class Manager extends ListActivity {
 	private static final int KILL_SERVICE_ID = 2;
 	Button startMyService;
 	TextView serviceState;
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ADD_NEW_ID, 0, "Add new");
 		menu.add(0, EXIT_ID, 0, "Exit");
-		//menu.add(0, KILL_SERVICE_ID, 0, "Kill handling service");
+		// menu.add(0, KILL_SERVICE_ID, 0, "Kill handling service");
 		return super.onCreateOptionsMenu(menu);
 
 	}
@@ -58,13 +57,11 @@ public class Manager extends ListActivity {
 			Manager.this.finish();
 			break;
 		}
-		/*case KILL_SERVICE_ID: {
-			//Manager.this.finish();
-			lb.mh.killNotification();
-			stopService(new Intent(Manager.this, MotionHandler1.class));
-			lb=null;
-			break;
-		}*/
+			/*
+			 * case KILL_SERVICE_ID: { //Manager.this.finish();
+			 * lb.mh.killNotification(); stopService(new Intent(Manager.this,
+			 * MotionHandler1.class)); lb=null; break; }
+			 */
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
@@ -73,48 +70,53 @@ public class Manager extends ListActivity {
 	int selectedItem = -1;
 	ListnerBinder lb = null;
 	ServiceConnection con;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		setContentView(R.layout.main);
 		super.onCreate(savedInstanceState);
 		startMyService = (Button) findViewById(R.id.service_start);
-		startService(new Intent(this,MotionHandler1.class));
+		startService(new Intent(this, MotionHandler1.class));
 		startMyService.setEnabled(false);
 		startMyService.setTextSize(20);
-		serviceState=(TextView)findViewById(R.id.text_about_service_state);
-		/*if(savedInstanceState!=null && savedInstanceState.containsKey("process"))
-			startMyService.setText(savedInstanceState.getBoolean("process")?"stop":"start");*/
+		serviceState = (TextView) findViewById(R.id.text_about_service_state);
+		/*
+		 * if(savedInstanceState!=null &&
+		 * savedInstanceState.containsKey("process"))
+		 * startMyService.setText(savedInstanceState
+		 * .getBoolean("process")?"stop":"start");
+		 */
 
 		lv = getListView();
 		fillListView();
 		startMyService.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-					switchService();
-					startMyService.setText(isServiceEnabled()? "stop" : "start");
-					serviceState.setText("Gestures service is"+ (lb.mh.isEnabled? " running" : " idle"));
-					
-					Cursor c = getContentResolver().query(
-							MotionsDB.MOTIONS_CONTENT_URI,
-							new String[] { "count(_ID)" }, null, null, null);
-					c.moveToFirst();
-					if(lb==null || lb.mh==null ) return;
-					if(c.getInt(0) == 0 && lb.mh.isEnabled)
-						startMyService.setEnabled(true);
-					if(c.getInt(0) == 0 && !lb.mh.isEnabled)
-						startMyService.setEnabled(false);
+				switchService();
+				startMyService.setText(isServiceEnabled() ? "stop" : "start");
+				serviceState.setText("Gestures service is"
+						+ (lb.mh.isEnabled ? " running" : " idle"));
 
-				}
+				Cursor c = getContentResolver().query(
+						MotionsDB.MOTIONS_CONTENT_URI,
+						new String[] { "count(_ID)" }, null, null, null);
+				c.moveToFirst();
+				if (lb == null || lb.mh == null)
+					return;
+				if (c.getInt(0) == 0 && lb.mh.isEnabled)
+					startMyService.setEnabled(true);
+				if (c.getInt(0) == 0 && !lb.mh.isEnabled)
+					startMyService.setEnabled(false);
 
-			
+			}
 
 		});
-		
+
 	}
-	
+
 	@Override
 	protected void onPause() {
-		
+
 		super.onPause();
 		unbindService(con);
 	}
@@ -122,53 +124,60 @@ public class Manager extends ListActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		con=new ServiceConnection(){
+		con = new ServiceConnection() {
 			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
 				lb = (ListnerBinder) arg1;
-				Log.i("handler", lb.mh+"");
-				startMyService.setText(lb.mh.isEnabled? "stop" : "start");
-				serviceState.setText("Gestures service is"+ (lb.mh.isEnabled? " running" : " idle"));
+				Log.i("handler", lb.mh + "");
+				startMyService.setText(lb.mh.isEnabled ? "stop" : "start");
+				serviceState.setText("Gestures service is"
+						+ (lb.mh.isEnabled ? " running" : " idle"));
 				Cursor c = getContentResolver().query(
 						MotionsDB.MOTIONS_CONTENT_URI,
 						new String[] { "count(_ID)" }, null, null, null);
 				c.moveToFirst();
-				if(c.getInt(0) == 0 && lb.mh.isEnabled)
+				if (c.getInt(0) == 0 && lb.mh.isEnabled)
 					startMyService.setEnabled(true);
-				if(c.getInt(0) == 0) return;
+				if (c.getInt(0) == 0)
+					return;
 				c.close();
 				lb.ms = new MotionListener() {
 					public void onMotionRecieved(int motion) {
 						Cursor c = getContentResolver().query(
 								MotionsDB.TASKS_CONTENT_URI,
-								new String[] {
-										ActivityColumns.PACK,
+								new String[] { ActivityColumns.PACK,
 										ActivityColumns.ACTIVITY },
-								ActivityColumns.MOTION_ID + "="
-										+ motion, null, null);
-						while (!c.isLast()) {
-							c.moveToNext();
-							Intent i = new Intent();
-							
-							i.setClassName(c.getString(0), c
-									.getString(1));
-							i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-							
-							try{
-								Log.i("startActivity", "begin");
-							lb.mh.startActivity(i);
-							
-							Log.i("startActivity", "end");
-							}catch(Exception e){
-								
-								Log.i("startActivity", "failed");
-								Toast.makeText(lb.mh, "cant't start activity", 1000).show();
-								e.printStackTrace();
+								ActivityColumns.MOTION_ID + "=" + motion, null,
+								null);
+						c.moveToFirst();
+						while (!c.isAfterLast()) {
+							if (c.getString(0) != null
+									&& c.getString(1) != null) {
+								Intent i = new Intent();
+
+								i.setClassName(c.getString(0), c.getString(1));
+								i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+								try {
+									//Log.i("startActivity", "begin");
+									lb.mh.startActivity(i);
+
+									//Log.i("startActivity", "end");
+								} catch (Exception e) {
+
+									Log.i("startActivity", "failed");
+									Toast.makeText(lb.mh,
+											"cant't start activity", 1000)
+											.show();
+									e.printStackTrace();
+								}
 							}
-							
+
+							c.moveToNext();
+
 						}
 						c.close();
 					}
-					
+
 				};
 				startMyService.setEnabled(true);
 
@@ -176,49 +185,51 @@ public class Manager extends ListActivity {
 
 			public void onServiceDisconnected(ComponentName arg0) {
 				startMyService.setEnabled(false);
-				
+
 			}
 		};
-			
-		bindService(new Intent(this,MotionHandler1.class),con,0);
-	
+
+		bindService(new Intent(this, MotionHandler1.class), con, 0);
+
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Cursor c = getContentResolver().query(
-				MotionsDB.MOTIONS_CONTENT_URI,
+		Cursor c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "count(_ID)" }, null, null, null);
 		c.moveToFirst();
-		if(lb==null || lb.mh==null ) return;
-		if(c.getInt(0) == 0 && lb.mh.isEnabled)
+		if (lb == null || lb.mh == null)
+			return;
+		if (c.getInt(0) == 0 && lb.mh.isEnabled)
 			startMyService.setEnabled(true);
-		if(c.getInt(0) == 0 && !lb.mh.isEnabled)
+		if (c.getInt(0) == 0 && !lb.mh.isEnabled)
 			startMyService.setEnabled(false);
-		
+
 	}
 
-	private void fillListView(){
+	private void fillListView() {
 		c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "_id", MotionColumns.NAME }, null, null, null);
 		startManagingCursor(c);
-		c.registerContentObserver(new ContentObserver(new Handler(){
-			
-		}){
+		c.registerContentObserver(new ContentObserver(new Handler() {
+
+		}) {
 
 			@Override
 			public void onChange(boolean selfChange) {
-				if(c.getCount()==0 && !lb.mh.isEnabled) startMyService.setEnabled(false);
-				else startMyService.setEnabled(true);
-				
+				if (c.getCount() == 0 && !lb.mh.isEnabled)
+					startMyService.setEnabled(false);
+				else
+					startMyService.setEnabled(true);
+
 			}
-			
+
 		});
 		motions = new MySimpleAdapter(this, R.layout.motions_row, c,
 				new String[] { MotionColumns.NAME },
 				new int[] { R.id.motion_name });
-		
+
 		lv.setAdapter(motions);
 		lv.setItemsCanFocus(false);
 		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -232,48 +243,51 @@ public class Manager extends ListActivity {
 				startActivity(i);
 			}
 		});
-		LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View empty=inflater.inflate(R.layout.start_view, null);
-		//lv.setEmptyView(empty);
-		Button addFirst=(Button) findViewById(R.id.add_first);
-		addFirst.setOnClickListener(new OnClickListener(){
+		LayoutInflater inflater = (LayoutInflater) this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View empty = inflater.inflate(R.layout.start_view, null);
+		// lv.setEmptyView(empty);
+		Button addFirst = (Button) findViewById(R.id.add_first);
+		addFirst.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View arg0) {
 				Intent i = new Intent(Manager.this, MotionEditor.class);
 				i.setAction(android.content.Intent.ACTION_MAIN);
 				startActivity(i);
 			}
-			
+
 		});
-		
-		
+
 	}
-	class MySimpleAdapter extends SimpleCursorAdapter{
+
+	class MySimpleAdapter extends SimpleCursorAdapter {
 
 		public MySimpleAdapter(Context context, int layout, Cursor c,
 				String[] from, int[] to) {
 			super(context, layout, c, from, to);
-			
+
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
-			 TextView tv=(TextView)super.getView(position, convertView, parent);
-			 tv.setTextSize(30);
-			 tv.setPadding(0, 3, 0, 3);
-			 return tv;
-			
+			TextView tv = (TextView) super.getView(position, convertView,
+					parent);
+			tv.setTextSize(30);
+			tv.setPadding(0, 3, 0, 3);
+			return tv;
+
 		}
-		
+
 	}
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		//c.close();
+		// c.close();
 		super.onSaveInstanceState(outState);
-		if(lb!=null)
-			outState.putBoolean("process",isServiceEnabled() );
-		//unbindService(con);
+		if (lb != null)
+			outState.putBoolean("process", isServiceEnabled());
+		// unbindService(con);
 	}
 
 	@Override
@@ -283,17 +297,19 @@ public class Manager extends ListActivity {
 		super.onDestroy();
 	}
 
-	boolean isServiceEnabled(){
-		//Parcel p = Parcel.obtain();
-		//try {
-			return lb.mh.isEnabled;//.transact(ListnerBinder.GET_STATUS, null, p, 0);
-//		} catch (RemoteException e) {}
-	//	return p.readBundle().getBoolean("on/off");
-		
+	boolean isServiceEnabled() {
+		// Parcel p = Parcel.obtain();
+		// try {
+		return lb.mh.isEnabled;// .transact(ListnerBinder.GET_STATUS, null, p,
+								// 0);
+		// } catch (RemoteException e) {}
+		// return p.readBundle().getBoolean("on/off");
+
 	}
-	void switchService(){
-		//try {
-			lb.mh.switchMe();//transact(ListnerBinder.SWITCH_CODE, null, null, 0);
-		//} catch (RemoteException e) {}
+
+	void switchService() {
+		// try {
+		lb.mh.switchMe();// transact(ListnerBinder.SWITCH_CODE, null, null, 0);
+		// } catch (RemoteException e) {}
 	}
 }
