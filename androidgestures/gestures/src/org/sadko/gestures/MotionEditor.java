@@ -48,7 +48,7 @@ public class MotionEditor extends Activity {
 	ContentValues motionValues = new ContentValues();
 	ContentValues activityValues = new ContentValues();
 	String action;
-	long motionId;
+	long motionId=0;
 	long taskId;
 	Button launch;
 	String appActivity;
@@ -125,8 +125,8 @@ public class MotionEditor extends Activity {
 			//if(app)
 			activityValues.put(ActivityColumns.ACTIVITY, appActivity);
 			activityValues.put(ActivityColumns.MOTION_ID, motionId);
-			getContentResolver().insert(MotionsDB.TASKS_CONTENT_URI,
-					activityValues);
+			taskId=ContentUris.parseId(getContentResolver().insert(MotionsDB.TASKS_CONTENT_URI,
+					activityValues));
 		}
 	}
 
@@ -320,7 +320,7 @@ public class MotionEditor extends Activity {
 			} catch (CursorIndexOutOfBoundsException e) {
 				Log.e("error", "with cursor");
 			}
-			taskId = taskCursor.getLong(taskCursor.getColumnIndex(ActivityColumns.MOTION_ID));
+			taskId = taskCursor.getLong(taskCursor.getColumnIndex(ActivityColumns._ID));
 			//bound spinner and app representations to retrieved info
 			makeSpinner();
 			setPickedApp();
@@ -382,6 +382,7 @@ public class MotionEditor extends Activity {
 											Uri.withAppendedPath(
 													MotionColumns.CONTENT_URI,
 													"" + id), null, null);
+							MotionEditor.this.discarding=true;
 							MotionEditor.this.finish();
 							// c.requery();
 
