@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class MotionHandler1 extends MotionHandler {
-	long needTime = 0;// максимальное время движения(из записанных)
+	long needTime = 0;// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ(пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 	public static double MOTION_SENSITIVITY = 0.1;
 	long oldestTime = 0;
 	public static long timeBetweenRegistering = 1400;
@@ -33,7 +33,7 @@ public class MotionHandler1 extends MotionHandler {
 	public void addMotion(Motion motion) {
 		super.addMotion(motion);
 		needTime = (motion.time > needTime ? motion.time : needTime);
-		// это чтобы в массиве хватало полей для улавливания движения
+		
 		needTime += 1;
 		ARRAY_SIZE = (int) (needTime / 20) + 1;
 		yaws = new double[ARRAY_SIZE];
@@ -123,8 +123,9 @@ public class MotionHandler1 extends MotionHandler {
 				c.requery();
 				if(isEnabled)mgr.unregisterListener(MotionHandler1.this);
 				deleteAllMotions();
-				while (!c.isLast()) {
-					c.moveToNext();
+				c.moveToFirst();
+				while (!c.isAfterLast()) {
+					
 					Motion motion = new Motion();
 					for (int i = 0; i < 3; i++)
 						for (int j = 0; j < 3; j++)
@@ -133,6 +134,7 @@ public class MotionHandler1 extends MotionHandler {
 					motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
 					Log.i("motion",motion.time+" "+motion.matrix[0][0]);
 					addMotion(motion);
+					c.moveToNext();
 				}
 				if(isEnabled)mgr.registerListener(MotionHandler1.this,SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 				super.onChange(selfChange);
