@@ -78,7 +78,7 @@ public class Manager extends ListActivity {
 		super.onCreate(savedInstanceState);
 		startMyService = (Button) findViewById(R.id.service_start);
 		startService(new Intent(this, MotionHandler1.class));
-		startMyService.setEnabled(false);
+		//startMyService.setEnabled(false);
 		startMyService.setTextSize(20);
 		serviceState = (TextView) findViewById(R.id.text_about_service_state);
 		/*
@@ -97,7 +97,7 @@ public class Manager extends ListActivity {
 				serviceState.setText("Gestures service is"
 						+ (lb.mh.isEnabled ? " running" : " idle"));
 
-				Cursor c = getContentResolver().query(
+				/*Cursor c = getContentResolver().query(
 						MotionsDB.MOTIONS_CONTENT_URI,
 						new String[] { "count(_ID)" }, null, null, null);
 				c.moveToFirst();
@@ -106,7 +106,7 @@ public class Manager extends ListActivity {
 				if (c.getInt(0) == 0 && lb.mh.isEnabled)
 					startMyService.setEnabled(true);
 				if (c.getInt(0) == 0 && !lb.mh.isEnabled)
-					startMyService.setEnabled(false);
+					startMyService.setEnabled(false);*/
 
 			}
 
@@ -196,7 +196,7 @@ public class Manager extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Cursor c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
+		/*Cursor c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "count(_ID)" }, null, null, null);
 		c.moveToFirst();
 		if (lb == null || lb.mh == null)
@@ -204,7 +204,7 @@ public class Manager extends ListActivity {
 		if (c.getInt(0) == 0 && lb.mh.isEnabled)
 			startMyService.setEnabled(true);
 		if (c.getInt(0) == 0 && !lb.mh.isEnabled)
-			startMyService.setEnabled(false);
+			startMyService.setEnabled(false);*/
 
 	}
 
