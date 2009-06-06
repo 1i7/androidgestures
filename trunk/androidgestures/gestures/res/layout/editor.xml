@@ -61,7 +61,7 @@
 				android:maxHeight="50px" android:maxWidth="50px" android:minHeight="50px" android:minWidth="50px"></ImageButton>
 			<TextView android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:layout_weight="1"
-				android:id="@+id/app_name_in_edit" android:text="&lt;-Press here"
+				android:id="@+id/app_name_in_edit" android:text="&#x2190; Press here"
 				android:layout_gravity="center_vertical"></TextView>
 			<Button android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:text="launch now"
