@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,19 +32,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class AppPicker extends ListActivity {
+public class AppPicker extends ListActivity implements Runnable {
 	int packChosen = 0;
 	int actChosen = 0;
+	ProgressDialog pd;
 	List<PackageInfo> apps;
-	public static final String RESULT_CONTENT_VALUES_NAME="org.sadko.gestures.AppPicker/val"; 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.picker);
+	MyExpandableListAdapter adapter;
+	public static final String RESULT_CONTENT_VALUES_NAME="org.sadko.gestures.AppPicker/val";
+	MyExpandableListAdapter buildAdapter(){
 		final PackageManager pm = getPackageManager();
-		Intent launcher=new Intent();
-		launcher.setAction(android.content.Intent.ACTION_MAIN);
-		launcher.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
+		//Intent launcher=new Intent();
+		//launcher.setAction(android.content.Intent.ACTION_MAIN);
+		//launcher.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
 		apps=pm.getInstalledPackages(PackageManager.GET_ACTIVITIES);
 		Iterator<PackageInfo> appsIter=apps.iterator();
 		final List<ActivityInfo[]> activities = new ArrayList<ActivityInfo[]>();
@@ -65,21 +67,17 @@ public class AppPicker extends ListActivity {
 		apssSet.addAll(apps);
 		apps=new ArrayList<PackageInfo>(apssSet);
 		MyExpandableListAdapter mAdapter=new MyExpandableListAdapter(apps);
-		//mAdapter.groups=apps;
-		//mAdapter.children=activities;
-		/*final List<AppRow> listForView = new ArrayList<AppRow>();
-		while (iter.hasNext()) {
-			ApplicationInfo ai = iter.next();
-			
-			AppRow ar=new AppRow();
-			ar.name = ai.loadLabel(pm);
-			ar.icon= pm.getApplicationIcon(ai.activityInfo.applicationInfo);
-			ar.packName=ai.activityInfo.packageName;
-			lst.add(ar);
-		}*/
-		//final MyExpandableListAdapter ad = new MyExpandableListAdapter();
+		return mAdapter;
+	}
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.picker);
+		final PackageManager pm = getPackageManager();
+		
 		ListView applications = getListView();//this.getListView()
-		applications.setAdapter(mAdapter);
+		
+		//applications.setAdapter(mAdapter);
 		applications.setItemsCanFocus(false);
 		applications.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		applications.setItemChecked(0, true);
@@ -89,17 +87,6 @@ public class AppPicker extends ListActivity {
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-			/*	ContentValues cv = new ContentValues();
-				cv.put(ActivityColumns.PACK, activities.get(arg2)[arg3].packageName);
-				cv.put(ActivityColumns.ACTIVITY,activities.get(arg2)[arg3].name);
-				Intent intent = new Intent();
-				intent.putExtra(RESULT_CONTENT_VALUES_NAME, cv);
-				setResult(1, intent);
-				finish();
-			
-			finish();
-		
-	*/
 				Intent i=new Intent();
 				i.setAction(android.content.Intent.ACTION_MAIN);
 				i.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
@@ -126,34 +113,10 @@ public class AppPicker extends ListActivity {
 			}
 			
 		});
-		/*applications.setOnItemClickListener(new OnItemClickListener() {
-
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				Intent i=new Intent();
-				i.setAction(android.content.Intent.ACTION_MAIN);
-				i.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
-				Iterator<ResolveInfo> iter=pm.queryIntentActivities(i,0).iterator();
-				String needPackageName=lst.get(arg2).packName;
-				while(iter.hasNext()){
-					ResolveInfo info=iter.next();
-					if(info.activityInfo.packageName.equals(needPackageName)){
-						ContentValues cv = new ContentValues();
-						cv.put(ActivityColumns.PACK, needPackageName);
-						cv.put(ActivityColumns.ACTIVITY,info.activityInfo.name);
-						Intent intent = new Intent();
-						intent.putExtra(RESULT_CONTENT_VALUES_NAME, cv);
-						setResult(1, intent);
-						finish();
-					}
-					finish();
-				}
-
-			}
-
-		});*/
-
-
+		pd = ProgressDialog.show(this, "Working..", "loading application list", true,
+	                false);
+		Thread thread=new Thread(this);
+		thread.start();
 	}/*
 	private class AppRow{
 		Drawable icon;
@@ -294,4 +257,18 @@ public class AppPicker extends ListActivity {
 		}*/
 
     }
+	public void run() {
+		adapter=buildAdapter();
+		handler.sendEmptyMessage(0);
+		
+	}
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+        	
+            pd.dismiss();
+            getListView().setAdapter(adapter);
+ 
+        }
+    };
 }
