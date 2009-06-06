@@ -9,11 +9,13 @@ import java.util.TreeSet;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -25,6 +27,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -196,6 +199,22 @@ public class MotionEditor extends Activity {
 		ImageButton record = (ImageButton) findViewById(R.id.Record);
 		record.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				bindService(new Intent(MotionEditor.this,MotionHandler1.class), new ServiceConnection(){
+
+					public void onServiceConnected(ComponentName arg0,
+							IBinder arg1) {
+						ListnerBinder lb=(ListnerBinder) arg1;
+						if(lb.mh.isEnabled)
+							lb.mh.switchMe();
+						unbindService(this);
+					}
+
+					public void onServiceDisconnected(ComponentName name) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				}, 0);
 				Intent i = new Intent(MotionEditor.this, Recorder.class);
 				startActivityForResult(i, RECORD_REQEST_CODE);
 			}
@@ -274,6 +293,22 @@ public class MotionEditor extends Activity {
 				showDialog(DIALOG_YES_NO_MESSAGE);
 			}
 
+		});
+		Button fromApp=(Button)findViewById(R.id.from_app);
+		fromApp.setOnClickListener(new OnClickListener(){
+
+			public void onClick(View v) {
+				PackageManager pm=getPackageManager();
+				try {
+					((EditText) findViewById(R.id.NameInput)).setText(pm
+							.getApplicationLabel(pm.getApplicationInfo(appPackage,
+									0)));
+				} catch (NameNotFoundException e) {
+					
+				}
+				
+			}
+			
 		});
 
 		
@@ -405,7 +440,7 @@ public class MotionEditor extends Activity {
 		//decide should we replace name of motion or not and other stuff
 		boolean nameWasAsPickedApp = false;
 		EditText motionName = ((EditText) findViewById(R.id.NameInput));
-		if (motionName.getText().toString().equals("No name"))
+		if (motionName.getText().toString().equals(""))
 			nameWasAsPickedApp = true;
 		//
 		PackageManager pm = getPackageManager();

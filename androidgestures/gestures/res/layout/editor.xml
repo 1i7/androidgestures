@@ -15,9 +15,8 @@
 			android:layout_height="wrap_content" android:layout_gravity="top|center_horizontal"
 			android:layout_weight="1" android:layout_margin="3px"
 			android:text="write name of gesture here:" android:id="@+id/TextWriteName"></TextView>
-		<EditText android:layout_height="wrap_content"
-			android:layout_width="fill_parent" android:layout_weight="1"
-			android:layout_margin="3px" android:id="@+id/NameInput" android:text="No name"></EditText>
+		<LinearLayout android:id="@+id/LinearLayout01" android:layout_height="wrap_content" android:layout_width="fill_parent"><EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="1" android:layout_margin="3px" android:id="@+id/NameInput" android:hint="name of gesture"></EditText><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="from app" android:id="@+id/from_app"></Button>
+</LinearLayout>
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="wrap_content" style="?android:attr/listSeparatorTextViewStyle"
 			android:textAppearance="?android:attr/textAppearanceSmall"
@@ -101,5 +100,6 @@
 
 
 
-	</LinearLayout>
+	
+</LinearLayout>
 </ScrollView>
