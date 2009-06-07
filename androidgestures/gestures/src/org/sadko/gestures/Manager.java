@@ -1,3 +1,22 @@
+/*
+  * Copyright (C) 2007 The Android Open Source Project
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+ 
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *      http://www.apache.org/licenses/LICENSE-2.0
+ 
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+ 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+ 
+  */
 package org.sadko.gestures;
 
 import android.app.ListActivity;
@@ -37,9 +56,9 @@ public class Manager extends ListActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, ADD_NEW_ID, 0, "Add new");
-		menu.add(0, ABOUT_ID, 0, "About");
-		menu.add(0, EXIT_ID, 0, "Exit");
+		menu.add(0, ADD_NEW_ID, 0, "Add new").setIcon(android.R.drawable.ic_menu_add);
+		menu.add(0, ABOUT_ID, 0, "About").setIcon(android.R.drawable.ic_menu_info_details);
+		menu.add(0, EXIT_ID, 0, "Exit").setIcon(android.R.drawable.ic_menu_revert);
 		
 		// menu.add(0, KILL_SERVICE_ID, 0, "Kill handling service");
 		return super.onCreateOptionsMenu(menu);
