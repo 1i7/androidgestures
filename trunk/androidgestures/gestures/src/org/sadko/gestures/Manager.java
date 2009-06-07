@@ -31,14 +31,16 @@ public class Manager extends ListActivity {
 	Cursor c;
 	private static final int ADD_NEW_ID = 0;
 	private static final int EXIT_ID = 1;
-	private static final int KILL_SERVICE_ID = 2;
+	private static final int ABOUT_ID = 2;
 	Button startMyService;
 	TextView serviceState;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ADD_NEW_ID, 0, "Add new");
+		menu.add(0, ABOUT_ID, 0, "About");
 		menu.add(0, EXIT_ID, 0, "Exit");
+		
 		// menu.add(0, KILL_SERVICE_ID, 0, "Kill handling service");
 		return super.onCreateOptionsMenu(menu);
 
@@ -55,6 +57,10 @@ public class Manager extends ListActivity {
 		}
 		case EXIT_ID: {
 			Manager.this.finish();
+			break;
+		}
+		case ABOUT_ID: {
+			//TODO: call about activity
 			break;
 		}
 			/*
