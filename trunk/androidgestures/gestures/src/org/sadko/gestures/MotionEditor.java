@@ -69,6 +69,10 @@ public class MotionEditor extends Activity {
 	private static final int PICK_APP_REQUEST_CODE = 2;
 	ActivityInfo[] activs;
 	//String oldAppName;
+	boolean needOn=false;
+	ServiceConnection con;
+	ListnerBinder lb;
+	
 	
 	@Override
 	protected void onPause() {
@@ -77,6 +81,10 @@ public class MotionEditor extends Activity {
 			if (!discarding)
 				saveGesture();
 		}
+		if(needOn)lb.mh.switchMe();
+		lb.mh.deleteListener(lb.ms);
+		unbindService(con);
+
 	}
 	private void sortActivs(){
 		final PackageManager pm=getPackageManager();
@@ -434,6 +442,27 @@ public class MotionEditor extends Activity {
 		return null;
 	}
 
+	@Override
+	protected void onResume() {
+		con=new ServiceConnection(){
+			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
+				lb= (ListnerBinder) arg1;
+				if(lb.mh.isEnabled){
+					needOn=true;
+					lb.mh.switchMe();
+				}
+			}
+
+			public void onServiceDisconnected(ComponentName arg0) {
+				
+				
+			}
+		};
+			
+		bindService(new Intent(this,MotionHandler1.class),con,0);
+		
+		super.onResume();
+	}
 	private void setPickedApp() {
 		//decide should we replace name of motion or not and other stuff
 		boolean nameWasAsPickedApp = false;
