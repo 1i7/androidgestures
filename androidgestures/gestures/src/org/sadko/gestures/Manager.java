@@ -26,12 +26,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.hardware.SensorManager;
+//import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
-import android.view.LayoutInflater;
+//import android.util.Log;
+//import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -152,7 +152,7 @@ public class Manager extends ListActivity {
 		con = new ServiceConnection() {
 			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
 				lb = (ListnerBinder) arg1;
-				Log.i("handler", lb.mh + "");
+				//Log.i("handler", lb.mh + "");
 				startMyService.setText(lb.mh.isEnabled ? "stop" : "start");
 				serviceState.setText("Gestures service is"
 						+ (lb.mh.isEnabled ? " running" : " idle"));
@@ -189,7 +189,7 @@ public class Manager extends ListActivity {
 									//Log.i("startActivity", "end");
 								} catch (Exception e) {
 
-									Log.i("startActivity", "failed");
+									//Log.i("startActivity", "failed");
 									Toast.makeText(lb.mh,
 											"cant't start activity", 1000)
 											.show();
@@ -268,9 +268,9 @@ public class Manager extends ListActivity {
 				startActivity(i);
 			}
 		});
-		LayoutInflater inflater = (LayoutInflater) this
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View empty = inflater.inflate(R.layout.start_view, null);
+		//LayoutInflater inflater = (LayoutInflater) this
+			//	.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		//View empty = inflater.inflate(R.layout.start_view, null);
 		// lv.setEmptyView(empty);
 		Button addFirst = (Button) findViewById(R.id.add_first);
 		addFirst.setOnClickListener(new OnClickListener() {

@@ -40,14 +40,14 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
+//import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -378,7 +378,7 @@ public class MotionEditor extends Activity {
 				appActivity = taskCursor.getString(taskCursor
 						.getColumnIndex(ActivityColumns.ACTIVITY));
 			} catch (CursorIndexOutOfBoundsException e) {
-				Log.e("error", "with cursor");
+				//Log.e("error", "with cursor");
 			}
 			taskId = taskCursor.getLong(taskCursor.getColumnIndex(ActivityColumns._ID));
 			//bound spinner and app representations to retrieved info

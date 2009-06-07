@@ -37,7 +37,7 @@ import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -118,7 +118,7 @@ public class AppPicker extends ListActivity implements Runnable {
 					ResolveInfo info=iter.next();
 					if(info.activityInfo.packageName.equals(needPackageName)){
 						cv.put(ActivityColumns.ACTIVITY,info.activityInfo.name);
-						Log.i("add app", needPackageName+"/"+info.activityInfo.name);
+						//Log.i("add app", needPackageName+"/"+info.activityInfo.name);
 						intent.putExtra(RESULT_CONTENT_VALUES_NAME, cv);
 						setResult(1, intent);
 						finish();

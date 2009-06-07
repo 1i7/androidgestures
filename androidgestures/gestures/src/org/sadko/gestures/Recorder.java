@@ -43,7 +43,7 @@ import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -273,9 +273,9 @@ public class Recorder extends Activity {
 				rolls[position] = values[2] * Math.PI / 180;
 				pitchs[position] = values[1] * Math.PI / 180;
 				times[position] = System.currentTimeMillis();
-				Log.i("sens " + position, "" + yaws[position] + "\t"
-						+ pitchs[position] + "\t" + rolls[position] + "\t"
-						+ times[position] + "\n");
+			//	Log.i("sens " + position, "" + yaws[position] + "\t"
+				//		+ pitchs[position] + "\t" + rolls[position] + "\t"
+					//	+ times[position] + "\n");
 				position++;
 			}
 			if (stage == END) {
@@ -310,7 +310,7 @@ public class Recorder extends Activity {
 				val.put(MotionColumns.TIME, time);
 				
 				rez.putExtra(RESULT_CONTENT_VALUES_NAME, val);
-				Log.i("rec", "i am here");
+				//Log.i("rec", "i am here");
 				setResult(1, rez);
 				mSensorManager.unregisterListener(this);
 				Recorder.this.finish();

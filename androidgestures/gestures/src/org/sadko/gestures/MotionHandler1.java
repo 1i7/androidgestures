@@ -25,8 +25,8 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.hardware.SensorManager;
 import android.os.Handler;
-import android.util.Log;
-import android.widget.Toast;
+//import android.util.Log;
+//import android.widget.Toast;
 
 public class MotionHandler1 extends MotionHandler {
 	long needTime = 0;// ������������ ����� ��������(�� ����������)
@@ -138,7 +138,7 @@ public class MotionHandler1 extends MotionHandler {
 						new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
 								"A21", "A22", "time", "_id" },
 						null, null, null);*/
-				Log.i("i am called","ugu!!");
+				//Log.i("i am called","ugu!!");
 				c.requery();
 				if(isEnabled)mgr.unregisterListener(MotionHandler1.this);
 				deleteAllMotions();
@@ -151,7 +151,7 @@ public class MotionHandler1 extends MotionHandler {
 							motion.matrix[i][j] = c.getFloat(c.getColumnIndex("A"+i+""+j));
 					motion.time = c.getLong(c.getColumnIndex(MotionColumns.TIME));
 					motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
-					Log.i("motion",motion.time+" "+motion.matrix[0][0]);
+					//Log.i("motion",motion.time+" "+motion.matrix[0][0]);
 					addMotion(motion);
 					c.moveToNext();
 				}
