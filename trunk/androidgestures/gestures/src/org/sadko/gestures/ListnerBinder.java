@@ -24,8 +24,8 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.RemoteException;
-import android.util.Log;
-import android.widget.TextView;
+//import android.util.Log;
+//import android.widget.TextView;
 
 public class ListnerBinder extends Binder {
 	MotionListener ms;

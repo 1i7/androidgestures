@@ -34,7 +34,7 @@ import android.content.Intent;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
-import android.util.Log;
+//import android.util.Log;
 
 public abstract class MotionHandler extends Service implements SensorListener{
 	public static final int START_STOP=359;
@@ -43,7 +43,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	SensorManager mgr;
 	public void addMotion(Motion motion){
 		motions.add(motion);
-		Log.i("motion","added!");
+		//Log.i("motion","added!");
 	}
 	
 	public void onAccuracyChanged(int arg0, int arg1) {
@@ -56,7 +56,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	}
 	@Override
 	public void onDestroy() {
-		Log.w("service dead",this+"");
+		//Log.w("service dead",this+"");
 		super.onDestroy();
 	}
 	public void deleteListener(MotionListener ms){
@@ -82,7 +82,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 				Log.i("binder","here!");
 				return super.onTransact(code, data, reply, flags);
 			}};*/
-		Log.i("searvice", "i am bound "+this);
+		//Log.i("searvice", "i am bound "+this);
 		if(listners.isEmpty()){
 			//Hardware.mContentResolver=getContentResolver();
 			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
@@ -98,16 +98,16 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	}
 	@Override
 	public void onStart(Intent intent, int startId) {
-		Log.i("searvice", "i am started "+this);
+		//Log.i("searvice", "i am started "+this);
 		super.onStart(intent, startId);
 	}
 
 	protected void notifyListeners(int motion){
 		Iterator<ListnerBinder> iter=listners.iterator();
-		Log.i("Listeners", listners.size()+"");
+		//Log.i("Listeners", listners.size()+"");
 		while(iter.hasNext()){
 			ListnerBinder lb=iter.next();
-			if(lb.ms!=null) lb.ms.onMotionRecieved(motion); else Log.i("ms", "is null");
+			if(lb.ms!=null) lb.ms.onMotionRecieved(motion);// else Log.i("ms", "is null");
 			
 		}
 	}

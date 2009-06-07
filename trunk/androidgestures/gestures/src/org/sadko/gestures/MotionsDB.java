@@ -19,7 +19,7 @@
   */
 package org.sadko.gestures;
 
-import java.util.HashMap;
+//import java.util.HashMap;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -32,8 +32,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.provider.BaseColumns;
-import android.util.Log;
+//import android.provider.BaseColumns;
+//import android.util.Log;
 
 public class MotionsDB extends ContentProvider {
 	public static final Uri CONTENT_URI = Uri
@@ -67,7 +67,7 @@ public class MotionsDB extends ContentProvider {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			Log.i("Dcreate", ":)");
+			//Log.i("Dcreate", ":)");
 			String script = "CREATE TABLE " + MOTIONS_TABLE_NAME + " ("
 					+ MotionColumns._ID
 					+ " integer primary key autoincrement, ";
@@ -94,10 +94,10 @@ public class MotionsDB extends ContentProvider {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log
-					.w("db", "Upgrading database from version " + oldVersion
-							+ " to " + newVersion
-							+ ", which will destroy all old data");
+			//Log
+				//	.w("db", "Upgrading database from version " + oldVersion
+					//		+ " to " + newVersion
+						//	+ ", which will destroy all old data");
 			db.execSQL("DROP TABLE IF EXISTS " + MOTIONS_TABLE_NAME);
 			onCreate(db);
 		}
@@ -138,7 +138,7 @@ public class MotionsDB extends ContentProvider {
 			
 			Uri taskUri = ContentUris.withAppendedId(TASKS_CONTENT_URI, rowId);
 			getContext().getContentResolver().notifyChange(taskUri, null);
-			Log.i("DB","TASK inserted "+rowId);
+			//Log.i("DB","TASK inserted "+rowId);
 			if(rowId<0) 
 				throw new SQLException("Failed to insert row into " + uri);
 			getContext().getContentResolver().notifyChange(uri, null);
@@ -150,7 +150,7 @@ public class MotionsDB extends ContentProvider {
 			long rowId = db.insert(MOTIONS_TABLE_NAME, null, initialValues);
 			Uri motionUri = ContentUris.withAppendedId(MOTIONS_CONTENT_URI, rowId);
 			//getContext().getContentResolver().notifyChange(motionUri, null);
-			Log.i("DB","MOTION inserted "+rowId);
+			//Log.i("DB","MOTION inserted "+rowId);
 			if(rowId<0) 
 				throw new SQLException("Failed to insert row into " + uri);
 			getContext().getContentResolver().notifyChange(MOTIONS_CONTENT_URI,null);
@@ -176,7 +176,7 @@ public class MotionsDB extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
-		Log.i("query", ":)");
+		//Log.i("query", ":)");
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
 		switch (sUriMatcher.match(uri)) {
@@ -218,7 +218,7 @@ public class MotionsDB extends ContentProvider {
 			
 			
 			getContext().getContentResolver().notifyChange(TASKS_CONTENT_URI, null);
-			Log.i("DB","TASK updated "+rez);
+			//Log.i("DB","TASK updated "+rez);
 			return rez;
 		}
 		case MOTIONS: {
@@ -226,7 +226,7 @@ public class MotionsDB extends ContentProvider {
 					.currentTimeMillis());
 			rez = db.update(MOTIONS_TABLE_NAME,values,selection,selectionArgs);
 			//getContext().getContentResolver().notifyChange(motionUri, null);
-			Log.i("DB","MOTION updated "+rez);
+			//Log.i("DB","MOTION updated "+rez);
 			getContext().getContentResolver().notifyChange(MOTIONS_CONTENT_URI,null);
 			
 			return rez;

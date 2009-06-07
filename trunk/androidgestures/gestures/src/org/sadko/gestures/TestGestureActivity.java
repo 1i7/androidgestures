@@ -25,15 +25,15 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
+//import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 public class TestGestureActivity extends Activity {
 
@@ -71,7 +71,7 @@ public class TestGestureActivity extends Activity {
 			needDelete=false;
 			motionId=getIntent().getLongExtra("motion_id", 0);
 		}
-		Log.i("motionid",motionId+"");
+		//Log.i("motionid",motionId+"");
 	}
 
 	@Override
