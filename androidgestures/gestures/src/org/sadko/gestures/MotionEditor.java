@@ -55,11 +55,7 @@ public class MotionEditor extends Activity {
 	long taskId;
 	Button launch;
 	String appActivity;
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		Log.i("config","chnged");
-		super.onConfigurationChanged(newConfig);
-	}
+
 
 	// Drawable appIcon;
 	String appName;
@@ -238,13 +234,15 @@ public class MotionEditor extends Activity {
 			public void onClick(View v) {
 				Intent i = new Intent(MotionEditor.this,
 						TestGestureActivity.class);
-				if (action.equals(android.content.Intent.ACTION_EDIT)
-						&& motionValues.size() == 0) {
+				saveGesture();
+				action=android.content.Intent.ACTION_EDIT;
+				//if (action.equals(android.content.Intent.ACTION_EDIT)
+					//	&& motionValues.size() == 0) {
 					i.putExtra("motion_id", motionId);
 
-				} else {
-					i.putExtra("motion", motionValues);
-				}
+				//} else {
+					//i.putExtra("motion", motionValues);
+				//}
 				startActivity(i);
 			}
 

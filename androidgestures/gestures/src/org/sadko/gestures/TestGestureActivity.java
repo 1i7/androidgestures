@@ -52,6 +52,7 @@ public class TestGestureActivity extends Activity {
 			needDelete=false;
 			motionId=getIntent().getLongExtra("motion_id", 0);
 		}
+		Log.i("motionid",motionId+"");
 	}
 
 	@Override
