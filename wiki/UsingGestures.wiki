@@ -1,13 +1,21 @@
 #summary One-sentence summary of this page.
 
 = Using Gestures =
- * <font size="4"> Firstly you should record your gesture:<font/>
+ * <font size="5"> Firstly you should record your gesture:<font/><br/>
+<font size="3"> 1. Create new gesture by "Add new" command in menu or by "Add my first gesture" button
+[http://androidgestures.googlecode.com/files/first_step.jpg]
 
+ 2. Push red button "Rec." and follow instructions on screen
+[http://androidgestures.googlecode.com/files/second_step.jpg]<br/>
+When it is done Button "test gesture" enables and you can chek how does your device recognize your gesture.<br/>
 
+ 3. Chose application to be launched when gesture is recognized.
+[http://androidgestures.googlecode.com/files/third_step.jpg]<br/>
+And you will see list of all applications installed on your phone<br/>
+[http://androidgestures.googlecode.com/files/4th_step.jpg]<br/>
+Choose one of them and you can exit<br/>
+[http://androidgestures.googlecode.com/files/5th_step.jpg]<br/>
 
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+<font size="4">*These gestures are saved on your device until you delete them by yourself*</font>
+<font size="3">_using this succession of steps you can add any number of gestures in your device._<font/>
+ * <font size="5"> Secondly you should turn on gestures service<font/>
