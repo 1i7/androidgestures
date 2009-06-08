@@ -1,8 +1,8 @@
 #summary One-sentence summary of this page.
 
 = Using Gestures =
+ * <font size="4"> Firstly you should record your gesture:<font/>
 
-Add your content here.
 
 
 = Details =
