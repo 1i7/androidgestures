@@ -16,6 +16,7 @@ And you will see list of all applications installed on your phone<br/>
 Choose one of them and you can exit<br/>
 [http://androidgestures.googlecode.com/files/5th_step.jpg]<br/>
 
-<font size="4">*These gestures are saved on your device until you delete them by yourself*</font>
+<font size="4">*These gestures are saved on your device until you delete them by yourself*</font><br/>
 <font size="3">_using this succession of steps you can add any number of gestures in your device._<font/>
  * <font size="5"> Secondly you should turn on gestures service<font/>
+<font size="3"> Push button "Start" on the screen
