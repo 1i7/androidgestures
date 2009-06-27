@@ -19,6 +19,8 @@
   */
 package org.sadko.gestures;
 
+import com.sadko.about.AboutActivity;
+
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -79,7 +81,9 @@ public class Manager extends ListActivity {
 			break;
 		}
 		case ABOUT_ID: {
-			//TODO: call about activity
+            final Intent intent = new Intent();
+            intent.setClass(this, AboutActivity.class);
+            startActivity(intent);
 			break;
 		}
 			/*

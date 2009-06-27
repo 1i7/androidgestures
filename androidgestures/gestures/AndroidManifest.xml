@@ -29,6 +29,12 @@
 <activity android:name="Manager"><intent-filter><category android:name="android.intent.category.LAUNCHER"></category><action android:name="android.intent.action.MAIN"></action>
 
 </intent-filter></activity>
+        <activity android:name="com.sadko.about.AboutActivity"
+                  android:label="@string/about_caption">
+        </activity>
+        <activity android:name="com.sadko.bursaq.GotoBursaqActivity"
+                  android:label="@string/get_bursaq_caption">
+        </activity>
 <activity android:name="MotionEditor"
 android:label="Gesture Editor" ></activity>
 <activity android:name="AppPicker"

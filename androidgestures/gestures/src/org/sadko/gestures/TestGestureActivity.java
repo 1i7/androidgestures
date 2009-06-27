@@ -19,16 +19,15 @@
   */
 package org.sadko.gestures;
 
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.ServiceConnection;
-//import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
-//import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -57,6 +56,7 @@ public class TestGestureActivity extends Activity {
 		ok.setTextSize(50);
 		ok.setHeight(100);
 		ok.setWidth(100);
+		
 		ok.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
