@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class GestureCatcherActivity extends Activity {
-	SensorManagerSimulator mSensorManager;
+	SensorManager mSensorManager;
 	int counter = 0;
 	SeekBar bar;
 	TextView counterRepres;
@@ -30,10 +30,10 @@ public class GestureCatcherActivity extends Activity {
 		gc.container = this;
 		GestureCatcher.GRAVITY = getSharedPreferences("gConstant", 0).getFloat("g", 0);
 		Log.i("gravity set to be", GestureCatcher.GRAVITY+"");
-		//mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		mSensorManager = SensorManagerSimulator.getSystemService(this, SENSOR_SERVICE);
+		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+		//mSensorManager = SensorManagerSimulator.getSystemService(this, SENSOR_SERVICE);
 		
-	    mSensorManager.connectSimulator();
+	    //mSensorManager.connectSimulator();
 		mSensorManager.registerListener(gc,
 				SensorManager.SENSOR_ORIENTATION | SensorManager.SENSOR_ACCELEROMETER,
 				SensorManager.SENSOR_DELAY_UI);
