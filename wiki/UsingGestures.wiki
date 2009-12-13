@@ -1,7 +1,7 @@
 #summary One-sentence summary of this page.
 
 = Using Gestures =
-__wahaha&lt__
+__wahaha&lt;__
  * <font size="5"> Firstly you should record your gesture:<font/><br/>
 <font size="3"> 1. Create new gesture by "Add new" command in menu or by "Add my first gesture" button
 [http://androidgestures.googlecode.com/files/first_step.jpg]
