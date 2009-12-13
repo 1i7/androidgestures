@@ -1,11 +1,13 @@
 #summary One-sentence summary of this page.
 
 = Using Gestures =
-__<wahaha>__**
+__<wahaha>__
+**dsafadfs
+sdfsdfrsgef**
  * <font size="5"> Firstly you should record your gesture:<font/><br/>
 <font size="3"> 1. Create new gesture by "Add new" command in menu or by "Add my first gesture" button
 [http://androidgestures.googlecode.com/files/first_step.jpg]
-**
+
  2. Push red button "Rec." and follow instructions on screen
 [http://androidgestures.googlecode.com/files/second_step.jpg]<br/>
 When it is done Button "test gesture" enables and you can chek how does your device recognize your gesture.<br/>
