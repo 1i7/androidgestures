@@ -19,41 +19,33 @@
   */
 package org.sadko.gestures;
 
-import com.sadko.about.AboutActivity;
-
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.ContentObserver;
 import android.database.Cursor;
-//import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-//import android.util.Log;
-//import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
-public class Manager extends ListActivity {
+import com.sadko.about.AboutActivity;
+
+public class Manager extends Activity {
 	ListView lv;
 	Cursor c;
 	private static final int ADD_NEW_ID = 0;
 	private static final int EXIT_ID = 1;
 	private static final int ABOUT_ID = 2;
-	Button startMyService;
+	ImageButton startMyService;
 	TextView serviceState;
 
 	@Override
@@ -105,10 +97,10 @@ public class Manager extends ListActivity {
 
 		setContentView(R.layout.main);
 		super.onCreate(savedInstanceState);
-		startMyService = (Button) findViewById(R.id.service_start);
+		startMyService = (ImageButton) findViewById(R.id.start_stop_service);
 		startService(new Intent(this, MotionHandler1.class));
 		//startMyService.setEnabled(false);
-		startMyService.setTextSize(20);
+		//startMyService.setTextSize(20);
 		serviceState = (TextView) findViewById(R.id.text_about_service_state);
 		/*
 		 * if(savedInstanceState!=null &&
@@ -117,12 +109,11 @@ public class Manager extends ListActivity {
 		 * .getBoolean("process")?"stop":"start");
 		 */
 
-		lv = getListView();
-		fillListView();
+		
 		startMyService.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				switchService();
-				startMyService.setText(isServiceEnabled() ? "stop" : "start");
+				startMyService.setImageResource(isServiceEnabled() ? R.drawable.banner : R.drawable.banner);
 				serviceState.setText("Gestures service is"
 						+ (lb.mh.isEnabled ? " running" : " idle"));
 
@@ -147,7 +138,7 @@ public class Manager extends ListActivity {
 	protected void onPause() {
 
 		super.onPause();
-		unbindService(con);
+		//unbindService(con);
 	}
 
 	@Override
@@ -157,7 +148,7 @@ public class Manager extends ListActivity {
 			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
 				lb = (ListnerBinder) arg1;
 				//Log.i("handler", lb.mh + "");
-				startMyService.setText(lb.mh.isEnabled ? "stop" : "start");
+				startMyService.setImageResource(lb.mh.isEnabled ? R.drawable.banner : R.drawable.banner);
 				serviceState.setText("Gestures service is"
 						+ (lb.mh.isEnabled ? " running" : " idle"));
 				Cursor c = getContentResolver().query(
@@ -237,79 +228,8 @@ public class Manager extends ListActivity {
 
 	}
 
-	private void fillListView() {
-		c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
-				new String[] { "_id", MotionColumns.NAME }, null, null, null);
-		startManagingCursor(c);
-		c.registerContentObserver(new ContentObserver(new Handler() {
 
-		}) {
-
-			@Override
-			public void onChange(boolean selfChange) {
-				if (c.getCount() == 0 && !lb.mh.isEnabled)
-					startMyService.setEnabled(false);
-				else
-					startMyService.setEnabled(true);
-
-			}
-
-		});
-		motions = new MySimpleAdapter(this, R.layout.motions_row, c,
-				new String[] { MotionColumns.NAME },
-				new int[] { R.id.motion_name });
-
-		lv.setAdapter(motions);
-		lv.setItemsCanFocus(false);
-		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		lv.setOnItemClickListener(new OnItemClickListener() {
-
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				Intent i = new Intent(Manager.this, MotionEditor.class);
-				i.setAction(android.content.Intent.ACTION_EDIT);
-				i.putExtra("id", motions.getItemId(arg2));
-				startActivity(i);
-			}
-		});
-		//LayoutInflater inflater = (LayoutInflater) this
-			//	.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		//View empty = inflater.inflate(R.layout.start_view, null);
-		// lv.setEmptyView(empty);
-		Button addFirst = (Button) findViewById(R.id.add_first);
-		addFirst.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View arg0) {
-				Intent i = new Intent(Manager.this, MotionEditor.class);
-				i.setAction(android.content.Intent.ACTION_MAIN);
-				startActivity(i);
-			}
-
-		});
-
-	}
-
-	class MySimpleAdapter extends SimpleCursorAdapter {
-
-		public MySimpleAdapter(Context context, int layout, Cursor c,
-				String[] from, int[] to) {
-			super(context, layout, c, from, to);
-
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-			TextView tv = (TextView) super.getView(position, convertView,
-					parent);
-			tv.setTextSize(30);
-			tv.setPadding(0, 3, 0, 3);
-			return tv;
-
-		}
-
-	}
-
+	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		// c.close();

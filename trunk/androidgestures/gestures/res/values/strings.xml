@@ -13,4 +13,6 @@
 <resources>
     
     <string name="app_name">Gestures</string>
+<string name="main_screen_label">HowTo</string>
+<string name="lib_label">Library</string>
 </resources>
