@@ -29,7 +29,7 @@ import android.os.Handler;
 //import android.widget.Toast;
 
 public class MotionHandler1 extends MotionHandler {
-	long needTime = 0;// ������������ ����� ��������(�� ����������)
+	long needTime = 0;
 	public static double MOTION_SENSITIVITY = 0.1;
 	long oldestTime = 0;
 	public static long timeBetweenRegistering = 1400;
@@ -41,6 +41,8 @@ public class MotionHandler1 extends MotionHandler {
 	protected double pitchs[] = new double[ARRAY_SIZE];
 	int position = 0;
 	Cursor c; 
+	
+	
 	@Override
 	public void onDestroy() {
 		//c.u

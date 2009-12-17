@@ -27,9 +27,7 @@
             android:authorities="org.sadko.gestures.content">
         </provider>
 
-<activity android:name="Manager"><intent-filter><category android:name="android.intent.category.LAUNCHER"></category><action android:name="android.intent.action.MAIN"></action>
-
-</intent-filter></activity>
+<activity android:name="Manager"></activity>
         <activity android:name="com.sadko.about.AboutActivity"
                   android:label="@string/about_caption">
         </activity>
@@ -40,9 +38,15 @@
 android:label="Gesture Editor" ></activity>
 <activity android:name="AppPicker"
 android:label="Application Picker"></activity>
+<activity android:name="MyTabActivity"
+android:label="Gestures"><intent-filter><category android:name="android.intent.category.LAUNCHER"></category><action android:name="android.intent.action.MAIN"></action>
+
+</intent-filter></activity>
 <service android:name="MotionHandler1"><intent-filter><action android:name="net.sadko.gestures.CONTROL_SERVICE"></action>
 </intent-filter>
 </service>
+<activity android:name="GesturesListActivity"
+android:label="Gestures lib"></activity>
 <activity android:name="TestGestureActivity"
 android:label="Gesture Tester"></activity>
 </application>
