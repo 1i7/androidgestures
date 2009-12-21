@@ -16,7 +16,7 @@ public class MyTabActivity extends TabActivity {
 
 		final TabHost tabHost = getTabHost();
 		//LayoutInflater.from(this).inflate(R.layout.arg, tabHost.getTabContentView(), true);
-
+		tabHost.setMeasureAllChildren(true);
         tabHost.addTab(tabHost.newTabSpec("tab1")
                 .setIndicator(getString(R.string.main_screen_label))
                 .setContent(new Intent(this, Manager.class)));
