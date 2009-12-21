@@ -25,9 +25,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import com.sadko.about.AboutActivity;
+
+import android.R.color;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -44,21 +48,28 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 //import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -67,6 +78,8 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class MotionEditor extends Activity {
+	private static final int DEACTIVATE_ID = 0;
+	private static final int DELETE_ID = 1;
 	ContentValues motionValues = new ContentValues();
 	ContentValues activityValues = new ContentValues();
 	String action;
@@ -92,7 +105,31 @@ public class MotionEditor extends Activity {
 	ServiceConnection con;
 	ListnerBinder lb;
 	
-	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, DEACTIVATE_ID, 0, "Deactivate").setIcon(android.R.drawable.ic_lock_silent_mode);
+		menu.add(0, DELETE_ID, 0, "Delete").setIcon(android.R.drawable.ic_delete);
+		
+		// menu.add(0, KILL_SERVICE_ID, 0, "Kill handling service");
+		return super.onCreateOptionsMenu(menu);
+
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		switch (item.getItemId()) {
+		case DEACTIVATE_ID: {
+			break;
+			
+		}
+		case DELETE_ID: {
+			showDialog(DIALOG_YES_NO_MESSAGE);
+			break;
+		}
+		}
+		return super.onMenuItemSelected(featureId, item);
+	}
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -212,11 +249,19 @@ public class MotionEditor extends Activity {
 
 	
 	private void initElements(){
+		//animation
+		/*ImageView anim = (ImageView) findViewById(R.id.anim);
+		RotateAnimation rotation = new RotateAnimation(-15,15,30,45);
+		anim.setAnimation(rotation);
+		rotation.setDuration(500);
+		rotation.setRepeatCount(rotation.INFINITE);
+		rotation.setRepeatMode(rotation.REVERSE);
+		rotation.start();*/
 		//initialize spinner
 		spinner = (Spinner) findViewById(R.id.activity_spinner);
 		spinner.setEnabled(false);
 		//set big font to name of app
-		((TextView) findViewById(R.id.app_name_in_edit)).setTextSize(20);
+		//((TextView) findViewById(R.id.app_name_in_edit)).setTextSize(20);
 		
 		//initialize record button
 		ImageButton record = (ImageButton) findViewById(R.id.Record);
@@ -308,16 +353,6 @@ public class MotionEditor extends Activity {
 				Intent i = new Intent(MotionEditor.this, AppPicker.class);
 				startActivityForResult(i, PICK_APP_REQUEST_CODE);
 			}
-		});
-		//init delete button
-		Button delete = (Button) findViewById(R.id.delete);
-		if (!action.equals(android.content.Intent.ACTION_EDIT))
-			delete.setVisibility(android.widget.Button.INVISIBLE);
-		delete.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				showDialog(DIALOG_YES_NO_MESSAGE);
-			}
-
 		});
 		Button fromApp=(Button)findViewById(R.id.from_app);
 		fromApp.setOnClickListener(new OnClickListener(){
@@ -494,13 +529,13 @@ public class MotionEditor extends Activity {
 			ImageButton pickButton = ((ImageButton) findViewById(R.id.pick));
 			pickButton.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
 			pickButton.setImageDrawable(pm.getApplicationIcon(appPackage));
-			TextView appNameLabel = ((TextView) findViewById(R.id.app_name_in_edit));
+			/*TextView appNameLabel = ((TextView) findViewById(R.id.app_name_in_edit));
 			if (appNameLabel.getText().toString().equals(
 					motionName.getText().toString()))
 				nameWasAsPickedApp = true;
-			((TextView) findViewById(R.id.app_name_in_edit)).setText(pm
-					.getApplicationLabel(pm.getApplicationInfo(appPackage, 0)));
-			PackageInfo pi = pm.getPackageInfo(appPackage,
+			//((TextView) findViewById(R.id.app_name_in_edit)).setText(pm
+			//		.getApplicationLabel(pm.getApplicationInfo(appPackage, 0)));
+			*/PackageInfo pi = pm.getPackageInfo(appPackage,
 					PackageManager.GET_ACTIVITIES);
 			activs=new ActivityInfo[pi.activities.length];
 			System.arraycopy(pi.activities, 0, activs, 0, pi.activities.length);

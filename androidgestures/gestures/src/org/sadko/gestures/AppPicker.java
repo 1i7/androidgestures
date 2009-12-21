@@ -247,7 +247,7 @@ public class AppPicker extends ListActivity implements Runnable {
 			ImageView typeSelectedImage = (ImageView) groupItem
 					.findViewById(R.id.app_icon);
 			
-			typeSelectedImage.setImageDrawable(pm.getApplicationIcon(groups.get(groupPosition).applicationInfo));
+			typeSelectedImage.setBackgroundDrawable(pm.getApplicationIcon(groups.get(groupPosition).applicationInfo));
 			return groupItem;
         }
 
