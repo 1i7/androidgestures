@@ -1,43 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2007 The Android Open Source Project
- 
-      Licensed under the Apache License, Version 2.0 (the "License");
- 
-      you may not use this file except in compliance with the License.
-      You may obtain a copy of the License at
- 
-           http://www.apache.org/licenses/LICENSE-2.0
- 
- 
-      Unless required by applicable law or agreed to in writing, software
-      distributed under the License is distributed on an "AS IS" BASIS,
- 
-      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or  
-implied.
-      See the License for the specific language governing permissions and
-      limitations under the License.
- 
--->
+	<!--
+		Copyright (C) 2007 The Android Open Source Project Licensed under the
+		Apache License, Version 2.0 (the "License"); you may not use this file
+		except in compliance with the License. You may obtain a copy of the
+		License at http://www.apache.org/licenses/LICENSE-2.0 Unless required
+		by applicable law or agreed to in writing, software distributed under
+		the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/ScrollView01"
-	android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="@drawable/bacground">
-	<LinearLayout 
-		android:orientation="vertical" android:scrollbars="horizontal|vertical"
+	android:id="@+id/ScrollView01" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:background="@drawable/bacground">
+	<LinearLayout android:orientation="vertical"
+		android:scrollbars="horizontal|vertical"
 		android:scrollbarAlwaysDrawVerticalTrack="true"
-		android:scrollbarAlwaysDrawHorizontalTrack="true" android:id="@+id/editor_whole_layout" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_gravity="fill_vertical">
-		
-		
-		
-		
-		
-
-
-
-
-
-		
-		
-		
+		android:scrollbarAlwaysDrawHorizontalTrack="true" android:id="@+id/editor_whole_layout"
+		android:layout_height="fill_parent" android:layout_width="fill_parent"
+		android:layout_gravity="fill_vertical">
 
 
 
@@ -45,27 +26,100 @@ implied.
 
 
 
-	
 
 
 
-<ImageView android:layout_height="fill_parent" android:layout_weight="0" android:layout_gravity="center_horizontal" android:layout_width="fill_parent" android:background="@drawable/banner_up" android:id="@+id/Banner"></ImageView>
-<TableLayout android:id="@+id/TableLayout01" android:layout_height="wrap_content" android:orientation="vertical" android:weightSum="2" android:layout_width="fill_parent">
-			
-			<TableRow android:id="@+id/TableRow05" android:layout_width="wrap_content" android:layout_height="wrap_content"><ImageButton android:src="@drawable/rec" android:id="@+id/Record" android:layout_height="wrap_content" android:layout_weight="0" android:layout_width="wrap_content" android:layout_gravity="right"></ImageButton><Button android:id="@+id/test_gesture" android:text="Test Gesture" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="0" android:enabled="false"></Button></TableRow>
-			
-		
-<TableRow android:id="@+id/TableRow01" android:layout_height="wrap_content" android:layout_marginLeft="20px" android:layout_marginRight="20px" android:layout_width="wrap_content" android:layout_weight="0"></TableRow>
-<TableRow android:id="@+id/TableRow04" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="30px" android:layout_marginRight="30px"><ImageButton android:id="@+id/pick" android:src="@drawable/pick_app" android:layout_weight="0" android:layout_width="wrap_content" android:layout_gravity="left|center_vertical" android:layout_height="wrap_content" android:padding="5px"></ImageButton><Button android:id="@+id/launch_now" android:layout_height="wrap_content" android:text="launch it" android:layout_weight="0" android:layout_width="fill_parent" android:textStyle="bold" android:layout_gravity="center_vertical"></Button>
-
-</TableRow><Spinner android:id="@+id/activity_spinner" android:layout_height="wrap_content" android:layout_weight="0" android:layout_width="fill_parent" android:layout_marginLeft="30px" android:layout_marginRight="30px"></Spinner><TableRow android:id="@+id/TableRow03" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="20px" android:layout_marginRight="20px"><ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxHeight="50px" android:maxWidth="50px" android:src="@drawable/gest_anim" android:id="@+id/anim"></ImageButton><LinearLayout android:id="@+id/LinearLayout01" android:layout_height="wrap_content" android:orientation="vertical" android:layout_width="fill_parent" android:layout_weight="1"><EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="1" android:layout_margin="3px" android:id="@+id/NameInput" android:hint="name of gesture"></EditText><Button android:layout_height="wrap_content" android:text="from app" android:id="@+id/from_app" android:layout_width="fill_parent" android:padding="0px"></Button></LinearLayout>
-</TableRow>
-</TableLayout><LinearLayout android:id="@+id/LinearLayout02" android:layout_width="fill_parent" android:orientation="horizontal" android:layout_weight="0" android:layout_height="fill_parent" android:layout_gravity="bottom|center_horizontal" android:layout_marginLeft="30px" android:layout_marginRight="35px">
-			<Button android:layout_height="wrap_content" android:id="@+id/discard" android:text="discard" android:layout_margin="3px" android:layout_gravity="bottom" android:layout_weight="1" android:layout_width="wrap_content"></Button>
-			<Button android:id="@+id/sSandE" android:text="save and exit" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="3px" android:layout_gravity="bottom" android:layout_width="wrap_content"></Button>
-
-			
 
 
-		</LinearLayout></LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+		<ImageView android:layout_height="fill_parent"
+			android:layout_weight="0" android:layout_gravity="center_horizontal"
+			android:layout_width="fill_parent" android:background="@drawable/banner"
+			android:id="@+id/Banner"></ImageView>
+		<TableLayout android:id="@+id/TableLayout01"
+			android:layout_height="wrap_content" android:orientation="vertical"
+			android:weightSum="2" android:layout_width="fill_parent">
+
+			<TableRow android:id="@+id/TableRow05" android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<ImageButton android:src="@drawable/rec" android:id="@+id/Record"
+					android:layout_height="wrap_content" android:layout_weight="0"
+					android:layout_width="wrap_content" android:layout_gravity="right"></ImageButton>
+				<Button android:id="@+id/test_gesture" android:text="Test Gesture"
+					android:layout_width="fill_parent" android:layout_height="fill_parent"
+					android:layout_weight="0" android:enabled="false"></Button>
+			</TableRow>
+
+
+			<TableRow android:id="@+id/TableRow01"
+				android:layout_height="wrap_content" android:layout_marginLeft="20px"
+				android:layout_marginRight="20px" android:layout_width="wrap_content"
+				android:layout_weight="0"></TableRow>
+			<TableRow android:id="@+id/TableRow04" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:layout_marginLeft="30px"
+				android:layout_marginRight="30px">
+				<ImageButton android:id="@+id/pick" android:src="@drawable/pick_app"
+					android:layout_weight="0" android:layout_width="wrap_content"
+					android:layout_gravity="left|center_vertical"
+					android:layout_height="wrap_content" android:padding="5px"></ImageButton>
+				<Button android:id="@+id/launch_now" android:layout_height="wrap_content"
+					android:text="launch it" android:layout_weight="0"
+					android:layout_width="fill_parent" android:textStyle="bold"
+					android:layout_gravity="center_vertical"></Button>
+
+			</TableRow>
+			<Spinner android:id="@+id/activity_spinner"
+				android:layout_height="wrap_content" android:layout_weight="0"
+				android:layout_width="fill_parent" android:layout_marginLeft="30px"
+				android:layout_marginRight="30px"></Spinner>
+			<TableRow android:id="@+id/TableRow03" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:layout_marginLeft="20px"
+				android:layout_marginRight="20px">
+				<ImageButton android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:maxHeight="50px"
+					android:maxWidth="50px" android:src="@drawable/gest_anim"
+					android:id="@+id/anim"></ImageButton>
+				<LinearLayout android:id="@+id/LinearLayout01"
+					android:layout_height="wrap_content" android:orientation="vertical"
+					android:layout_width="fill_parent" android:layout_weight="1">
+					<EditText android:layout_height="wrap_content"
+						android:layout_width="fill_parent" android:layout_weight="1"
+						android:layout_margin="3px" android:id="@+id/NameInput"
+						android:hint="name of gesture"></EditText>
+					<Button android:layout_height="wrap_content" android:text="from app"
+						android:id="@+id/from_app" android:layout_width="fill_parent"
+						android:padding="0px"></Button>
+				</LinearLayout>
+			</TableRow>
+		</TableLayout>
+		<LinearLayout android:id="@+id/LinearLayout02"
+			android:layout_width="fill_parent" android:orientation="horizontal"
+			android:layout_weight="0" android:layout_height="fill_parent"
+			android:layout_gravity="bottom|center_horizontal"
+			android:layout_marginLeft="30px" android:layout_marginRight="35px">
+			<Button android:layout_height="wrap_content" android:id="@+id/discard"
+				android:text="discard" android:layout_margin="3px"
+				android:layout_gravity="bottom" android:layout_weight="1"
+				android:layout_width="wrap_content"></Button>
+			<Button android:id="@+id/sSandE" android:text="save and exit"
+				android:layout_height="wrap_content" android:layout_weight="1"
+				android:layout_margin="3px" android:layout_gravity="bottom"
+				android:layout_width="wrap_content"></Button>
+
+
+
+
+		</LinearLayout>
+	</LinearLayout>
 </ScrollView>
