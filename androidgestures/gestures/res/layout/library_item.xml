@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_height="wrap_content"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_margin="3px"
+	android:id="@+id/item_layout" android:minHeight="60px">
+	<TextView android:layout_width="fill_parent" android:id="@+id/gesture_name"
+		android:text="123"
+		android:layout_height="wrap_content" ></TextView>
+	<TextView android:layout_width="fill_parent" android:id="@+id/modified_date"
+		android:text="0"
+		android:layout_height="wrap_content" android:layout_below="@+id/gesture_name"></TextView>
+	
+</RelativeLayout>
