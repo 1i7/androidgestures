@@ -192,7 +192,6 @@ public class MotionEditor extends Activity {
 					activityValues));
 		}
 	}
-
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		
@@ -216,7 +215,6 @@ public class MotionEditor extends Activity {
 						.getParcelableExtra(Recorder.RESULT_CONTENT_VALUES_NAME);
 				motionValues.putAll(v);
 				testGesture.setEnabled(true);
-
 			}
 		if (requestCode == PICK_APP_REQUEST_CODE) {
 			if (resultCode == 1) {
@@ -246,9 +244,8 @@ public class MotionEditor extends Activity {
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-
-	
 	private void initElements(){
+		
 		//animation
 		/*ImageView anim = (ImageView) findViewById(R.id.anim);
 		RotateAnimation rotation = new RotateAnimation(-15,15,30,45);
@@ -457,7 +454,6 @@ public class MotionEditor extends Activity {
 
 
 	}
-
 	static final int DIALOG_YES_NO_MESSAGE = 999;
 	//delete or no dialog
 	protected Dialog onCreateDialog(int id) {
@@ -495,7 +491,6 @@ public class MotionEditor extends Activity {
 		}
 		return null;
 	}
-
 	@Override
 	protected void onResume() {
 		con=new ServiceConnection(){
@@ -553,7 +548,6 @@ public class MotionEditor extends Activity {
 		} catch (NameNotFoundException e) {
 		}
 	}
-
 	private void makeSpinner() {
 		PackageManager pm = getPackageManager();
 		try {
@@ -565,6 +559,7 @@ public class MotionEditor extends Activity {
 			sortActivs();
 			spinner.setAdapter(new MySpinnerAdapter(activs));
 			spinner.setEnabled(true);
+			
 			spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 				public void onItemSelected(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
@@ -580,7 +575,6 @@ public class MotionEditor extends Activity {
 			//hence activity doesn't exist
 		}
 	}
-
 	public class MySpinnerAdapter implements SpinnerAdapter {
 		ActivityInfo[] currentAppActivities;
 		PackageManager pm = getPackageManager();
