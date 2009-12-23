@@ -9,6 +9,7 @@ import android.util.Log;
 public class MotionHandlerHelper extends BroadcastReceiver {
 	Context mContext;
 	boolean lastState;
+
 	public MotionHandlerHelper(Context context) {
 		mContext = context;
 		IntentFilter intentFilter = new IntentFilter();
@@ -20,9 +21,9 @@ public class MotionHandlerHelper extends BroadcastReceiver {
 	}
 	public void switchService(){
 		if(lastState)
-			turnOn();
-		else
 			turnOff();
+		else
+			turnOn();
 	}
 	public void turnOn(){
 		mContext.sendBroadcast(
@@ -46,6 +47,7 @@ public class MotionHandlerHelper extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
 		if(action.equals(MotionHandler.ACTION_SERVICE_STATE)){
+			Log.i("mhh","state received");
 			lastState = intent.getBooleanExtra(MotionHandler.STATE_IN_EXTRAS, false);
 			OnStateReceived(lastState);
 		}
@@ -53,7 +55,7 @@ public class MotionHandlerHelper extends BroadcastReceiver {
 			long id =intent.getLongExtra(MotionHandler.GESTUIRE_ID_IN_EXTRAS, -1);
 			OnGestureRegistered(id);
 		}
-		Log.i("mhh","call receibve");
+		Log.i("mhh",action);
 	}
 	public void OnStateReceived(boolean isEnabled){
 	}
