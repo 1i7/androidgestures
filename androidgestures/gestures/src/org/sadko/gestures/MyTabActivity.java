@@ -1,9 +1,9 @@
 package org.sadko.gestures;
 
 
-
 import android.app.TabActivity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.TabHost;
 
@@ -16,10 +16,10 @@ public class MyTabActivity extends TabActivity {
 		//setContentView(R.layout.menu);
 
 		final TabHost tabHost = getTabHost();
-		
 		//LayoutInflater.from(this).inflate(R.layout.arg, tabHost.getTabContentView(), true);
 		tabHost.setMeasureAllChildren(true);
 		
+		tabHost.setBackgroundResource(R.drawable.background_menu);
         tabHost.addTab(tabHost.newTabSpec("tab1")
                 .setIndicator(getString(R.string.main_screen_label))
                 .setContent(new Intent(this, Manager.class)));
