@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,8 +95,9 @@ public class GesturesListActivity extends ListActivity{
 				mDate.setTime(date);
 				dateTextView.setText(mDate.toLocaleString());
 			}
-			
+			dateTextView.setTextColor(Color.BLACK);
 			name.setTextSize(20);
+			name.setTextColor(Color.BLACK);
 			name.setText(cursor.getString(cursor.getColumnIndex(MotionColumns.NAME)));
 		}
 		@Override
