@@ -49,6 +49,16 @@ android:label="Gestures"><intent-filter><category android:name="android.intent.c
 android:label="Gestures lib"></activity>
 <activity android:name="TestGestureActivity"
 android:label="Gesture Tester"></activity>
+    <receiver android:enabled="true"
+              android:exported="true"
+             
+              android:label="string resource"
+              android:name="MotionHandlerBroadcastReceiver"><intent-filter><action android:name="get_handler_state"></action>
+<action android:name="turn_handler_on"></action>
+<action android:name="turn_handler_off"></action>
+</intent-filter>
+</receiver>
+   
 </application>
 
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
