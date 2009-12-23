@@ -28,8 +28,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -45,9 +47,10 @@ public class Manager extends Activity {
 	private static final int ADD_NEW_ID = 0;
 	private static final int EXIT_ID = 1;
 	private static final int ABOUT_ID = 2;
+	public static boolean isServiceStarted = false;
 	ImageButton startMyService;
 	TextView serviceState;
-	MotionHandlerHelper mMotionHandlerHelper;
+	static MotionHandlerHelper mMotionHandlerHelper;
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ADD_NEW_ID, 0, "Add new").setIcon(android.R.drawable.ic_menu_add);
@@ -121,15 +124,26 @@ public class Manager extends Activity {
 		 * .getBoolean("process")?"stop":"start");
 		 */
 
-		
 		startMyService.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				switchBanner();
 				switchService();
 			}
+
+			
 		});
 
 	}
-
+		private void switchBanner() {
+			// TODO Auto-generated method stub
+			if (isServiceStarted){
+				isServiceStarted = false;
+				startMyService.setBackgroundResource(R.drawable.banner_up);
+			} else {
+				isServiceStarted = true;
+				startMyService.setBackgroundResource(R.drawable.banner_down);
+			}
+		}
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -251,7 +265,7 @@ public class Manager extends Activity {
 
 	}*/
 
-	void switchService() {
+	public static void switchService() {
 		// try {
 		mMotionHandlerHelper.switchService();// transact(ListnerBinder.SWITCH_CODE, null, null, 0);
 		// } catch (RemoteException e) {}
