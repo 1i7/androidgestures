@@ -20,28 +20,26 @@
 package org.sadko.gestures;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-//import org.openintents.hardware.SensorManagerSimulator;
-//import org.openintents.provider.Hardware;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
-//import android.util.Log;
+import android.util.Log;
+import android.widget.RemoteViews;
 
 public abstract class MotionHandler extends Service implements SensorListener{
 	public static final int START_STOP=359;
-	public static final String ACTION_GESTURE_REGISTERED = "gesture registered";
-	public static final String ACTION_SERVICE_STATE = "gestures handler state";
+	public static final String ACTION_GESTURE_REGISTERED = "gesture.registered";
+	public static final String ACTION_SERVICE_STATE = "gestures.handler.state";
 	public static final String STATE_IN_EXTRAS = "state";
 	public static final String GESTUIRE_ID_IN_EXTRAS = "gesture";
 	protected List<Motion> motions;
@@ -50,6 +48,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	public void addMotion(Motion motion){
 		motions.add(motion);
 		//Log.i("motion","added!");
+		//android.content.Intent.
 	}
 	
 	public void onAccuracyChanged(int arg0, int arg1) {
@@ -78,6 +77,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	}
 	@Override
 	public IBinder onBind(Intent arg0) {
+		Log.i("service", "on bind");
 		if(listners.isEmpty()){
 			//Hardware.mContentResolver=getContentResolver();
 			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
@@ -94,6 +94,33 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
+		IntentFilter iFilter = new IntentFilter();
+
+		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_GET_STATE);
+		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_OFF);
+		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_ON);
+		registerReceiver(new MotionHandlerBroadcastReceiver(this), iFilter);
+		throwStateBroadcast();
+		mgr = (SensorManager)getSystemService(SENSOR_SERVICE);
+		//if(isEnabled)
+			//mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+		Log.i("service", "started");
+		displayWidget();
+		
+	}
+
+	private void displayWidget() {
+		RemoteViews updateViews = new RemoteViews(getPackageName(), R.layout.widget);
+		
+		Intent defineIntent = new Intent(isEnabled ?
+				MotionHandlerBroadcastReceiver.ACTION_TURN_OFF :
+			MotionHandlerBroadcastReceiver.ACTION_TURN_ON);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, defineIntent, 0);
+		updateViews.setOnClickPendingIntent(R.id.widget, pendingIntent);
+		updateViews.setOnClickPendingIntent(R., pendingIntent)
+		ComponentName thisWidget = new ComponentName(this, SwitchWidget.class);
+		AppWidgetManager manager = AppWidgetManager.getInstance(this);
+		manager.updateAppWidget(thisWidget, updateViews);
 		
 	}
 
@@ -157,12 +184,14 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	}
 
 	public void throwStateBroadcast() {
+		Log.i("1", "4");
 		Intent intent = new Intent(ACTION_SERVICE_STATE);
 		intent.putExtra(STATE_IN_EXTRAS, isEnabled);
 		sendBroadcast(intent);
 	}
 
 	public void turnOn() {
+		Log.i("1", "2");
 		if (!isEnabled){
 			switchMe();
 		}
@@ -170,6 +199,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	}
 
 	public void turnOff() {
+		Log.i("1", "3");
 		if (isEnabled){
 			switchMe();
 		}
