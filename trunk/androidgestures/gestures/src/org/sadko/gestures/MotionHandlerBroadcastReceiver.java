@@ -1,19 +1,34 @@
 package org.sadko.gestures;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.util.Log;
 
 public class MotionHandlerBroadcastReceiver extends BroadcastReceiver {
-	public static final String ACTION_GET_STATE = "get_handler_state";
-	public static final String ACTION_TURN_ON = "turn_handler_on";
-	public static final String ACTION_TURN_OFF = "turn_handler_off";
+	public static final String ACTION_GET_STATE = "get.handler.state";
+	public static final String ACTION_TURN_ON = "turn.handler.on";
+	public static final String ACTION_TURN_OFF = "turn.handler.off";
+	MotionHandler myContainer;
+	public MotionHandlerBroadcastReceiver(MotionHandler motionHandler) {
+		myContainer = motionHandler;
+	}
 	Intent getMotionHandlerIntent(Context c){
 		return new Intent(c,MotionHandler1.class);
 	}
+	ListnerBinder binder;
 	ListnerBinder getHandlerBinder(Context context){
-		return (ListnerBinder) peekService(context, getMotionHandlerIntent(context));
+		
+		ListnerBinder result = (ListnerBinder) peekService(context, getMotionHandlerIntent(context));
+		if (result == null){
+			context.startService(getMotionHandlerIntent(context));
+			result = (ListnerBinder) peekService(context, getMotionHandlerIntent(context));
+		}
+		return result;
+		
 	}
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -21,22 +36,14 @@ public class MotionHandlerBroadcastReceiver extends BroadcastReceiver {
 		
 		Log.i("action received", "ura!");
 		if(action.equals(ACTION_GET_STATE)){
-			ListnerBinder binder = getHandlerBinder(context);
-			if(binder == null)
-				return;
-			binder.mh.throwStateBroadcast();
+			myContainer.throwStateBroadcast();
 		}
 		if(action.equals(ACTION_TURN_ON)){
 			ListnerBinder binder = getHandlerBinder(context);
-			if(binder == null)
-				return;
-			binder.mh.turnOn();
+			myContainer.turnOn();
 		}	
 		if(action.equals(ACTION_TURN_OFF)){
-			ListnerBinder binder = getHandlerBinder(context);
-			if(binder == null)
-				return;
-			binder.mh.turnOff();
+			myContainer.turnOff();
 		}
 	}
 
