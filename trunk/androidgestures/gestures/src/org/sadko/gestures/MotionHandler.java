@@ -115,9 +115,8 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		Intent defineIntent = new Intent(isEnabled ?
 				MotionHandlerBroadcastReceiver.ACTION_TURN_OFF :
 			MotionHandlerBroadcastReceiver.ACTION_TURN_ON);
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, defineIntent, 0);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, defineIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		updateViews.setOnClickPendingIntent(R.id.widget, pendingIntent);
-		updateViews.setOnClickPendingIntent(R., pendingIntent)
 		ComponentName thisWidget = new ComponentName(this, SwitchWidget.class);
 		AppWidgetManager manager = AppWidgetManager.getInstance(this);
 		manager.updateAppWidget(thisWidget, updateViews);
@@ -178,6 +177,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			showNotification();
 		}
 		isEnabled= !isEnabled;
+		displayWidget();
 		throwStateBroadcast();
 		// TODO Auto-generated method stub
 		

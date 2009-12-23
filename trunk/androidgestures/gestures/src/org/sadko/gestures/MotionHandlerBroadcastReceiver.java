@@ -38,6 +38,7 @@ public class MotionHandlerBroadcastReceiver extends BroadcastReceiver {
 		if(action.equals(ACTION_GET_STATE)){
 			myContainer.throwStateBroadcast();
 		}
+		
 		if(action.equals(ACTION_TURN_ON)){
 			ListnerBinder binder = getHandlerBinder(context);
 			myContainer.turnOn();
