@@ -87,7 +87,7 @@ public class MotionEditor extends Activity {
 	long taskId;
 	Button launch;
 	String appActivity;
-
+	ImageView banner;
 
 	// Drawable appIcon;
 	String appName;
@@ -370,6 +370,16 @@ public class MotionEditor extends Activity {
 
 		
 	}
+	private void switchBanner() {
+		// TODO Auto-generated method stub
+		if (Manager.isServiceStarted){
+			Manager.isServiceStarted = false;
+			banner.setBackgroundResource(R.drawable.banner_up);
+		} else {
+			Manager.isServiceStarted = true;
+			banner.setBackgroundResource(R.drawable.banner_down);
+		}
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -378,6 +388,22 @@ public class MotionEditor extends Activity {
 		action = getIntent().getAction();
 		//if(action)
 		//GET ALL LAUNCHERS
+		banner = (ImageView)findViewById(R.id.Banner);
+		if (Manager.isServiceStarted){
+			banner.setBackgroundResource(R.drawable.banner_down);
+		} else {
+			banner.setBackgroundResource(R.drawable.banner_up);
+		}
+		banner.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Manager.switchService();
+				switchBanner();
+			}
+			
+		});
 		Intent intent = new Intent(Intent.ACTION_MAIN, null);
 		intent.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
 		Iterator<ResolveInfo> launchersList= getPackageManager().queryIntentActivities(intent, 0).iterator();
