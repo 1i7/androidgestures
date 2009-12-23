@@ -24,6 +24,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -94,6 +96,8 @@ public class Manager extends Activity {
 
 		setContentView(R.layout.main);
 		super.onCreate(savedInstanceState);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.LinearLayout01);
+		layout.setBackgroundColor(Color.TRANSPARENT);
 		startMyService = (ImageButton) findViewById(R.id.start_stop_service);
 		startService(new Intent(this, MotionHandler1.class));
 		//startMyService.setEnabled(false);
