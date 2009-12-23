@@ -77,7 +77,7 @@ public class TestGestureActivity extends Activity {
 	@Override
 	protected void onPause() {
 		if(needOff)lb.mh.switchMe();
-		lb.mh.deleteListener(lb.ms);
+		//lb.mh.deleteListener(lb.ms);
 		unbindService(con);
 		if(needDelete)
 				getContentResolver().delete(ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI, motionId), null, null);

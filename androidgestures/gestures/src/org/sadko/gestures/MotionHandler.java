@@ -30,6 +30,8 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
@@ -38,6 +40,10 @@ import android.os.IBinder;
 
 public abstract class MotionHandler extends Service implements SensorListener{
 	public static final int START_STOP=359;
+	public static final String ACTION_GESTURE_REGISTERED = "gesture registered";
+	public static final String ACTION_SERVICE_STATE = "gestures handler state";
+	public static final String STATE_IN_EXTRAS = "state";
+	public static final String GESTUIRE_ID_IN_EXTRAS = "gesture";
 	protected List<Motion> motions;
 	boolean isEnabled=false;
 	SensorManager mgr;
@@ -59,9 +65,9 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		//Log.w("service dead",this+"");
 		super.onDestroy();
 	}
-	public void deleteListener(MotionListener ms){
+	/*public void deleteListener(MotionListener ms){
 		listners.remove(ms);
-	}
+	}*/
 	protected List<ListnerBinder> listners=new ArrayList<ListnerBinder>();
 	
 	MotionHandler(){
@@ -72,44 +78,30 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	}
 	@Override
 	public IBinder onBind(Intent arg0) {
-		//Log.i("serv","binding");
-/*		if(arg0.getAction()!=null && arg0.getAction().equals("CONTROL")) return new Binder(){
-
-			@Override
-			protected boolean onTransact(int code, Parcel data, Parcel reply,
-					int flags) throws RemoteException {
-				isEnabled=!isEnabled;
-				Log.i("binder","here!");
-				return super.onTransact(code, data, reply, flags);
-			}};*/
-		//Log.i("searvice", "i am bound "+this);
 		if(listners.isEmpty()){
 			//Hardware.mContentResolver=getContentResolver();
 			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
 			//SensorManagerSimulator.connectSimulator();
-			mgr=(SensorManager)getSystemService(SENSOR_SERVICE);
+			mgr = (SensorManager)getSystemService(SENSOR_SERVICE);
 			if(isEnabled)
-			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+				mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		}
 		ListnerBinder lb=new ListnerBinder();
 		lb.mh=this;
-		listners.add(lb);
+		//listners.add(lb);
 		return lb;
 	}
 	@Override
 	public void onStart(Intent intent, int startId) {
-		//Log.i("searvice", "i am started "+this);
 		super.onStart(intent, startId);
+		
 	}
 
 	protected void notifyListeners(int motion){
-		Iterator<ListnerBinder> iter=listners.iterator();
-		//Log.i("Listeners", listners.size()+"");
-		while(iter.hasNext()){
-			ListnerBinder lb=iter.next();
-			if(lb.ms!=null) lb.ms.onMotionRecieved(motion);// else Log.i("ms", "is null");
-			
-		}
+		
+		Intent intent = new Intent(ACTION_GESTURE_REGISTERED);
+		intent.putExtra(GESTUIRE_ID_IN_EXTRAS, motion);
+		sendBroadcast( new Intent(ACTION_GESTURE_REGISTERED));
 	}
 	public static double[][] math(double yaw2, double pitch2, double roll2, double yaw,
     		double pitch, double roll ){
@@ -159,7 +151,28 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			showNotification();
 		}
 		isEnabled= !isEnabled;
+		throwStateBroadcast();
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void throwStateBroadcast() {
+		Intent intent = new Intent(ACTION_SERVICE_STATE);
+		intent.putExtra(STATE_IN_EXTRAS, isEnabled);
+		sendBroadcast(intent);
+	}
+
+	public void turnOn() {
+		if (!isEnabled){
+			switchMe();
+		}
+		
+	}
+
+	public void turnOff() {
+		if (isEnabled){
+			switchMe();
+		}
+	}
 }
+
