@@ -29,7 +29,7 @@ implied.
 
 	
 	
-<ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/banner" android:layout_gravity="center_horizontal" android:id="@+id/start_stop_service"></ImageButton><RelativeLayout android:id="@+id/RelativeLayout01"
+<ImageButton android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:id="@+id/start_stop_service" android:background="@drawable/banner_up" android:layout_width="fill_parent"></ImageButton><RelativeLayout android:id="@+id/RelativeLayout01"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content">
 	<TextView android:layout_width="fill_parent"
@@ -37,12 +37,11 @@ implied.
 		style="?android:attr/listSeparatorTextViewStyle"
 		android:text="Gestures service control" android:id="@+id/control_area"
 		android:layout_margin="3px"/>
-	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+	<TextView android:layout_height="wrap_content"
 		android:text="Gestures Service is running"
 		android:id="@+id/text_about_service_state"
 		android:layout_below="@+id/control_area"
-		android:layout_margin="3px"></TextView>
+		android:layout_margin="3px" android:layout_width="fill_parent"></TextView>
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="Gestures service listens to your phone movements and launches specified application, if recognized action matches the gesture recorded earlier by you."
