@@ -138,7 +138,7 @@ public class MotionEditor extends Activity {
 				saveGesture();
 		}
 		if(needOn)lb.mh.switchMe();
-		lb.mh.deleteListener(lb.ms);
+		//lb.mh.deleteListener(lb.ms);
 		unbindService(con);
 
 	}
@@ -569,6 +569,7 @@ public class MotionEditor extends Activity {
 					//do nothing
 				}
 			});
+			
 			//when activity list is ready we can launch
 			launch.setEnabled(true);
 		} catch (NameNotFoundException e) {

@@ -209,7 +209,7 @@ public class Recorder extends Activity {
 	protected void onPause() {
 		super.onPause();
 		if(needOn)lb.mh.switchMe();
-		lb.mh.deleteListener(lb.ms);
+		//lb.mh.deleteListener(lb.ms);
 		unbindService(con);
 
 	}

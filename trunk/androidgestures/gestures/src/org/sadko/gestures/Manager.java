@@ -47,7 +47,7 @@ public class Manager extends Activity {
 	private static final int ABOUT_ID = 2;
 	ImageButton startMyService;
 	TextView serviceState;
-
+	MotionHandlerHelper mMotionHandlerHelper;
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ADD_NEW_ID, 0, "Add new").setIcon(android.R.drawable.ic_menu_add);
@@ -89,10 +89,7 @@ public class Manager extends Activity {
 
 	SimpleCursorAdapter motions;
 	int selectedItem = -1;
-	ListnerBinder lb = null;
-	ServiceConnection con;
-
-	@Override
+		@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		setContentView(R.layout.main);
@@ -102,6 +99,19 @@ public class Manager extends Activity {
 		//startMyService.setEnabled(false);
 		//startMyService.setTextSize(20);
 		serviceState = (TextView) findViewById(R.id.text_about_service_state);
+		mMotionHandlerHelper = new MotionHandlerHelper(this){
+			@Override
+			public void OnGestureRegistered(long id) {
+
+			}
+
+			@Override
+			public void OnStateReceived(boolean isEnabled) {
+			}
+			
+		
+		};
+
 		/*
 		 * if(savedInstanceState!=null &&
 		 * savedInstanceState.containsKey("process"))
@@ -113,37 +123,20 @@ public class Manager extends Activity {
 		startMyService.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				switchService();
-				startMyService.setImageResource(isServiceEnabled() ? R.drawable.banner : R.drawable.banner);
-				serviceState.setText("Gestures service is"
-						+ (lb.mh.isEnabled ? " running" : " idle"));
-
-				/*Cursor c = getContentResolver().query(
-						MotionsDB.MOTIONS_CONTENT_URI,
-						new String[] { "count(_ID)" }, null, null, null);
-				c.moveToFirst();
-				if (lb == null || lb.mh == null)
-					return;
-				if (c.getInt(0) == 0 && lb.mh.isEnabled)
-					startMyService.setEnabled(true);
-				if (c.getInt(0) == 0 && !lb.mh.isEnabled)
-					startMyService.setEnabled(false);*/
-
 			}
-
 		});
 
 	}
 
 	@Override
 	protected void onPause() {
-
 		super.onPause();
-		//unbindService(con);
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
+		/*
 		con = new ServiceConnection() {
 			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
 				lb = (ListnerBinder) arg1;
@@ -210,7 +203,7 @@ public class Manager extends Activity {
 		};
 
 		bindService(new Intent(this, MotionHandler1.class), con, 0);
-
+		*/
 	}
 
 	@Override
@@ -234,8 +227,8 @@ public class Manager extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		// c.close();
 		super.onSaveInstanceState(outState);
-		if (lb != null)
-			outState.putBoolean("process", isServiceEnabled());
+	/*	if (lb != null)
+			outState.putBoolean("process", isServiceEnabled());*/
 		// unbindService(con);
 	}
 
@@ -246,7 +239,7 @@ public class Manager extends Activity {
 		super.onDestroy();
 	}
 
-	boolean isServiceEnabled() {
+	/*boolean isServiceEnabled() {
 		// Parcel p = Parcel.obtain();
 		// try {
 		return lb.mh.isEnabled;// .transact(ListnerBinder.GET_STATUS, null, p,
@@ -254,11 +247,11 @@ public class Manager extends Activity {
 		// } catch (RemoteException e) {}
 		// return p.readBundle().getBoolean("on/off");
 
-	}
+	}*/
 
 	void switchService() {
 		// try {
-		lb.mh.switchMe();// transact(ListnerBinder.SWITCH_CODE, null, null, 0);
+		mMotionHandlerHelper.switchService();// transact(ListnerBinder.SWITCH_CODE, null, null, 0);
 		// } catch (RemoteException e) {}
 	}
 }

@@ -30,7 +30,7 @@ import android.os.RemoteException;
 public class ListnerBinder extends Binder {
 	MotionListener ms;
 	MotionHandler mh;
-	public static final int GET_STATUS=1;
+	public static final int GET_STATUS = 1;
 	public static final int SWITCH_CODE = 0;
 	@Override
 	protected boolean onTransact(int code, Parcel data, Parcel reply,
