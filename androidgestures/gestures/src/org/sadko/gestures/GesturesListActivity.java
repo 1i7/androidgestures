@@ -1,20 +1,23 @@
 package org.sadko.gestures;
 
 
+import java.util.Date;
+
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.ContentObserver;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -31,11 +34,12 @@ public class GesturesListActivity extends ListActivity{
 	
 	private void fillListView() {
 		gesturesFromDatabase = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
-				new String[] { "_id", MotionColumns.NAME }, null, null, null);
+				new String[] { "_id", MotionColumns.NAME, MotionColumns.MODIFIED_DATE }, null, null, null);
 		startManagingCursor(gesturesFromDatabase);
 		/*gesturesFromDatabase.registerContentObserver(new ContentObserver(new Handler() {
 
 		}) {
+		
 
 			@Override
 			public void onChange(boolean selfChange) {
@@ -47,9 +51,7 @@ public class GesturesListActivity extends ListActivity{
 			}
 
 		});*/
-		final MySimpleAdapter motions = new MySimpleAdapter(this, R.layout.motions_row, gesturesFromDatabase,
-				new String[] { MotionColumns.NAME },
-				new int[] { R.id.motion_name });
+		final MySimpleAdapter motions = new MySimpleAdapter(this,gesturesFromDatabase);
 
 		lv.setAdapter(motions);
 		lv.setItemsCanFocus(false);
@@ -77,19 +79,38 @@ public class GesturesListActivity extends ListActivity{
 
 	}
 	
-	class MySimpleAdapter extends SimpleCursorAdapter {
-		public MySimpleAdapter(Context context, int layout, Cursor c,
-				String[] from, int[] to) {
-			super(context, layout, c, from, to);
+	class MySimpleAdapter extends CursorAdapter {
+		public MySimpleAdapter(Context context, Cursor c) {
+			super(context, c);
+		}
+		PackageManager mPackageManager = GesturesListActivity.this.getPackageManager();
+
+		void fillData(Cursor cursor, View view){
+			TextView name = (TextView) view.findViewById(R.id.gesture_name);
+			TextView dateTextView = (TextView) view.findViewById(R.id.modified_date);
+			Date mDate = new Date();
+			Long date = cursor.getLong(cursor.getColumnIndex(MotionColumns.MODIFIED_DATE));
+			if (date != null){
+				mDate.setTime(date);
+				dateTextView.setText(mDate.toLocaleString());
+			}
+			
+			name.setTextSize(20);
+			name.setText(cursor.getString(cursor.getColumnIndex(MotionColumns.NAME)));
 		}
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-			TextView tv = (TextView) super.getView(position, convertView,
-					parent);
-			tv.setTextSize(30);
-			tv.setPadding(0, 3, 0, 3);
-			return tv;
+		public void bindView(View arg0, Context arg1, Cursor arg2) {
+			fillData(arg2, arg0);
+			
+		}
+		@Override
+		public View newView(Context arg0, Cursor arg1, ViewGroup arg2) {
+			LayoutInflater inflater = (LayoutInflater)arg0
+			.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View result = inflater.inflate(R.layout.library_item,null);
+			fillData(arg1, result);
+			return result;
+			
 		}
 	}
 }
