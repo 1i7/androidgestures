@@ -251,7 +251,9 @@ public class Manager extends Activity {
 	@Override
 	protected void onDestroy() {
 		stopManagingCursor(c);
-		c.close();
+		if (c != null){
+			c.close();
+		}
 		super.onDestroy();
 	}
 
