@@ -34,6 +34,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -92,6 +93,7 @@ public class AppPicker extends ListActivity implements Runnable {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.picker);
+		
 		final PackageManager pm = getPackageManager();
 		
 		ListView applications = getListView();//this.getListView()
@@ -238,6 +240,7 @@ public class AppPicker extends ListActivity implements Runnable {
 			//String destinationType = (String) getItem(position);
 			TextView destinationTypeText = (TextView) groupItem
 					.findViewById(R.id.app_name);
+			destinationTypeText.setTextColor(Color.BLACK);
 			CharSequence label=groups.get(groupPosition).applicationInfo.loadLabel(pm);
 			if(label==null || label.toString().equals(""))
 				destinationTypeText.setText(groups.get(groupPosition).packageName);
