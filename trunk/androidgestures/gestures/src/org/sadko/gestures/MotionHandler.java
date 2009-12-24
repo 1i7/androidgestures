@@ -22,7 +22,7 @@ package org.sadko.gestures;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openintents.sensorsimulator.hardware.SensorManagerSimulator;
+//import org.openintents.sensorsimulator.hardware.SensorManagerSimulator;
 
 import android.app.Notification;
 import android.app.NotificationManager;

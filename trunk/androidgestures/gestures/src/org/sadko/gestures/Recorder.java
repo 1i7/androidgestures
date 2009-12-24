@@ -34,7 +34,7 @@ package org.sadko.gestures;
 //import org.openintents.hardware.SensorManagerSimulator;
 //import org.openintents.provider.Hardware;
 
-import org.openintents.sensorsimulator.hardware.SensorManagerSimulator;
+//import org.openintents.sensorsimulator.hardware.SensorManagerSimulator;
 
 import android.app.Activity;
 import android.content.ComponentName;
