@@ -41,6 +41,7 @@ import com.sadko.about.AboutActivity;
 public class Manager extends Activity {
 	ListView lv;
 	private static final int ADD_NEW_ID = 0;
+	private static final int SETTINNGS_ID = 3;
 	private static final int EXIT_ID = 1;
 	private static final int ABOUT_ID = 2;
 	public static boolean isServiceStarted = false;
@@ -52,6 +53,8 @@ public class Manager extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ADD_NEW_ID, 0, "Add new").setIcon(
 				android.R.drawable.ic_menu_add);
+		menu.add(0, SETTINNGS_ID, 0, "Settings").setIcon(
+				android.R.drawable.ic_menu_set_as);
 		menu.add(0, ABOUT_ID, 0, "About").setIcon(
 				android.R.drawable.ic_menu_info_details);
 		menu.add(0, EXIT_ID, 0, "Exit").setIcon(
@@ -64,6 +67,12 @@ public class Manager extends Activity {
 		switch (item.getItemId()) {
 		case ADD_NEW_ID: {
 			Intent i = new Intent(Manager.this, MotionEditor.class);
+			i.setAction(android.content.Intent.ACTION_MAIN);
+			startActivity(i);
+			break;
+		}
+		case SETTINNGS_ID: {
+			Intent i = new Intent(Manager.this, SettingsActivity.class);
 			i.setAction(android.content.Intent.ACTION_MAIN);
 			startActivity(i);
 			break;
