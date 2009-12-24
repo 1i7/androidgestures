@@ -20,6 +20,8 @@ h  * Copyright (C) 2007 The Android Open Source Project
 package org.sadko.gestures;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProvider;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -64,6 +66,7 @@ public class Manager extends Activity {
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		
 		switch (item.getItemId()) {
 		case ADD_NEW_ID: {
 			Intent i = new Intent(Manager.this, MotionEditor.class);
