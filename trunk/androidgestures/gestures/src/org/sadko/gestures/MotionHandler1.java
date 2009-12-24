@@ -25,18 +25,26 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.os.Handler;
+import android.util.Log;
 //import android.util.Log;
 //import android.widget.Toast;
 
 public class MotionHandler1 extends MotionHandler {
 	SharedPreferences settings;
-	public static final String preferencesString = "Gestures.preferences";
+	//public static final long MAX_TIME = 2000;
+	public static final String PREFERENCE_STRING = "Gestures.preferences";
 	public static final String MOTION_SENSITIVITY_STRING = "Gestures.motion.sensitivity";
-	public static final String TIME_INTERVAL_STRING = "Gestures.time.interval"; 
-	long needTime = 0;
+	public static final String TIME_INTERVAL_STRING = "Gestures.time.interval";
+	public static final String PERIOD_STRING = "Gestures.time.period";
+	public static final float MAX_SENSITIVITY = 2;
+	public static final float MAX_PERIOD = 500;
 	public static float MOTION_SENSITIVITY = 0.1f;
+	public static float PERIOD = 100;
+	long needTime = 0;
 	long oldestTime = 0;
 	public static long timeBetweenRegistering = 1400;
 	int ARRAY_SIZE = 10;
@@ -65,18 +73,109 @@ public class MotionHandler1 extends MotionHandler {
 		pitchs = new double[ARRAY_SIZE];
 		times = new long[ARRAY_SIZE];
 	}
-	public void onAccuracyChanged(int sensor, int accuracy) {
+
+
+	@Override
+	public void onCreate() {
+		settings = getSharedPreferences(PREFERENCE_STRING, 0);
+		loadPreferences();
+		c = getContentResolver().query(
+				MotionsDB.MOTIONS_CONTENT_URI,
+				new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
+						"A21", "A22", "time", "_id" },
+				null, null, null);
+		
+		while (c.getCount()!=0 && !c.isLast()) {
+			c.moveToNext();
+			Motion motion = new Motion();
+			for (int i = 0; i < 3; i++)
+				for (int j = 0; j < 3; j++)
+					motion.matrix[i][j] = c.getFloat(c.getColumnIndex("A"+i+""+j));
+			motion.time = c.getLong(c.getColumnIndex(MotionColumns.TIME));
+			motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
+			addMotion(motion);
+		}
+		getContentResolver().registerContentObserver(MotionsDB.MOTIONS_CONTENT_URI, true, new ContentObserver(new Handler(){	
+		}){
+	        @Override 
+	        public boolean deliverSelfNotifications() { 
+	            return true; 
+	        }
+			@Override
+			public void onChange(boolean selfChange) {
+				c.requery();
+				if(isEnabled)
+					mgr.unregisterListener(MotionHandler1.this);
+				deleteAllMotions();
+				c.moveToFirst();
+				while (!c.isAfterLast()) {		
+					Motion motion = new Motion();
+					for (int i = 0; i < 3; i++)
+						for (int j = 0; j < 3; j++)
+							motion.matrix[i][j] = c.getFloat(c.getColumnIndex("A"+i+""+j));
+					motion.time = c.getLong(c.getColumnIndex(MotionColumns.TIME));
+					motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
+					addMotion(motion);
+					c.moveToNext();
+				}
+				if(isEnabled)
+					mgr.registerListener(MotionHandler1.this, 
+							mgr.getSensorList(Sensor.TYPE_ORIENTATION).get(0), 
+							SensorManager.SENSOR_DELAY_UI);
+				super.onChange(selfChange);
+			}
+			
+		});
+			super.onCreate();
 	}
 
 
-
-	public void onSensorChanged(int sensor, float[] values) {
-
+	boolean isOnSharedPreferencesRegistered = false;
+	private void loadPreferences(){
+		if(! isOnSharedPreferencesRegistered)
+			settings.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
+				@Override
+				public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+						String key) {
+					Log.i("key", key +"!");
+					if (key.equals(MOTION_SENSITIVITY_STRING) && key.equals(TIME_INTERVAL_STRING))
+						MotionHandler1.this.loadPreferences();
+				
+				}
+			});
+		isOnSharedPreferencesRegistered = true;
+		MOTION_SENSITIVITY = settings.getFloat(MOTION_SENSITIVITY_STRING, 0.1f);
+		timeBetweenRegistering = settings.getLong(TIME_INTERVAL_STRING, 1000);
+		Log.i("preferences", "SENSITIVITY = " + MOTION_SENSITIVITY);
+	}
+	private void savePreferences(){
+		settings.edit().putFloat(MOTION_SENSITIVITY_STRING, (float) MOTION_SENSITIVITY)
+		.putLong(TIME_INTERVAL_STRING, timeBetweenRegistering).commit();
+	}
+	public void changeSensitivity(float d) {
+		MOTION_SENSITIVITY = d;
+		savePreferences();
+	}
+	public void changePeriod(long d) {
+		PERIOD = d;
+		savePreferences();
+	}
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+		
+	}
+	long lastAcceptedTime = System.currentTimeMillis();
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		if (event.timestamp / 1000 - lastAcceptedTime < PERIOD)
+			return;
+		lastAcceptedTime = event.timestamp;
 		boolean checkMotion[] = new boolean[motions.size()];
 		times[position] = System.currentTimeMillis();
-		yaws[position] = values[0] * Math.PI / 180;
-		pitchs[position] = values[1] * Math.PI / 180;
-		rolls[position] = values[2] * Math.PI / 180;
+		yaws[position] = event.values[0] * Math.PI / 180;
+		pitchs[position] = event.values[1] * Math.PI / 180;
+		rolls[position] = event.values[2] * Math.PI / 180;
 		int i = position;
 		boolean detected = false;
 		while (!detected && i != (position + 1) % ARRAY_SIZE) {
@@ -94,11 +193,11 @@ public class MotionHandler1 extends MotionHandler {
 							ss += (matrix[k][l] - m.matrix[k][l])
 									* (matrix[k][l] - m.matrix[k][l]);
 					if (ss < MOTION_SENSITIVITY
-							&& System.currentTimeMillis() - lastRegisterTime > timeBetweenRegistering
+							&& lastAcceptedTime - lastRegisterTime > timeBetweenRegistering
 							) {
 						notifyListeners((int) m.id);
 						//Toast.makeText(MotionHandler1.this, "motion!", 500).show();
-						lastRegisterTime = System.currentTimeMillis();
+						lastRegisterTime = lastAcceptedTime;
 						detected = true;
 					}
 				}
@@ -106,132 +205,6 @@ public class MotionHandler1 extends MotionHandler {
 			}
 			i = (i - 1 + ARRAY_SIZE) % ARRAY_SIZE;
 		}
-		position = (position + 1) % ARRAY_SIZE;
+		position = (position + 1) % ARRAY_SIZE;	
 	}
-
-	@Override
-	public void onCreate() {
-		settings = getSharedPreferences(preferencesString, 0);
-		c = getContentResolver().query(
-				MotionsDB.MOTIONS_CONTENT_URI,
-				new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
-						"A21", "A22", "time", "_id" },
-				null, null, null);
-		
-		while (c.getCount()!=0 && !c.isLast()) {
-			
-			c.moveToNext();
-			Motion motion = new Motion();
-			for (int i = 0; i < 3; i++)
-				for (int j = 0; j < 3; j++)
-					motion.matrix[i][j] = c.getFloat(c.getColumnIndex("A"+i+""+j));
-			motion.time = c.getLong(c.getColumnIndex(MotionColumns.TIME));
-			motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
-			addMotion(motion);
-		}
-		getContentResolver().registerContentObserver(MotionsDB.MOTIONS_CONTENT_URI, true, new ContentObserver(new Handler(){
-			
-		}){
-	        @Override 
-	        public boolean deliverSelfNotifications() { 
-	            return true; 
-	        }
-			@Override
-			public void onChange(boolean selfChange) {
-				/*Cursor c = getContentResolver().query(
-						MotionsDB.MOTIONS_CONTENT_URI,
-						new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
-								"A21", "A22", "time", "_id" },
-						null, null, null);*/
-				//Log.i("i am called","ugu!!");
-				c.requery();
-				if(isEnabled)mgr.unregisterListener(MotionHandler1.this);
-				deleteAllMotions();
-				c.moveToFirst();
-				while (!c.isAfterLast()) {
-					
-					Motion motion = new Motion();
-					for (int i = 0; i < 3; i++)
-						for (int j = 0; j < 3; j++)
-							motion.matrix[i][j] = c.getFloat(c.getColumnIndex("A"+i+""+j));
-					motion.time = c.getLong(c.getColumnIndex(MotionColumns.TIME));
-					motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
-					//Log.i("motion",motion.time+" "+motion.matrix[0][0]);
-					addMotion(motion);
-					c.moveToNext();
-				}
-				if(isEnabled)mgr.registerListener(MotionHandler1.this,SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
-				super.onChange(selfChange);
-			}
-			
-		});
-		/*c.registerContentObserver(new ContentObserver(new Handler(){
-			
-		}){
-
-			@Override
-			public void onChange(boolean selfChange) {
-				/*Cursor c = getContentResolver().query(
-						MotionsDB.MOTIONS_CONTENT_URI,
-						new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
-								"A21", "A22", "time", "_id" },
-						null, null, null);
-				Log.i("i am called","ugu!!");
-				if(isEnabled)mgr.unregisterListener(MotionHandler1.this);
-				deleteAllMotions();
-				while (!c.isLast()) {
-					c.moveToNext();
-					Motion motion = new Motion();
-					for (int i = 0; i < 3; i++)
-						for (int j = 0; j < 3; j++)
-							motion.matrix[i][j] = c.getFloat(c.getColumnIndex("A"+i+""+j));
-					motion.time = c.getLong(c.getColumnIndex(MotionColumns.TIME));
-					motion.id = c.getLong(c.getColumnIndex(MotionColumns._ID));
-					addMotion(motion);
-				}
-				if(isEnabled)mgr.registerListener(MotionHandler1.this,SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
-				super.onChange(selfChange);
-			}
-			
-		});*/
-		//showNotification();
-
-		super.onCreate();
-	}
-
-	@Override
-	public void switchMe() {
-		super.switchMe();
-		
-	}
-	boolean isOnSharedPreferencesRegistered = false;
-	private void loadPreferences(){
-		if(! isOnSharedPreferencesRegistered)
-			settings.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
-				@Override
-				public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-						String key) {
-					if (key.equals(MOTION_SENSITIVITY_STRING) && key.equals(TIME_INTERVAL_STRING))
-						MotionHandler1.this.loadPreferences();
-				
-				}
-			});
-		isOnSharedPreferencesRegistered = true;
-		MOTION_SENSITIVITY = settings.getFloat(MOTION_SENSITIVITY_STRING, 0.1f);
-		timeBetweenRegistering = settings.getLong(TIME_INTERVAL_STRING, 1000);
-	}
-	private void savePreferences(){
-		settings.edit().putFloat(MOTION_SENSITIVITY_STRING, (float) MOTION_SENSITIVITY)
-		.putLong(TIME_INTERVAL_STRING, timeBetweenRegistering).commit();
-	}
-	public void changeSensitivity(float d) {
-		MOTION_SENSITIVITY = d;
-		savePreferences();
-	}
-	public void changeTimeInterval(long d) {
-		timeBetweenRegistering = d;
-		savePreferences();
-	}
-	
-
 }
