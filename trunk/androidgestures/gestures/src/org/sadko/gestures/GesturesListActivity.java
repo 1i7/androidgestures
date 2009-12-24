@@ -110,6 +110,7 @@ public class GesturesListActivity extends ListActivity{
 			LayoutInflater inflater = (LayoutInflater)arg0
 			.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View result = inflater.inflate(R.layout.library_item,null);
+			result.setBackgroundResource(R.drawable.background_lib);
 			fillData(arg1, result);
 			return result;
 			
