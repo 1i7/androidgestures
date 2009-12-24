@@ -34,6 +34,8 @@ package org.sadko.gestures;
 //import org.openintents.hardware.SensorManagerSimulator;
 //import org.openintents.provider.Hardware;
 
+import org.openintents.sensorsimulator.hardware.SensorManagerSimulator;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -196,7 +198,8 @@ public class Recorder extends Activity {
 
 			}
 		});
-		mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
+		mSensorManager = (SensorManager)getSystemService( SENSOR_SERVICE);//(SensorManager)getSystemService(SENSOR_SERVICE);
+		//mSensorManager.connectSimulator();
 		//Hardware.mContentResolver=getContentResolver();
 		//mSensorManager= new SensorManagerSimulator((SensorManager)
 		//getSystemService(SENSOR_SERVICE));
