@@ -37,6 +37,7 @@
 		</activity>
 		<activity android:name="MotionEditor" android:label="Gesture Editor"></activity>
 		<activity android:name="AppPicker" android:label="Application Picker"></activity>
+		<activity android:name="SettingsActivity" android:label="Settings"></activity>
 		<activity android:name="MyTabActivity" android:label="Gestures">
 			<intent-filter>
 				<category android:name="android.intent.category.LAUNCHER"></category>

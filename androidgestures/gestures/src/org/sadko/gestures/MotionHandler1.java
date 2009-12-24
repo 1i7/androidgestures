@@ -21,6 +21,8 @@ package org.sadko.gestures;
 
 import java.util.Iterator;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.hardware.SensorManager;
@@ -29,8 +31,12 @@ import android.os.Handler;
 //import android.widget.Toast;
 
 public class MotionHandler1 extends MotionHandler {
+	SharedPreferences settings;
+	public static final String preferencesString = "Gestures.preferences";
+	public static final String MOTION_SENSITIVITY_STRING = "Gestures.motion.sensitivity";
+	public static final String TIME_INTERVAL_STRING = "Gestures.time.interval"; 
 	long needTime = 0;
-	public static double MOTION_SENSITIVITY = 0.1;
+	public static float MOTION_SENSITIVITY = 0.1f;
 	long oldestTime = 0;
 	public static long timeBetweenRegistering = 1400;
 	int ARRAY_SIZE = 10;
@@ -105,8 +111,7 @@ public class MotionHandler1 extends MotionHandler {
 
 	@Override
 	public void onCreate() {
-		// File f=new File("/sdcard/motions.txt");
-		//TODO read settings
+		settings = getSharedPreferences(preferencesString, 0);
 		c = getContentResolver().query(
 				MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
@@ -199,11 +204,33 @@ public class MotionHandler1 extends MotionHandler {
 		super.switchMe();
 		
 	}
-	public static void changeSensitivity(double d) {
-		MOTION_SENSITIVITY = d;	
+	boolean isOnSharedPreferencesRegistered = false;
+	private void loadPreferences(){
+		if(! isOnSharedPreferencesRegistered)
+			settings.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
+				@Override
+				public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+						String key) {
+					if (key.equals(MOTION_SENSITIVITY_STRING) && key.equals(TIME_INTERVAL_STRING))
+						MotionHandler1.this.loadPreferences();
+				
+				}
+			});
+		isOnSharedPreferencesRegistered = true;
+		MOTION_SENSITIVITY = settings.getFloat(MOTION_SENSITIVITY_STRING, 0.1f);
+		timeBetweenRegistering = settings.getLong(TIME_INTERVAL_STRING, 1000);
 	}
-	public static void changeTimeInterval(long d) {
+	private void savePreferences(){
+		settings.edit().putFloat(MOTION_SENSITIVITY_STRING, (float) MOTION_SENSITIVITY)
+		.putLong(TIME_INTERVAL_STRING, timeBetweenRegistering).commit();
+	}
+	public void changeSensitivity(float d) {
+		MOTION_SENSITIVITY = d;
+		savePreferences();
+	}
+	public void changeTimeInterval(long d) {
 		timeBetweenRegistering = d;
+		savePreferences();
 	}
 	
 
