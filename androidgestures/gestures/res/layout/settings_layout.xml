@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" android:layout_width="fill_parent" android:background="@drawable/bacground" android:layout_height="fill_parent">
+<ImageView android:id="@+id/ImageView01" android:layout_height="wrap_content" android:background="@drawable/banner_up" android:layout_width="fill_parent"></ImageView><TextView android:id="@+id/TextView03" android:layout_height="wrap_content" android:layout_width="fill_parent" android:gravity="center" android:textColor="#000" android:text="Settings" android:textSize="35px"></TextView><TextView android:id="@+id/TextView01" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:textColor="#000" android:text="Sensitivity" android:layout_width="fill_parent" android:gravity="center" android:layout_marginTop="20px" android:textSize="20px"></TextView><SeekBar android:layout_height="wrap_content" android:id="@+id/Sensitivity_bar" android:layout_gravity="center" android:layout_marginLeft="40px" android:layout_marginRight="40px" android:layout_width="fill_parent"></SeekBar>
+<TextView android:id="@+id/TextView02" android:layout_height="wrap_content" android:gravity="center" android:layout_width="fill_parent" android:text="Frequency" android:textColor="#000" android:layout_marginTop="20px" android:textSize="20px"></TextView><SeekBar android:layout_height="wrap_content" android:id="@+id/Time_bar" android:layout_gravity="center" android:layout_marginLeft="40px" android:layout_marginRight="40px" android:layout_width="fill_parent"></SeekBar>
+
+
+
+
+</LinearLayout>
