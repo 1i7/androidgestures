@@ -45,16 +45,13 @@ public class MotionHandler1 extends MotionHandler {
 	
 	@Override
 	public void onDestroy() {
-		//c.u
 		c.close();
-		
 		super.onDestroy();
 	}
 	@Override
 	public void addMotion(Motion motion) {
 		super.addMotion(motion);
-		needTime = (motion.time > needTime ? motion.time : needTime);
-		
+		needTime = (motion.time > needTime ? motion.time : needTime);	
 		needTime += 1;
 		ARRAY_SIZE = (int) (needTime / 20) + 1;
 		yaws = new double[ARRAY_SIZE];
@@ -109,6 +106,7 @@ public class MotionHandler1 extends MotionHandler {
 	@Override
 	public void onCreate() {
 		// File f=new File("/sdcard/motions.txt");
+		//TODO read settings
 		c = getContentResolver().query(
 				MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
@@ -200,6 +198,12 @@ public class MotionHandler1 extends MotionHandler {
 	public void switchMe() {
 		super.switchMe();
 		
+	}
+	public static void changeSensitivity(double d) {
+		MOTION_SENSITIVITY = d;	
+	}
+	public static void changeTimeInterval(long d) {
+		timeBetweenRegistering = d;
 	}
 	
 

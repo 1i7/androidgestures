@@ -130,8 +130,8 @@ public abstract class MotionHandler extends Service implements SensorListener{
 	protected void notifyListeners(int motion){
 		
 		Intent intent = new Intent(ACTION_GESTURE_REGISTERED);
-		intent.putExtra(GESTUIRE_ID_IN_EXTRAS, motion);
-		sendBroadcast( new Intent(ACTION_GESTURE_REGISTERED));
+		intent.putExtra(GESTUIRE_ID_IN_EXTRAS, new Long(motion));
+		sendBroadcast( intent);
 	}
 	public static double[][] math(double yaw2, double pitch2, double roll2, double yaw,
     		double pitch, double roll ){

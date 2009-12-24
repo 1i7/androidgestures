@@ -1,22 +1,22 @@
 /*
-  * Copyright (C) 2007 The Android Open Source Project
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
+h  * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
  
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *      http://www.apache.org/licenses/LICENSE-2.0
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
  
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
  
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  
-  */
+ */
 package org.sadko.gestures;
 
 import android.app.Activity;
@@ -40,7 +40,6 @@ import com.sadko.about.AboutActivity;
 
 public class Manager extends Activity {
 	ListView lv;
-	Cursor c;
 	private static final int ADD_NEW_ID = 0;
 	private static final int EXIT_ID = 1;
 	private static final int ABOUT_ID = 2;
@@ -48,15 +47,16 @@ public class Manager extends Activity {
 	ImageButton startMyService;
 	TextView serviceState;
 	MotionHandlerHelper mMotionHandlerHelper;
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, ADD_NEW_ID, 0, "Add new").setIcon(android.R.drawable.ic_menu_add);
-		menu.add(0, ABOUT_ID, 0, "About").setIcon(android.R.drawable.ic_menu_info_details);
-		menu.add(0, EXIT_ID, 0, "Exit").setIcon(android.R.drawable.ic_menu_revert);
-		
-		// menu.add(0, KILL_SERVICE_ID, 0, "Kill handling service");
+		menu.add(0, ADD_NEW_ID, 0, "Add new").setIcon(
+				android.R.drawable.ic_menu_add);
+		menu.add(0, ABOUT_ID, 0, "About").setIcon(
+				android.R.drawable.ic_menu_info_details);
+		menu.add(0, EXIT_ID, 0, "Exit").setIcon(
+				android.R.drawable.ic_menu_revert);
 		return super.onCreateOptionsMenu(menu);
-
 	}
 
 	@Override
@@ -73,9 +73,9 @@ public class Manager extends Activity {
 			break;
 		}
 		case ABOUT_ID: {
-            final Intent intent = new Intent();
-            intent.setClass(this, AboutActivity.class);
-            startActivity(intent);
+			final Intent intent = new Intent();
+			intent.setClass(this, AboutActivity.class);
+			startActivity(intent);
 			break;
 		}
 			/*
@@ -88,8 +88,8 @@ public class Manager extends Activity {
 	}
 
 	SimpleCursorAdapter motions;
-	int selectedItem = -1;
-		@Override
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		setContentView(R.layout.main);
@@ -98,73 +98,56 @@ public class Manager extends Activity {
 		layout.setBackgroundColor(Color.TRANSPARENT);
 		startMyService = (ImageButton) findViewById(R.id.start_stop_service);
 		startService(new Intent(this, MotionHandler1.class));
-		//startMyService.setEnabled(false);
-		//startMyService.setTextSize(20);
 		serviceState = (TextView) findViewById(R.id.text_about_service_state);
-		mMotionHandlerHelper = new MotionHandlerHelper(this){
+		mMotionHandlerHelper = new MotionHandlerHelper(this) {
 			@Override
 			public void OnGestureRegistered(long id) {
-				Log.i("manager", "i received!");
-				Cursor c = getContentResolver().query(
+				Log.i("manager", "received gesture with id " + id);
+				Cursor tasksForGesture = getContentResolver().query(
 						MotionsDB.TASKS_CONTENT_URI,
 						new String[] { ActivityColumns.PACK,
 								ActivityColumns.ACTIVITY },
-						ActivityColumns.MOTION_ID + "=" + id, null,
-						null);
-				c.moveToFirst();
-				while (!c.isAfterLast()) {
-					if (c.getString(0) != null
-							&& c.getString(1) != null) {
+						ActivityColumns.MOTION_ID + "=" + id, null, null);
+				tasksForGesture.moveToFirst();
+				while (!tasksForGesture.isAfterLast()) {
+					if (tasksForGesture.getString(0) != null
+							&& tasksForGesture.getString(1) != null) {
 						Intent i = new Intent();
-						i.setClassName(c.getString(0), c.getString(1));
+						i.setClassName(tasksForGesture.getString(0),
+								tasksForGesture.getString(1));
 						i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						try {
 							startActivity(i);
 						} catch (Exception e) {
-							Toast.makeText(mContext,
-									"cant't start activity", 1000)
-									.show();
+							Toast.makeText(mContext, "cant't start activity",
+									1000).show();
 							e.printStackTrace();
 						}
 					}
-					c.moveToNext();
+					tasksForGesture.moveToNext();
 				}
-				c.close();
+				tasksForGesture.close();
 			}
 
 			@Override
 			public void OnStateReceived(boolean isEnabled) {
+				setBannerEnabled(isEnabled);
 			}
-			
-		
 		};
-
-		/*
-		 * if(savedInstanceState!=null &&
-		 * savedInstanceState.containsKey("process"))
-		 * startMyService.setText(savedInstanceState
-		 * .getBoolean("process")?"stop":"start");
-		 */
-
 		
 		startMyService.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				switchBanner();
 				switchService();
 			}
 		});
+	}
+
+	private void setBannerEnabled(boolean isEnabled) {
+		startMyService.setBackgroundResource(isEnabled ? R.drawable.banner_up
+				: R.drawable.banner_down);
 
 	}
-		private void switchBanner() {
-			// TODO Auto-generated method stub
-			if (isServiceStarted){
-				isServiceStarted = false;
-				startMyService.setBackgroundResource(R.drawable.banner_up);
-			} else {
-				isServiceStarted = true;
-				startMyService.setBackgroundResource(R.drawable.banner_down);
-			}
-		}
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -173,56 +156,25 @@ public class Manager extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		}
+	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		/*Cursor c = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
-				new String[] { "count(_ID)" }, null, null, null);
-		c.moveToFirst();
-		if (lb == null || lb.mh == null)
-			return;
-		if (c.getInt(0) == 0 && lb.mh.isEnabled)
-			startMyService.setEnabled(true);
-		if (c.getInt(0) == 0 && !lb.mh.isEnabled)
-			startMyService.setEnabled(false);*/
-
 	}
 
-
-	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		// c.close();
 		super.onSaveInstanceState(outState);
-	/*	if (lb != null)
-			outState.putBoolean("process", isServiceEnabled());*/
-		// unbindService(con);
 	}
 
 	@Override
 	protected void onDestroy() {
-		stopManagingCursor(c);
-		if (c != null){
-			c.close();
-		}
 		super.onDestroy();
 	}
 
-	/*boolean isServiceEnabled() {
-		// Parcel p = Parcel.obtain();
-		// try {
-		return lb.mh.isEnabled;// .transact(ListnerBinder.GET_STATUS, null, p,
-								// 0);
-		// } catch (RemoteException e) {}
-		// return p.readBundle().getBoolean("on/off");
-
-	}*/
 
 	void switchService() {
-		// try {
-		mMotionHandlerHelper.switchService();// transact(ListnerBinder.SWITCH_CODE, null, null, 0);
-		// } catch (RemoteException e) {}
+		mMotionHandlerHelper.switchService();
 	}
 }
