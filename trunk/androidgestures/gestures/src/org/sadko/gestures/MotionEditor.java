@@ -399,7 +399,7 @@ public class MotionEditor extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				Manager.switchService();
+				//Manager.switchService();
 				switchBanner();
 			}
 			
