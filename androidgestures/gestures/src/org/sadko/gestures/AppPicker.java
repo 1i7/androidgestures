@@ -236,11 +236,12 @@ public class AppPicker extends ListActivity implements Runnable {
 			} else {
 				groupItem = convertView;
 			}
-
+			groupItem.setBackgroundResource(R.drawable.background_lib);
 			//String destinationType = (String) getItem(position);
 			TextView destinationTypeText = (TextView) groupItem
 					.findViewById(R.id.app_name);
 			destinationTypeText.setTextColor(Color.BLACK);
+			destinationTypeText.setBackgroundColor(Color.TRANSPARENT);
 			CharSequence label=groups.get(groupPosition).applicationInfo.loadLabel(pm);
 			if(label==null || label.toString().equals(""))
 				destinationTypeText.setText(groups.get(groupPosition).packageName);
