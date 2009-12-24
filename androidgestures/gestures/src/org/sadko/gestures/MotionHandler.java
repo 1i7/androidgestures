@@ -22,7 +22,6 @@ package org.sadko.gestures;
 import java.util.ArrayList;
 import java.util.List;
 
-//import org.openintents.sensorsimulator.hardware.SensorManagerSimulator;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -32,13 +31,14 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.hardware.SensorListener;
+import android.hardware.Sensor;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-public abstract class MotionHandler extends Service implements SensorListener{
+public abstract class MotionHandler extends Service implements SensorEventListener{
 	public static final int START_STOP=359;
 	public static final String ACTION_GESTURE_REGISTERED = "gesture.registered";
 	public static final String ACTION_SERVICE_STATE = "gestures.handler.state";
@@ -53,14 +53,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		//android.content.Intent.
 	}
 	
-	public void onAccuracyChanged(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void onSensorChanged(int sensor, float[] values) {
-		// TODO Auto-generated method stub
-		
-	}
+
 	@Override
 	public void onDestroy() {
 		//Log.w("service dead",this+"");
@@ -85,8 +78,11 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
 			//SensorManagerSimulator.connectSimulator();
 			//mgr = (SensorManager)getSystemService(SENSOR_SERVICE);
+			;
 			if(isEnabled)
-				mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+				mgr.registerListener(this, 
+						mgr.getSensorList(Sensor.TYPE_ORIENTATION).get(0), 
+						SensorManager.SENSOR_DELAY_UI);
 		}
 		ListnerBinder lb=new ListnerBinder();
 		lb.mh=this;
@@ -177,7 +173,9 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			killNotification();
 		}
 		else{
-			mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
+			mgr.registerListener(this, 
+					mgr.getSensorList(Sensor.TYPE_ORIENTATION).get(0), 
+					SensorManager.SENSOR_DELAY_UI);
 			showNotification();
 		}
 		isEnabled= !isEnabled;
