@@ -10,6 +10,7 @@ import android.widget.TabHost;
 public class MyTabActivity extends TabActivity {
 	TabHost tabhost;
 	@Override
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);

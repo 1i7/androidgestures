@@ -22,6 +22,8 @@ package org.sadko.gestures;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openintents.sensorsimulator.hardware.SensorManagerSimulator;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -82,7 +84,7 @@ public abstract class MotionHandler extends Service implements SensorListener{
 			//Hardware.mContentResolver=getContentResolver();
 			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
 			//SensorManagerSimulator.connectSimulator();
-			mgr = (SensorManager)getSystemService(SENSOR_SERVICE);
+			//mgr = (SensorManager)getSystemService(SENSOR_SERVICE);
 			if(isEnabled)
 				mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		}
@@ -101,7 +103,9 @@ public abstract class MotionHandler extends Service implements SensorListener{
 		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_ON);
 		registerReceiver(new MotionHandlerBroadcastReceiver(this), iFilter);
 		throwStateBroadcast();
-		mgr = (SensorManager)getSystemService(SENSOR_SERVICE);
+		mgr = (SensorManager)getSystemService( SENSOR_SERVICE);
+		//mgr.connectSimulator();
+		//mgr = (SensorManager)getSystemService(SENSOR_SERVICE);
 		//if(isEnabled)
 			//mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
 		Log.i("service", "started");
