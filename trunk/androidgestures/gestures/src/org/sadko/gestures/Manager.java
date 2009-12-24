@@ -20,24 +20,21 @@
 package org.sadko.gestures;
 
 import android.app.Activity;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RemoteViews;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sadko.about.AboutActivity;
 
@@ -50,7 +47,7 @@ public class Manager extends Activity {
 	public static boolean isServiceStarted = false;
 	ImageButton startMyService;
 	TextView serviceState;
-	static MotionHandlerHelper mMotionHandlerHelper;
+	MotionHandlerHelper mMotionHandlerHelper;
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ADD_NEW_ID, 0, "Add new").setIcon(android.R.drawable.ic_menu_add);
@@ -107,7 +104,32 @@ public class Manager extends Activity {
 		mMotionHandlerHelper = new MotionHandlerHelper(this){
 			@Override
 			public void OnGestureRegistered(long id) {
-
+				Log.i("manager", "i received!");
+				Cursor c = getContentResolver().query(
+						MotionsDB.TASKS_CONTENT_URI,
+						new String[] { ActivityColumns.PACK,
+								ActivityColumns.ACTIVITY },
+						ActivityColumns.MOTION_ID + "=" + id, null,
+						null);
+				c.moveToFirst();
+				while (!c.isAfterLast()) {
+					if (c.getString(0) != null
+							&& c.getString(1) != null) {
+						Intent i = new Intent();
+						i.setClassName(c.getString(0), c.getString(1));
+						i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						try {
+							startActivity(i);
+						} catch (Exception e) {
+							Toast.makeText(mContext,
+									"cant't start activity", 1000)
+									.show();
+							e.printStackTrace();
+						}
+					}
+					c.moveToNext();
+				}
+				c.close();
 			}
 
 			@Override
@@ -124,13 +146,12 @@ public class Manager extends Activity {
 		 * .getBoolean("process")?"stop":"start");
 		 */
 
+		
 		startMyService.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				switchBanner();
 				switchService();
 			}
-
-			
 		});
 
 	}
@@ -152,75 +173,7 @@ public class Manager extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		/*
-		con = new ServiceConnection() {
-			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-				lb = (ListnerBinder) arg1;
-				//Log.i("handler", lb.mh + "");
-				startMyService.setImageResource(lb.mh.isEnabled ? R.drawable.banner : R.drawable.banner);
-				serviceState.setText("Gestures service is"
-						+ (lb.mh.isEnabled ? " running" : " idle"));
-				Cursor c = getContentResolver().query(
-						MotionsDB.MOTIONS_CONTENT_URI,
-						new String[] { "count(_ID)" }, null, null, null);
-				c.moveToFirst();
-				if (c.getInt(0) == 0 && lb.mh.isEnabled)
-					startMyService.setEnabled(true);
-				if (c.getInt(0) == 0)
-					return;
-				c.close();
-				lb.ms = new MotionListener() {
-					public void onMotionRecieved(int motion) {
-						Cursor c = getContentResolver().query(
-								MotionsDB.TASKS_CONTENT_URI,
-								new String[] { ActivityColumns.PACK,
-										ActivityColumns.ACTIVITY },
-								ActivityColumns.MOTION_ID + "=" + motion, null,
-								null);
-						c.moveToFirst();
-						while (!c.isAfterLast()) {
-							if (c.getString(0) != null
-									&& c.getString(1) != null) {
-								Intent i = new Intent();
-
-								i.setClassName(c.getString(0), c.getString(1));
-								i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-								try {
-									//Log.i("startActivity", "begin");
-									lb.mh.startActivity(i);
-
-									//Log.i("startActivity", "end");
-								} catch (Exception e) {
-
-									//Log.i("startActivity", "failed");
-									Toast.makeText(lb.mh,
-											"cant't start activity", 1000)
-											.show();
-									e.printStackTrace();
-								}
-							}
-
-							c.moveToNext();
-
-						}
-						c.close();
-					}
-
-				};
-				startMyService.setEnabled(true);
-
-			}
-
-			public void onServiceDisconnected(ComponentName arg0) {
-				startMyService.setEnabled(false);
-
-			}
-		};
-
-		bindService(new Intent(this, MotionHandler1.class), con, 0);
-		*/
-	}
+		}
 
 	@Override
 	protected void onResume() {
@@ -267,7 +220,7 @@ public class Manager extends Activity {
 
 	}*/
 
-	public static void switchService() {
+	void switchService() {
 		// try {
 		mMotionHandlerHelper.switchService();// transact(ListnerBinder.SWITCH_CODE, null, null, 0);
 		// } catch (RemoteException e) {}
