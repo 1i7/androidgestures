@@ -37,15 +37,15 @@ package org.sadko.gestures;
 //import org.openintents.sensorsimulator.hardware.SensorManagerSimulator;
 
 import android.app.Activity;
-import android.content.ComponentName;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.IBinder;
-//import android.util.Log;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -54,9 +54,10 @@ import android.widget.TextView;
 
 public class Recorder extends Activity {
 	private boolean needOn=false;
-	private ServiceConnection con;
-	private ListnerBinder lb;
-	public static final String RESULT_CONTENT_VALUES_NAME="org.sadko.gestures.Recorder/val"; 
+	//private ServiceConnection con;
+	//private ListnerBinder lb;
+	public static final String RESULT_CONTENT_VALUES_NAME="org.sadko.gestures.Recorder/val";
+	public static final double THRESHOLD_DEVIATION = 3.0; 
 	public static double[][] math(double yaw2, double pitch2, double roll2,
 			double yaw, double pitch, double roll) {
 
@@ -166,6 +167,7 @@ public class Recorder extends Activity {
 	static final int BEGIN = 0;
 	static final int RECORD = 1;
 	static final int END = 2;
+	private static final int DIALOG_BAD_GESTURE = 0;
 	recordListener r = new recordListener();
 	SensorManager mSensorManager;
 	int stage = BEGIN;
@@ -211,33 +213,33 @@ public class Recorder extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if(needOn)lb.mh.switchMe();
+		//if(needOn)lb.mh.switchMe();
 		//lb.mh.deleteListener(lb.ms);
-		unbindService(con);
+		//unbindService(con);
 
 	}
 	@Override
 	protected void onResume() {
-		con=new ServiceConnection(){
-			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-				lb= (ListnerBinder) arg1;
-				if(lb.mh.isEnabled){
-					needOn=true;
-					lb.mh.switchMe();
-				}
 
-			}
-
-			public void onServiceDisconnected(ComponentName arg0) {
-				
-				
-			}
-		};
-			
-		bindService(new Intent(this,MotionHandler1.class),con,0);
-		
 		super.onResume();
 	}
+	protected Dialog onCreateDialog(int id) {
+
+		switch (id) {
+		case DIALOG_BAD_GESTURE:
+			return new AlertDialog.Builder(this).setTitle(
+					"Bad gesture").setMessage(R.string.bad_gesture_text).setNeutralButton("OK",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							dialog.dismiss();
+
+						}
+					}).create();
+		}
+		return null;
+	}
+	
 	private class recordListener implements SensorListener {
 		int ARRAY_SIZE = 10;
 
@@ -304,6 +306,12 @@ public class Recorder extends Activity {
 						maxMatrixNorm = matrixNorm;
 					}
 				}
+				if(maxMatrixNorm < THRESHOLD_DEVIATION){
+					Log.i("recorded norm", matrixNorm + "");
+					showDialog(DIALOG_BAD_GESTURE);
+					stage = BEGIN;
+					return;
+				}
 				ContentValues val = new ContentValues();
 				Intent rez = new Intent();
 
@@ -322,6 +330,11 @@ public class Recorder extends Activity {
 
 			}
 
+		}
+
+		private void showNotification() {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}

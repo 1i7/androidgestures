@@ -35,20 +35,19 @@ import android.util.Log;
 
 public class MotionHandler1 extends MotionHandler {
 	SharedPreferences settings;
-	//public static final long MAX_TIME = 2000;
 	public static final String PREFERENCE_STRING = "Gestures.preferences";
 	public static final String MOTION_SENSITIVITY_STRING = "Gestures.motion.sensitivity";
-	public static final String TIME_INTERVAL_STRING = "Gestures.time.interval";
 	public static final String PERIOD_STRING = "Gestures.time.period";
-	public static final float MAX_SENSITIVITY = 2;
+	public static final float MAX_SENSITIVITY = 4;
 	public static final float MAX_PERIOD = 500;
 	public static float MOTION_SENSITIVITY = 0.1f;
-	public static float PERIOD = 100;
+	public static long PERIOD = 100;
 	long needTime = 0;
 	long oldestTime = 0;
-	public static long timeBetweenRegistering = 1400;
+	public static final long timeBetweenRegistering = 1000;
 	int ARRAY_SIZE = 10;
 	long lastRegisterTime = 0;
+	long lastRegisteredGestureId = 0;
 	long[] times = new long[ARRAY_SIZE];
 	protected double yaws[] = new double[ARRAY_SIZE];
 	protected double rolls[] = new double[ARRAY_SIZE];
@@ -65,8 +64,15 @@ public class MotionHandler1 extends MotionHandler {
 	@Override
 	public void addMotion(Motion motion) {
 		super.addMotion(motion);
-		needTime = (motion.time > needTime ? motion.time : needTime);	
+		needTime = (motion.time > needTime ? motion.time : needTime);
+		double norm = 0;
+		for (int i = 0; i < 3; ++i)
+			for(int j = 0; j < 3; ++j)
+				norm += (motion.matrix[i][j]) *(motion.matrix[i][j]);
+		Log.i("motion norm", norm + "");
+				
 		needTime += 1;
+		
 		ARRAY_SIZE = (int) (needTime / 20) + 1;
 		yaws = new double[ARRAY_SIZE];
 		rolls = new double[ARRAY_SIZE];
@@ -138,19 +144,19 @@ public class MotionHandler1 extends MotionHandler {
 				public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 						String key) {
 					Log.i("key", key +"!");
-					if (key.equals(MOTION_SENSITIVITY_STRING) && key.equals(TIME_INTERVAL_STRING))
+					if (key.equals(MOTION_SENSITIVITY_STRING) || key.equals(PERIOD_STRING))
 						MotionHandler1.this.loadPreferences();
 				
 				}
 			});
 		isOnSharedPreferencesRegistered = true;
 		MOTION_SENSITIVITY = settings.getFloat(MOTION_SENSITIVITY_STRING, 0.1f);
-		timeBetweenRegistering = settings.getLong(TIME_INTERVAL_STRING, 1000);
+		PERIOD = settings.getLong(PERIOD_STRING, 100);
 		Log.i("preferences", "SENSITIVITY = " + MOTION_SENSITIVITY);
 	}
 	private void savePreferences(){
 		settings.edit().putFloat(MOTION_SENSITIVITY_STRING, (float) MOTION_SENSITIVITY)
-		.putLong(TIME_INTERVAL_STRING, timeBetweenRegistering).commit();
+		.putLong(PERIOD_STRING, PERIOD).commit();
 	}
 	public void changeSensitivity(float d) {
 		MOTION_SENSITIVITY = d;
@@ -163,15 +169,17 @@ public class MotionHandler1 extends MotionHandler {
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
-		
 	}
-	long lastAcceptedTime = System.currentTimeMillis();
+	long lastAcceptedTime = 0;
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		if (event.timestamp / 1000 - lastAcceptedTime < PERIOD)
+		
+		if (event.timestamp / 1000000 - lastAcceptedTime < PERIOD)
 			return;
-		lastAcceptedTime = event.timestamp;
+		//Log.i("sensor", event.values[0] + " " + event.values[1]+ " " + event.values[2] + " "+lastAcceptedTime + " " +MOTION_SENSITIVITY);
+		lastAcceptedTime = event.timestamp / 1000000;
 		boolean checkMotion[] = new boolean[motions.size()];
+		
 		times[position] = System.currentTimeMillis();
 		yaws[position] = event.values[0] * Math.PI / 180;
 		pitchs[position] = event.values[1] * Math.PI / 180;
@@ -193,13 +201,17 @@ public class MotionHandler1 extends MotionHandler {
 							ss += (matrix[k][l] - m.matrix[k][l])
 									* (matrix[k][l] - m.matrix[k][l]);
 					if (ss < MOTION_SENSITIVITY
-							&& lastAcceptedTime - lastRegisterTime > timeBetweenRegistering
+							&& (lastAcceptedTime - lastRegisterTime > timeBetweenRegistering
+							|| m.id != lastRegisteredGestureId)
 							) {
-						notifyListeners((int) m.id);
-						//Toast.makeText(MotionHandler1.this, "motion!", 500).show();
+						
+						lastRegisteredGestureId = m.id; 
 						lastRegisterTime = lastAcceptedTime;
 						detected = true;
+						notifyListeners(m.id);
+						Log.i("mh1", "caught");
 					}
+					Log.i("sensor", ss+"");
 				}
 				s++;
 			}

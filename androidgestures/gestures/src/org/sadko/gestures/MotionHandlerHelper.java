@@ -12,12 +12,19 @@ public class MotionHandlerHelper extends BroadcastReceiver {
 
 	public MotionHandlerHelper(Context context) {
 		mContext = context;
+		registerAsReceiver();
+		getState();
+		Log.i("mhh","call");
+	}
+	public void registerAsReceiver(){
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(MotionHandler.ACTION_SERVICE_STATE);
 		intentFilter.addAction(MotionHandler.ACTION_GESTURE_REGISTERED);
-		context.registerReceiver(this, intentFilter);
-		getState();
-		Log.i("mhh","call");
+		intentFilter.addAction(MotionHandler.DEBUG_ACTION_GESTURE_REGISTERED);
+		mContext.registerReceiver(this, intentFilter);
+	}
+	public void unregisterAsReceiver(){
+		mContext.unregisterReceiver(this);
 	}
 	public void switchService(){
 		if(lastState)
@@ -55,7 +62,14 @@ public class MotionHandlerHelper extends BroadcastReceiver {
 			long id =intent.getLongExtra(MotionHandler.GESTUIRE_ID_IN_EXTRAS, -1);
 			OnGestureRegistered(id);
 		}
+		if(action.equals(MotionHandler.DEBUG_ACTION_GESTURE_REGISTERED)){
+			long id =intent.getLongExtra(MotionHandler.GESTUIRE_ID_IN_EXTRAS, -1);
+			OnDebugGestureRegistered(id);
+		}
 		Log.i("mhh",action);
+	}
+	public void OnDebugGestureRegistered(long id) {
+		
 	}
 	public void OnStateReceived(boolean isEnabled){
 	}

@@ -53,8 +53,6 @@ public class Manager extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, ADD_NEW_ID, 0, "Add new").setIcon(
-				android.R.drawable.ic_menu_add);
 		menu.add(0, SETTINNGS_ID, 0, "Settings").setIcon(
 				android.R.drawable.ic_menu_set_as);
 		menu.add(0, ABOUT_ID, 0, "About").setIcon(
@@ -68,12 +66,6 @@ public class Manager extends Activity {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		
 		switch (item.getItemId()) {
-		case ADD_NEW_ID: {
-			Intent i = new Intent(Manager.this, MotionEditor.class);
-			i.setAction(android.content.Intent.ACTION_MAIN);
-			startActivity(i);
-			break;
-		}
 		case SETTINNGS_ID: {
 			Intent i = new Intent(Manager.this, SettingsActivity.class);
 			i.setAction(android.content.Intent.ACTION_MAIN);
@@ -125,9 +117,10 @@ public class Manager extends Activity {
 					if (tasksForGesture.getString(0) != null
 							&& tasksForGesture.getString(1) != null) {
 						Intent i = new Intent();
+						i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+								| Intent.FLAG_ACTIVITY_NEW_TASK);
 						i.setClassName(tasksForGesture.getString(0),
 								tasksForGesture.getString(1));
-						i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						try {
 							startActivity(i);
 						} catch (Exception e) {
