@@ -11,6 +11,8 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -23,6 +25,28 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class GesturesListActivity extends ListActivity{
+	private static final int ADD_NEW_ID = 0;
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, ADD_NEW_ID, 0, "Add new").setIcon(
+				android.R.drawable.ic_menu_add);
+		
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		switch (item.getItemId()) {
+		case ADD_NEW_ID: {
+			Intent i = new Intent(GesturesListActivity.this, MotionEditor.class);
+			i.setAction(android.content.Intent.ACTION_MAIN);
+			startActivity(i);
+			break;
+		}
+		}
+		return super.onMenuItemSelected(featureId, item);
+	}
+
 	Cursor gesturesFromDatabase;
 	ListView lv;
 	@Override

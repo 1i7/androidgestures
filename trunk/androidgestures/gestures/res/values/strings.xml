@@ -16,7 +16,7 @@
 <string name="main_screen_label">HowTo</string>
 <string name="lib_label">Library</string>
 <string name="widget_name">Gestures widget</string>
-
+<string name="bad_gesture_text">This gesture is like a non-moving gesture. Usage of this gesture leads to malfunction. Try again!</string>
 
 
 </resources>

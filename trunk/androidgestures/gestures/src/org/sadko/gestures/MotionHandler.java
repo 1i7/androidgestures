@@ -41,9 +41,13 @@ import android.widget.RemoteViews;
 public abstract class MotionHandler extends Service implements SensorEventListener{
 	public static final int START_STOP=359;
 	public static final String ACTION_GESTURE_REGISTERED = "gesture.registered";
+	public static final String DEBUG_ACTION_GESTURE_REGISTERED = "debug.gesture.registered";
 	public static final String ACTION_SERVICE_STATE = "gestures.handler.state";
 	public static final String STATE_IN_EXTRAS = "state";
 	public static final String GESTUIRE_ID_IN_EXTRAS = "gesture";
+	public static int mode = 0;
+	public static final int NORMAL_MODE = 0;
+	public static final int DEBUG_MODE = 1;
 	protected List<Motion> motions;
 	boolean isEnabled=false;
 	SensorManager mgr;
@@ -54,14 +58,6 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 	}
 	
 
-	@Override
-	public void onDestroy() {
-		//Log.w("service dead",this+"");
-		super.onDestroy();
-	}
-	/*public void deleteListener(MotionListener ms){
-		listners.remove(ms);
-	}*/
 	protected List<ListnerBinder> listners=new ArrayList<ListnerBinder>();
 	
 	MotionHandler(){
@@ -74,11 +70,6 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 	public IBinder onBind(Intent arg0) {
 		Log.i("service", "on bind");
 		if(listners.isEmpty()){
-			//Hardware.mContentResolver=getContentResolver();
-			//mgr=new SensorManagerSimulator((SensorManager)getSystemService(SENSOR_SERVICE));
-			//SensorManagerSimulator.connectSimulator();
-			//mgr = (SensorManager)getSystemService(SENSOR_SERVICE);
-			;
 			if(isEnabled)
 				mgr.registerListener(this, 
 						mgr.getSensorList(Sensor.TYPE_ORIENTATION).get(0), 
@@ -86,7 +77,6 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 		}
 		ListnerBinder lb=new ListnerBinder();
 		lb.mh=this;
-		//listners.add(lb);
 		return lb;
 	}
 	@Override
@@ -97,20 +87,17 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_GET_STATE);
 		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_OFF);
 		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_ON);
+		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_SET_MODE);
 		registerReceiver(new MotionHandlerBroadcastReceiver(this), iFilter);
 		throwStateBroadcast();
 		mgr = (SensorManager)getSystemService( SENSOR_SERVICE);
-		//mgr.connectSimulator();
-		//mgr = (SensorManager)getSystemService(SENSOR_SERVICE);
-		//if(isEnabled)
-			//mgr.registerListener(this, SensorManager.SENSOR_ORIENTATION,SensorManager.SENSOR_DELAY_UI);
-		Log.i("service", "started");
+		//Log.i("service", "started");
 		displayWidget();
 		
 	}
 
 	private void displayWidget() {
-		RemoteViews updateViews = new RemoteViews(getPackageName(), R.layout.widget);
+		RemoteViews updateViews = new RemoteViews(getPackageName(), isEnabled ? R.layout.widget_on : R.layout.widget_off);
 		
 		Intent defineIntent = new Intent(isEnabled ?
 				MotionHandlerBroadcastReceiver.ACTION_TURN_OFF :
@@ -123,11 +110,21 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 		
 	}
 
-	protected void notifyListeners(int motion){
+	protected void notifyListeners(long motion){
+		if(mode == NORMAL_MODE){
+			Intent intent = new Intent(ACTION_GESTURE_REGISTERED);
+			intent.putExtra(GESTUIRE_ID_IN_EXTRAS, new Long(motion));
+			sendBroadcast(intent);
+			return;
+		}
+		if(mode == DEBUG_MODE){
+			Intent intent = new Intent(DEBUG_ACTION_GESTURE_REGISTERED);
+			intent.putExtra(GESTUIRE_ID_IN_EXTRAS, new Long(motion));
+			sendBroadcast(intent);
+			Log.i("mode debug"," gesture registered");
+			return;
+		}
 		
-		Intent intent = new Intent(ACTION_GESTURE_REGISTERED);
-		intent.putExtra(GESTUIRE_ID_IN_EXTRAS, new Long(motion));
-		sendBroadcast( intent);
 	}
 	public static double[][] math(double yaw2, double pitch2, double roll2, double yaw,
     		double pitch, double roll ){
@@ -146,12 +143,8 @@ public abstract class MotionHandler extends Service implements SensorEventListen
     	 
     }
 	protected void showNotification() {
-	/*	if(!isEnabled) {
-			killNotification();
-			return;
-		}*/
 		Intent m_clickIntent = new Intent();
-		m_clickIntent.setClass(this, Manager.class);
+		m_clickIntent.setClass(this, MyTabActivity.class);
 		m_clickIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
 				| Intent.FLAG_ACTIVITY_NEW_TASK);
 		NotificationManager mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -186,14 +179,14 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 	}
 
 	public void throwStateBroadcast() {
-		Log.i("1", "4");
+		//Log.i("1", "4");
 		Intent intent = new Intent(ACTION_SERVICE_STATE);
 		intent.putExtra(STATE_IN_EXTRAS, isEnabled);
 		sendBroadcast(intent);
 	}
 
 	public void turnOn() {
-		Log.i("1", "2");
+		//Log.i("1", "2");
 		if (!isEnabled){
 			switchMe();
 		}
@@ -201,7 +194,7 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 	}
 
 	public void turnOff() {
-		Log.i("1", "3");
+		//Log.i("1", "3");
 		if (isEnabled){
 			switchMe();
 		}

@@ -89,7 +89,6 @@ public class MotionEditor extends Activity {
 	String appActivity;
 	ImageView banner;
 
-	// Drawable appIcon;
 	String appName;
 	String appPackage;
 	Spinner spinner;
@@ -100,10 +99,7 @@ public class MotionEditor extends Activity {
 	private static final int RECORD_REQEST_CODE = 1;
 	private static final int PICK_APP_REQUEST_CODE = 2;
 	ActivityInfo[] activs;
-	//String oldAppName;
-	boolean needOn=false;
-	ServiceConnection con;
-	ListnerBinder lb;
+	MotionHandlerHelper helper;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -133,19 +129,16 @@ public class MotionEditor extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		helper.unregisterAsReceiver();
 		if (isFinishing()) {
 			if (!discarding)
 				saveGesture();
 		}
-		if(needOn)lb.mh.switchMe();
-		//lb.mh.deleteListener(lb.ms);
-		unbindService(con);
-
 	}
+	
 	private void sortActivs(){
 		final PackageManager pm=getPackageManager();
 		TreeSet<ActivityInfo> tmp=new TreeSet<ActivityInfo>(new Comparator<ActivityInfo>(){
-		
 			public int compare(ActivityInfo object1, ActivityInfo object2) {
 				boolean firstIsLauncher=launchers.contains(object1.name);
 				boolean secondIsLauncher=launchers.contains(object2.name);
@@ -157,18 +150,14 @@ public class MotionEditor extends Activity {
 				if(label2==null) return -1;
 				if( label1.toString().compareTo(label2.toString())!=0) return label1.toString().compareTo(label2.toString());
 				else  return object1.name.compareTo(object2.name);
-				//return object1.name.compareTo(object2.name);
-				
 			}
-			
 		});
 		for(int i=0;i<activs.length;i++)
 			if(activs[i]!=null) tmp.add(activs[i]);
 		activs=new ActivityInfo[tmp.size()];
 		activs=tmp.toArray(activs);
-		
-		
 	}
+	
 	void saveGesture() {
 		// saving name of motion
 		motionValues.put(MotionColumns.NAME,
@@ -192,19 +181,13 @@ public class MotionEditor extends Activity {
 					activityValues));
 		}
 	}
+	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		
-		//outState.putParcelable("motionValues",motionValues);
-		//outState.putParcelable("activityValues",activityValues);
 		saveGesture();
 		action=android.content.Intent.ACTION_EDIT;
 		outState.putString("action",action);
 		outState.putLong("motionId",motionId);
-		/*outState.putLong("taskId",taskId);
-		outState.putString("appActivity",appActivity);
-		outState.putString("appName",appName);
-		outState.putString("appPackage",appPackage);*/
 		super.onSaveInstanceState(outState);
 	}
 	@Override
@@ -245,22 +228,8 @@ public class MotionEditor extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	private void initElements(){
-		
-		//animation
-		/*ImageView anim = (ImageView) findViewById(R.id.anim);
-		RotateAnimation rotation = new RotateAnimation(-15,15,30,45);
-		anim.setAnimation(rotation);
-		rotation.setDuration(500);
-		rotation.setRepeatCount(rotation.INFINITE);
-		rotation.setRepeatMode(rotation.REVERSE);
-		rotation.start();*/
-		//initialize spinner
 		spinner = (Spinner) findViewById(R.id.activity_spinner);
 		spinner.setEnabled(false);
-		//set big font to name of app
-		//((TextView) findViewById(R.id.app_name_in_edit)).setTextSize(20);
-		
-		//initialize record button
 		ImageButton record = (ImageButton) findViewById(R.id.Record);
 		record.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -286,6 +255,14 @@ public class MotionEditor extends Activity {
 
 		});
 		
+		banner = (ImageView)findViewById(R.id.Banner);
+		banner.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				helper.switchService();
+			}
+		});
+		
 		//initialize discard button
 		Button discard = (Button) findViewById(R.id.discard);
 		discard.setOnClickListener(new OnClickListener() {
@@ -305,13 +282,7 @@ public class MotionEditor extends Activity {
 						TestGestureActivity.class);
 				saveGesture();
 				action=android.content.Intent.ACTION_EDIT;
-				//if (action.equals(android.content.Intent.ACTION_EDIT)
-					//	&& motionValues.size() == 0) {
-					i.putExtra("motion_id", motionId);
-
-				//} else {
-					//i.putExtra("motion", motionValues);
-				//}
+				i.putExtra("motion_id", motionId);
 				startActivity(i);
 			}
 
@@ -346,14 +317,15 @@ public class MotionEditor extends Activity {
 		//init pick app button
 		ImageButton pick = (ImageButton) findViewById(R.id.pick);
 		pick.setOnClickListener(new OnClickListener() {
+
 			public void onClick(View v) {
 				Intent i = new Intent(MotionEditor.this, AppPicker.class);
 				startActivityForResult(i, PICK_APP_REQUEST_CODE);
 			}
 		});
+		
 		Button fromApp=(Button)findViewById(R.id.from_app);
 		fromApp.setOnClickListener(new OnClickListener(){
-
 			public void onClick(View v) {
 				PackageManager pm=getPackageManager();
 				try {
@@ -362,48 +334,44 @@ public class MotionEditor extends Activity {
 									0)));
 				} catch (NameNotFoundException e) {
 					
-				}
-				
+				}	
 			}
-			
 		});
-
-		
+	
 	}
-	private void switchBanner() {
-		// TODO Auto-generated method stub
-		if (Manager.isServiceStarted){
-			Manager.isServiceStarted = false;
+	
+	private void setBannerEnabled(boolean isEnabled) {
+		if (isEnabled){
 			banner.setBackgroundResource(R.drawable.banner_up);
 		} else {
-			Manager.isServiceStarted = true;
 			banner.setBackgroundResource(R.drawable.banner_down);
 		}
 	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
 		//get action of start
 		action = getIntent().getAction();
-		//if(action)
-		//GET ALL LAUNCHERS
-		banner = (ImageView)findViewById(R.id.Banner);
-		if (Manager.isServiceStarted){
-			banner.setBackgroundResource(R.drawable.banner_down);
-		} else {
-			banner.setBackgroundResource(R.drawable.banner_up);
-		}
-		banner.setOnClickListener(new OnClickListener(){
+		helper = new MotionHandlerHelper(this){
 
 			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				//Manager.switchService();
-				switchBanner();
+			public void OnGestureRegistered(long id) {
+				super.OnGestureRegistered(id);
+			}
+
+			@Override
+			public void OnStateReceived(boolean isEnabled) {
+				super.OnStateReceived(isEnabled);
+				setBannerEnabled(isEnabled);
 			}
 			
-		});
+		};
+		
+		//if(action)
+		//GET ALL LAUNCHERS
+
 		Intent intent = new Intent(Intent.ACTION_MAIN, null);
 		intent.addCategory(android.content.Intent.CATEGORY_LAUNCHER);
 		Iterator<ResolveInfo> launchersList= getPackageManager().queryIntentActivities(intent, 0).iterator();
@@ -422,7 +390,7 @@ public class MotionEditor extends Activity {
 		//if we edit motion we should get what we are going to edit		
 		if (action.equals(android.content.Intent.ACTION_EDIT)) {
 			initElements();
-			if(motionId==0)
+			if(motionId == 0)
 				motionId = getIntent().getExtras().getLong("id");
 			Cursor taskCursor = getContentResolver().query(MotionsDB.TASKS_CONTENT_URI,
 					null, ActivityColumns.MOTION_ID + "=" + motionId, null,
@@ -457,7 +425,6 @@ public class MotionEditor extends Activity {
 			//if motion was recorded let to test it
 			if (!c.isNull(1))
 				testGesture.setEnabled(true);
-			
 			c.close();
 			taskCursor.close();
 		}else{
@@ -519,24 +486,8 @@ public class MotionEditor extends Activity {
 	}
 	@Override
 	protected void onResume() {
-		con=new ServiceConnection(){
-			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-				lb= (ListnerBinder) arg1;
-				if(lb.mh.isEnabled){
-					needOn=true;
-					lb.mh.switchMe();
-				}
-			}
-
-			public void onServiceDisconnected(ComponentName arg0) {
-				
-				
-			}
-		};
-			
-		bindService(new Intent(this,MotionHandler1.class),con,0);
-		
 		super.onResume();
+		helper.registerAsReceiver();
 	}
 	private void setPickedApp() {
 		//decide should we replace name of motion or not and other stuff

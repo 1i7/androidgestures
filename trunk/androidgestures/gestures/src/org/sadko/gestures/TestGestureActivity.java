@@ -42,8 +42,7 @@ public class TestGestureActivity extends Activity {
 	TextView count;
 	boolean needOff=false;
 	boolean needDelete=true;
-	ServiceConnection con;
-	ListnerBinder lb;
+	MotionHandlerHelper helper;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,64 +55,56 @@ public class TestGestureActivity extends Activity {
 		ok.setTextSize(50);
 		ok.setHeight(100);
 		ok.setWidth(100);
-		
 		ok.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
 				finish();
 			}
 		});
-		//Intent i=getIntent();
-		//Bundle b=i.getExtras();
 		if(getIntent().getExtras().containsKey("motion"))
 			motionId=ContentUris.parseId(getContentResolver().insert(MotionsDB.MOTIONS_CONTENT_URI, (ContentValues)getIntent().getParcelableExtra("motion")));
 		else{
 			needDelete=false;
 			motionId=getIntent().getLongExtra("motion_id", 0);
 		}
-		//Log.i("motionid",motionId+"");
+		helper= new MotionHandlerHelper(this){
+
+			
+
+			@Override
+			public void OnDebugGestureRegistered(long id) {
+				if (id == motionId)
+					increase();
+				super.OnDebugGestureRegistered(id);
+			}
+			
+		};
 	}
 
 	@Override
 	protected void onPause() {
-		if(needOff)lb.mh.switchMe();
-		//lb.mh.deleteListener(lb.ms);
-		unbindService(con);
+		helper.unregisterAsReceiver();
+		Intent set_normal = new Intent(MotionHandlerBroadcastReceiver.ACTION_SET_MODE);
+		set_normal.putExtra(MotionHandlerBroadcastReceiver.MODE_KEY, MotionHandler1.NORMAL_MODE);
+		sendBroadcast(set_normal);
+		helper.turnOff();
 		if(needDelete)
 				getContentResolver().delete(ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI, motionId), null, null);
 		super.onPause();
 	}
-
+	
+	private void increase(){
+		++recievedMotions;
+		count.setText(recievedMotions + "");
+	}
+	
 	@Override
 	protected void onResume() {
-		con=new ServiceConnection(){
-			public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-				lb= (ListnerBinder) arg1;
-				if(!lb.mh.isEnabled){
-					needOff=true;
-					lb.mh.switchMe();
-				}
-				lb.ms = new MotionListener() {
-					public void onMotionRecieved(int motion) {
-						if(motion==motionId){
-							recievedMotions++;
-							count.setText(recievedMotions+"");
-						}
-						
-					}
-					
-				};
-				
-
-			}
-
-			public void onServiceDisconnected(ComponentName arg0) {
-				
-				
-			}
-		};
-			
-		bindService(new Intent(this,MotionHandler1.class),con,0);
+		helper.registerAsReceiver();
+		Intent set_debug = new Intent(MotionHandlerBroadcastReceiver.ACTION_SET_MODE);
+		set_debug.putExtra(MotionHandlerBroadcastReceiver.MODE_KEY, MotionHandler1.DEBUG_MODE);
+		sendBroadcast(set_debug);
+		helper.turnOn();
 		super.onResume();
 	}
 	

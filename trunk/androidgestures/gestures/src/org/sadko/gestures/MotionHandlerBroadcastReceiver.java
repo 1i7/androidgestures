@@ -12,6 +12,8 @@ public class MotionHandlerBroadcastReceiver extends BroadcastReceiver {
 	public static final String ACTION_GET_STATE = "get.handler.state";
 	public static final String ACTION_TURN_ON = "turn.handler.on";
 	public static final String ACTION_TURN_OFF = "turn.handler.off";
+	public static final String ACTION_SET_MODE = "motion.handler.set.mode";
+	public static final String MODE_KEY = "set.mode";
 	MotionHandler myContainer;
 	public MotionHandlerBroadcastReceiver(MotionHandler motionHandler) {
 		myContainer = motionHandler;
@@ -38,7 +40,10 @@ public class MotionHandlerBroadcastReceiver extends BroadcastReceiver {
 		if(action.equals(ACTION_GET_STATE)){
 			myContainer.throwStateBroadcast();
 		}
-		
+		if(action.equals(ACTION_SET_MODE)){
+			MotionHandler.mode = intent.getIntExtra(MODE_KEY, MotionHandler1.NORMAL_MODE);
+			Log.i("set mode", MotionHandler.mode + " ");
+		}
 		if(action.equals(ACTION_TURN_ON)){
 			ListnerBinder binder = getHandlerBinder(context);
 			myContainer.turnOn();
