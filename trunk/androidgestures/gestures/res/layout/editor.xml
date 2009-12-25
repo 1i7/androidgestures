@@ -12,13 +12,12 @@
 	-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/ScrollView01" android:layout_width="fill_parent"
-	android:layout_height="fill_parent" android:background="@drawable/bacground">
+	android:layout_height="fill_parent" android:background="@drawable/background">
 	<LinearLayout android:orientation="vertical"
 		android:scrollbars="horizontal|vertical"
 		android:scrollbarAlwaysDrawVerticalTrack="true"
 		android:scrollbarAlwaysDrawHorizontalTrack="true" android:id="@+id/editor_whole_layout"
-		android:layout_height="fill_parent" android:layout_width="fill_parent"
-		android:layout_gravity="fill_vertical">
+		android:layout_width="fill_parent" android:layout_height="fill_parent">
 		<ImageView android:layout_height="fill_parent"
 			android:layout_weight="0" android:layout_gravity="center_horizontal"
 			android:layout_width="fill_parent" android:background="@drawable/banner"
@@ -32,27 +31,18 @@
 				<ImageButton android:src="@drawable/rec" android:id="@+id/Record"
 					android:layout_height="wrap_content" android:layout_weight="0"
 					android:layout_width="wrap_content" android:layout_gravity="right"></ImageButton>
-				<Button android:id="@+id/test_gesture" android:text="Test Gesture"
-					android:layout_width="fill_parent" android:layout_height="fill_parent"
-					android:layout_weight="0" android:enabled="false"></Button>
-			</TableRow>
-			<TableRow android:id="@+id/TableRow01"
-				android:layout_height="wrap_content" android:layout_marginLeft="20px"
-				android:layout_marginRight="20px" android:layout_width="wrap_content"
-				android:layout_weight="0"></TableRow>
+				
+			<ImageButton android:id="@+id/pick" android:src="@drawable/pick_app" android:layout_width="wrap_content" android:padding="5px" android:background="@drawable/button" android:adjustViewBounds="true" android:layout_weight="1" android:layout_margin="5px" android:layout_height="wrap_content"></ImageButton></TableRow>
+			
 			<TableRow android:id="@+id/TableRow04" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:layout_marginLeft="30px"
-				android:layout_marginRight="30px">
-				<ImageButton android:id="@+id/pick" android:src="@drawable/pick_app"
-					android:layout_weight="0" android:layout_width="wrap_content"
-					android:layout_gravity="left|center_vertical"
-					android:layout_height="wrap_content" android:padding="5px"></ImageButton>
-				<Button android:id="@+id/launch_now" android:layout_height="wrap_content"
-					android:text="launch it" android:layout_weight="0"
-					android:layout_width="fill_parent" android:textStyle="bold"
-					android:layout_gravity="center_vertical"></Button>
+				android:layout_marginRight="30px"><Button android:id="@+id/test_gesture" android:text="Test Gesture" android:layout_width="fill_parent" android:layout_height="fill_parent" android:enabled="false" android:layout_weight="1"></Button>
+				
+				
 
-			</TableRow>
+			
+<Button android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="fill_parent" android:text="launch now" android:id="@+id/launch_now"></Button>
+</TableRow>
 			<Spinner android:id="@+id/activity_spinner"
 				android:layout_height="wrap_content" android:layout_weight="0"
 				android:layout_width="fill_parent" android:layout_marginLeft="30px"
@@ -60,36 +50,27 @@
 			<TableRow android:id="@+id/TableRow03" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:layout_marginLeft="20px"
 				android:layout_marginRight="20px">
-				<ImageButton android:layout_width="wrap_content"
-					android:layout_height="wrap_content" android:maxHeight="50px"
-					android:maxWidth="50px" android:src="@drawable/gest_anim"
-					android:id="@+id/anim"></ImageButton>
+				
 				<LinearLayout android:id="@+id/LinearLayout01"
 					android:layout_height="wrap_content" android:orientation="vertical"
 					android:layout_width="fill_parent" android:layout_weight="1">
 					<EditText android:layout_height="wrap_content"
 						android:layout_width="fill_parent" android:layout_weight="1"
-						android:layout_margin="3px" android:id="@+id/NameInput"
-						android:hint="name of gesture"></EditText>
+						android:id="@+id/NameInput"
+						android:hint="name of gesture" android:background="@drawable/my_button_off" android:gravity="center" android:layout_marginTop="5px" android:layout_marginBottom="5px"></EditText>
 					<Button android:layout_height="wrap_content" android:text="from app"
 						android:id="@+id/from_app" android:layout_width="fill_parent"
-						android:padding="0px"></Button>
+						android:padding="0px" android:background="@drawable/button" android:layout_marginBottom="5px" android:layout_marginTop="5px"></Button>
 				</LinearLayout>
 			</TableRow>
 		</TableLayout>
 		<LinearLayout android:id="@+id/LinearLayout02"
-			android:layout_width="fill_parent" android:orientation="horizontal"
-			android:layout_weight="0" android:layout_height="fill_parent"
-			android:layout_gravity="bottom|center_horizontal"
-			android:layout_marginLeft="30px" android:layout_marginRight="35px">
-			<Button android:layout_height="wrap_content" android:id="@+id/discard"
-				android:text="discard" android:layout_margin="3px"
-				android:layout_gravity="bottom" android:layout_weight="1"
-				android:layout_width="wrap_content"></Button>
-			<Button android:id="@+id/sSandE" android:text="save and exit"
-				android:layout_height="wrap_content" android:layout_weight="1"
-				android:layout_margin="3px" android:layout_gravity="bottom"
-				android:layout_width="wrap_content"></Button>
+			android:orientation="horizontal"
+			android:layout_gravity="center" android:layout_height="wrap_content" android:layout_weight="1" android:layout_width="wrap_content" android:layout_marginLeft="2px">
+			<Button android:id="@+id/discard"
+				android:layout_gravity="bottom" android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="@drawable/button_left" android:layout_marginRight="10px" android:text="             discard"></Button>
+			<Button android:id="@+id/sSandE" android:layout_gravity="bottom"
+				android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="@drawable/button_right" android:text="save and exit           "></Button>
 
 
 
