@@ -44,7 +44,7 @@ public class MotionHandler1 extends MotionHandler {
 	public static long PERIOD = 100;
 	long needTime = 0;
 	long oldestTime = 0;
-	public static final long timeBetweenRegistering = 1000;
+	public static final long timeBetweenRegistering = 1500;
 	int ARRAY_SIZE = 10;
 	long lastRegisterTime = 0;
 	long lastRegisteredGestureId = 0;
@@ -70,7 +70,6 @@ public class MotionHandler1 extends MotionHandler {
 			for(int j = 0; j < 3; ++j)
 				norm += (motion.matrix[i][j]) *(motion.matrix[i][j]);
 		Log.i("motion norm", norm + "");
-				
 		needTime += 1;
 		
 		ARRAY_SIZE = (int) (needTime / 20) + 1;
@@ -180,7 +179,7 @@ public class MotionHandler1 extends MotionHandler {
 		lastAcceptedTime = event.timestamp / 1000000;
 		boolean checkMotion[] = new boolean[motions.size()];
 		
-		times[position] = System.currentTimeMillis();
+		times[position] = lastAcceptedTime;
 		yaws[position] = event.values[0] * Math.PI / 180;
 		pitchs[position] = event.values[1] * Math.PI / 180;
 		rolls[position] = event.values[2] * Math.PI / 180;
@@ -209,7 +208,7 @@ public class MotionHandler1 extends MotionHandler {
 						lastRegisterTime = lastAcceptedTime;
 						detected = true;
 						notifyListeners(m.id);
-						Log.i("mh1", "caught");
+						Log.i("mhandler", "caught");
 					}
 					Log.i("sensor", ss+"");
 				}

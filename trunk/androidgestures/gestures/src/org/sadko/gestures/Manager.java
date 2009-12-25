@@ -106,6 +106,7 @@ public class Manager extends Activity {
 		mMotionHandlerHelper = new MotionHandlerHelper(this) {
 			@Override
 			public void OnGestureRegistered(long id) {
+				
 				Log.i("manager", "received gesture with id " + id);
 				Cursor tasksForGesture = getContentResolver().query(
 						MotionsDB.TASKS_CONTENT_URI,

@@ -93,6 +93,7 @@ public class MotionEditor extends Activity {
 	String appPackage;
 	Spinner spinner;
 	Button testGesture;
+	
 	Button saveExit;
 	boolean discarding = false;
 	List<String> launchers;
