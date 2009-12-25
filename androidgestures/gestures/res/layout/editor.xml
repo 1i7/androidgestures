@@ -24,24 +24,18 @@
 			android:id="@+id/Banner"></ImageView>
 		<TableLayout android:id="@+id/TableLayout01"
 			android:layout_height="wrap_content" android:orientation="vertical"
-			android:weightSum="2" android:layout_width="fill_parent">
+			android:weightSum="2" android:layout_width="fill_parent"><TableRow android:id="@+id/TableRow01" android:layout_width="wrap_content" android:layout_height="wrap_content"><LinearLayout android:id="@+id/LinearLayout03" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1"><ImageButton android:src="@drawable/rec" android:id="@+id/Record" android:layout_height="wrap_content" android:layout_width="wrap_content" android:background="@drawable/button" android:padding="10px" android:layout_gravity="right" android:adjustViewBounds="true" android:layout_marginRight="45px"></ImageButton></LinearLayout><LinearLayout android:id="@+id/LinearLayout04" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1"><ImageButton android:id="@+id/pick" android:src="@drawable/pick_app" android:background="@drawable/button" android:adjustViewBounds="true" android:padding="5px" android:layout_gravity="left" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="25px"></ImageButton></LinearLayout></TableRow>
 
-			<TableRow android:id="@+id/TableRow05" android:layout_width="wrap_content"
-				android:layout_height="wrap_content">
-				<ImageButton android:src="@drawable/rec" android:id="@+id/Record"
-					android:layout_height="wrap_content" android:layout_weight="0"
-					android:layout_width="wrap_content" android:layout_gravity="right"></ImageButton>
-				
-			<ImageButton android:id="@+id/pick" android:src="@drawable/pick_app" android:layout_width="wrap_content" android:padding="5px" android:background="@drawable/button" android:adjustViewBounds="true" android:layout_weight="1" android:layout_margin="5px" android:layout_height="wrap_content"></ImageButton></TableRow>
+			
 			
 			<TableRow android:id="@+id/TableRow04" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:layout_marginLeft="30px"
-				android:layout_marginRight="30px"><Button android:id="@+id/test_gesture" android:text="Test Gesture" android:layout_width="fill_parent" android:layout_height="fill_parent" android:enabled="false" android:layout_weight="1"></Button>
+				android:layout_marginRight="30px"><Button android:id="@+id/test_gesture" android:text="Test Gesture" android:layout_width="fill_parent" android:enabled="false" android:background="@drawable/button" android:layout_height="wrap_content" android:layout_marginBottom="5px" android:layout_marginTop="5px" android:layout_marginLeft="5px" android:layout_marginRight="5px" android:layout_weight="1"></Button><Button android:text="launch now" android:id="@+id/launch_now" android:background="@drawable/button" android:layout_marginTop="5px" android:layout_marginBottom="5px" android:layout_marginLeft="5px" android:layout_marginRight="5px" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="0.5"></Button>
 				
 				
 
 			
-<Button android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="fill_parent" android:text="launch now" android:id="@+id/launch_now"></Button>
+
 </TableRow>
 			<Spinner android:id="@+id/activity_spinner"
 				android:layout_height="wrap_content" android:layout_weight="0"
@@ -53,7 +47,7 @@
 				
 				<LinearLayout android:id="@+id/LinearLayout01"
 					android:layout_height="wrap_content" android:orientation="vertical"
-					android:layout_width="fill_parent" android:layout_weight="1">
+					android:layout_width="fill_parent" android:layout_weight="1" android:layout_marginLeft="15px" android:layout_marginRight="15px">
 					<EditText android:layout_height="wrap_content"
 						android:layout_width="fill_parent" android:layout_weight="1"
 						android:id="@+id/NameInput"
@@ -63,10 +57,11 @@
 						android:padding="0px" android:background="@drawable/button" android:layout_marginBottom="5px" android:layout_marginTop="5px"></Button>
 				</LinearLayout>
 			</TableRow>
-		</TableLayout>
+		
+</TableLayout>
 		<LinearLayout android:id="@+id/LinearLayout02"
 			android:orientation="horizontal"
-			android:layout_gravity="center" android:layout_height="wrap_content" android:layout_weight="1" android:layout_width="wrap_content" android:layout_marginLeft="2px">
+			android:layout_gravity="center" android:layout_height="wrap_content" android:layout_weight="1" android:layout_width="wrap_content" android:layout_marginLeft="2px" android:layout_marginTop="15px">
 			<Button android:id="@+id/discard"
 				android:layout_gravity="bottom" android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="@drawable/button_left" android:layout_marginRight="10px" android:text="             discard"></Button>
 			<Button android:id="@+id/sSandE" android:layout_gravity="bottom"
