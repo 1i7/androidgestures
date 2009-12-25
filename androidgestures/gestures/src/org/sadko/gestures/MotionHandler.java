@@ -71,9 +71,10 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 		Log.i("service", "on bind");
 		if(listners.isEmpty()){
 			if(isEnabled)
-				mgr.registerListener(this, 
-						mgr.getSensorList(Sensor.TYPE_ORIENTATION).get(0), 
-						SensorManager.SENSOR_DELAY_UI);
+				if(motions.size() > 0)
+					mgr.registerListener(this, 
+							mgr.getSensorList(Sensor.TYPE_ORIENTATION).get(0), 
+							SensorManager.SENSOR_DELAY_UI);
 		}
 		ListnerBinder lb=new ListnerBinder();
 		lb.mh=this;
@@ -166,9 +167,10 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 			killNotification();
 		}
 		else{
-			mgr.registerListener(this, 
-					mgr.getSensorList(Sensor.TYPE_ORIENTATION).get(0), 
-					SensorManager.SENSOR_DELAY_UI);
+			if(motions.size() > 0)
+				mgr.registerListener(this, 
+						mgr.getSensorList(Sensor.TYPE_ORIENTATION).get(0), 
+						SensorManager.SENSOR_DELAY_UI);
 			showNotification();
 		}
 		isEnabled= !isEnabled;
