@@ -178,8 +178,6 @@ public class Recorder extends Activity {
 		setContentView(R.layout.record);
 		TextView instruction=(TextView)findViewById(R.id.instruction_record);
 		TextView instruction2=(TextView)findViewById(R.id.instruction_record_2);
-		instruction.setText("1. Press start to start recording the gesture\n2. Make a short movement with your phone in a space and remember the gesture)");
-		instruction2.setText("3. Press stop when finished");
 		start = (Button) findViewById(R.id.Button01);
 		start.setTextSize(50);
 		start.setOnClickListener(new OnClickListener() {
