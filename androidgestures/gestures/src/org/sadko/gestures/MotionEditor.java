@@ -238,6 +238,7 @@ public class MotionEditor extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	private void initElements(){
+		
 		spinner = (Spinner) findViewById(R.id.activity_spinner);
 		spinner.setEnabled(false);
 		ImageButton record = (ImageButton) findViewById(R.id.Record);
@@ -363,6 +364,7 @@ public class MotionEditor extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
 		//get action of start
+		
 		action = getIntent().getAction();
 		helper = new MotionHandlerHelper(this){
 			@Override
@@ -449,6 +451,7 @@ public class MotionEditor extends Activity {
 				
 			}
 			initElements();
+			
 		}
 		
 
