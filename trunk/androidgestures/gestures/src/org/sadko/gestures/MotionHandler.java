@@ -117,6 +117,7 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_OFF);
 		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_ON);
 		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_SET_MODE);
+		iFilter.addAction(android.content.Intent.ACTION_SCREEN_OFF);
 		controller = new MotionHandlerBroadcastReceiver(this);
 		registerReceiver(controller, iFilter);
 		throwStateBroadcast();
