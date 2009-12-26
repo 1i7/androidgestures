@@ -521,12 +521,14 @@ public class MotionEditor extends Activity {
 			activs=new ActivityInfo[pi.activities.length];
 			System.arraycopy(pi.activities, 0, activs, 0, pi.activities.length);
 			sortActivs();
+			
 			int i = 0;
 			for (int j = 0; j < activs.length; j++) {
 				if (activs[j].name.equals(appActivity))
 					i = j;
 			}
 			spinner.setSelection(i);
+			
 			if (nameWasAsPickedApp)
 				((EditText) findViewById(R.id.NameInput)).setText(pm
 						.getApplicationLabel(pm.getApplicationInfo(appPackage,
