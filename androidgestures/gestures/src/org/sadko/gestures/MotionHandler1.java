@@ -92,7 +92,7 @@ public class MotionHandler1 extends MotionHandler {
 						"A21", "A22", MotionColumns.TIME, MotionColumns._ID,
 						MotionColumns.ISACTIVE },
 				MotionColumns.ISACTIVE + " = " + 1, null, null);
-		
+		//android.content.Intent.
 		while (c.getCount()!=0 && !c.isLast()) {
 			c.moveToNext();
 			Motion motion = new Motion();

@@ -38,6 +38,8 @@ public class MotionHandlerBroadcastReceiver extends BroadcastReceiver {
 		String action = intent.getAction();
 		
 		Log.i("action received", action);
+		if(action.equals(android.content.Intent.ACTION_SCREEN_OFF))
+			myContainer.turnOff();
 		if(action.equals(ACTION_GET_STATE)){
 			myContainer.throwStateBroadcast();
 		}
