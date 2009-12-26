@@ -3,12 +3,14 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_margin="3px"
 	android:id="@+id/item_layout" android:minHeight="60px">
-	<TextView android:id="@+id/gesture_name"
-		android:text="123"
+	<TextView android:id="@+id/gesture_name" android:text="123"
 		android:layout_height="wrap_content" android:layout_width="fill_parent"></TextView>
 	<TextView android:layout_width="fill_parent" android:id="@+id/modified_date"
-		android:text="0"
-		android:layout_height="wrap_content" android:layout_below="@+id/gesture_name"></TextView>
-	
-<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/activated_indicator" android:src="@drawable/rec" android:layout_alignParentRight="true" android:maxWidth="70px" android:maxHeight="70px"></ImageView>
+		android:text="0" android:layout_height="wrap_content"
+		android:layout_below="@+id/gesture_name"></TextView>
+
+	<ImageView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:id="@+id/activated_indicator"
+		android:src="@drawable/rec" android:layout_alignParentRight="true"
+		android:maxWidth="70px" android:maxHeight="70px"></ImageView>
 </RelativeLayout>
