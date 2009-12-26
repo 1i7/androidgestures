@@ -1,6 +1,6 @@
 package org.sadko.gestures;
 
-import android.R;
+
 import android.content.Context;
 import android.widget.Button;
 

@@ -39,6 +39,7 @@ public class SettingsActivity extends Activity {
 		});
 		saveAndExit.setOnClickListener(new OnClickListener() {
 			@Override
+			
 			public void onClick(View v) {
 				isDiscarding = false;
 				SettingsActivity.this.finish();
@@ -58,10 +59,10 @@ public class SettingsActivity extends Activity {
 	private void loadSettings(){
 		settings = getSharedPreferences(MotionHandler1.PREFERENCE_STRING, 0); 
 		sensitivity.setProgress(Math.round( (1 - settings
-				.getFloat(MotionHandler1.MOTION_SENSITIVITY_STRING, 0.9f) / MotionHandler1.MAX_SENSITIVITY )* 
+				.getFloat(MotionHandler1.MOTION_SENSITIVITY_STRING, MotionHandler1.SENSITIVITY_DEFAULT) / MotionHandler1.MAX_SENSITIVITY )* 
 					sensitivity.getMax()));
 		period.setProgress(Math.round( ((float)settings
-				.getLong(MotionHandler1.PERIOD_STRING, 100) / 
+				.getLong(MotionHandler1.PERIOD_STRING, MotionHandler1.PERIOD_DEFAULT) / 
 					MotionHandler1.MAX_PERIOD )* 
 					period.getMax()));
 	}
@@ -73,8 +74,8 @@ public class SettingsActivity extends Activity {
 						Math.round(MotionHandler1.MAX_PERIOD * ((double)period.getProgress() / 
 								period.getMax())))
 				.commit();
-		MotionHandler1.MOTION_SENSITIVITY = settings.getFloat(MotionHandler1.MOTION_SENSITIVITY_STRING, 0.9f);
-		MotionHandler1.PERIOD = settings.getLong(MotionHandler1.PERIOD_STRING, 100);
+		MotionHandler1.SENSITIVITY = settings.getFloat(MotionHandler1.MOTION_SENSITIVITY_STRING, MotionHandler1.SENSITIVITY_DEFAULT);
+		MotionHandler1.PERIOD = settings.getLong(MotionHandler1.PERIOD_STRING, MotionHandler1.PERIOD_DEFAULT);
 	}
 
 	

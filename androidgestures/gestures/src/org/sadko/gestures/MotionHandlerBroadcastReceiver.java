@@ -17,6 +17,7 @@ public class MotionHandlerBroadcastReceiver extends BroadcastReceiver {
 	MotionHandler myContainer;
 	public MotionHandlerBroadcastReceiver(MotionHandler motionHandler) {
 		myContainer = motionHandler;
+		Log.i("controller", "new instance!");
 	}
 	Intent getMotionHandlerIntent(Context c){
 		return new Intent(c,MotionHandler1.class);
@@ -36,7 +37,7 @@ public class MotionHandlerBroadcastReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
 		
-		Log.i("action received", "ura!");
+		Log.i("action received", action);
 		if(action.equals(ACTION_GET_STATE)){
 			myContainer.throwStateBroadcast();
 		}

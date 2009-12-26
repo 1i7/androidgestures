@@ -52,7 +52,11 @@
 		</service>
 		<activity android:name="GesturesListActivity" android:label="Gestures lib"></activity>
 		<activity android:name="TestGestureActivity" android:label="Gesture Tester"></activity>
-		
+		<receiver android:name = ".LauncherReceiver">
+			<intent-filter>
+                <action android:name="gesture.registered" />
+            </intent-filter>
+		</receiver>
 		<receiver android:name=".SwitchWidget" android:label="@string/widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
