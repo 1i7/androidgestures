@@ -353,9 +353,9 @@ public class MotionEditor extends Activity {
 	
 	private void setBannerEnabled(boolean isEnabled) {
 		if (isEnabled){
-			banner.setBackgroundResource(R.drawable.banner_up);
-		} else {
 			banner.setBackgroundResource(R.drawable.banner_down);
+		} else {
+			banner.setBackgroundResource(R.drawable.banner_up);
 		}
 	}
 	
