@@ -83,8 +83,10 @@ public class MotionEditor extends Activity {
 	ContentValues motionValues = new ContentValues();
 	ContentValues activityValues = new ContentValues();
 	String action;
-	long motionId=0;
+	long motionId = -1;
 	long taskId;
+	boolean isActive = false;
+	
 	Button launch;
 	String appActivity;
 	ImageView banner;
@@ -104,7 +106,7 @@ public class MotionEditor extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, DEACTIVATE_ID, 0, "Deactivate").setIcon(android.R.drawable.ic_lock_silent_mode);
+		menu.add(0, DEACTIVATE_ID, 0, isActive ? "Deactivate" : "Activate").setIcon( isActive ? android.R.drawable.ic_lock_silent_mode : android.R.drawable.ic_lock_silent_mode_off);
 		menu.add(0, DELETE_ID, 0, "Delete").setIcon(android.R.drawable.ic_delete);
 		
 		// menu.add(0, KILL_SERVICE_ID, 0, "Kill handling service");
@@ -116,6 +118,9 @@ public class MotionEditor extends Activity {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
 		case DEACTIVATE_ID: {
+			isActive = !isActive;
+			motionValues.put(MotionColumns.ISACTIVE, isActive);
+			item.setTitle(isActive ? "Deactivate" : "Activate").setIcon( isActive ? android.R.drawable.ic_lock_silent_mode : android.R.drawable.ic_lock_silent_mode_off);
 			break;
 			
 		}
@@ -161,6 +166,7 @@ public class MotionEditor extends Activity {
 	
 	void saveGesture() {
 		// saving name of motion
+		motionValues.put(MotionColumns.ISACTIVE, (isActive ? 1 : 0));
 		motionValues.put(MotionColumns.NAME,
 				((EditText) findViewById(R.id.NameInput)).getText().toString());
 		if (action.equals(android.content.Intent.ACTION_EDIT)) {
@@ -189,6 +195,7 @@ public class MotionEditor extends Activity {
 		action=android.content.Intent.ACTION_EDIT;
 		outState.putString("action",action);
 		outState.putLong("motionId",motionId);
+		outState.putBoolean("isactivated", isActive);
 		super.onSaveInstanceState(outState);
 	}
 	@Override
@@ -199,6 +206,8 @@ public class MotionEditor extends Activity {
 						.getParcelableExtra(Recorder.RESULT_CONTENT_VALUES_NAME);
 				motionValues.putAll(v);
 				testGesture.setEnabled(true);
+				if(motionValues.containsKey(MotionColumns.TIME))
+					isActive = true;
 			}
 		if (requestCode == PICK_APP_REQUEST_CODE) {
 			if (resultCode == 1) {
@@ -356,12 +365,6 @@ public class MotionEditor extends Activity {
 		//get action of start
 		action = getIntent().getAction();
 		helper = new MotionHandlerHelper(this){
-
-			@Override
-			public void OnGestureRegistered(long id) {
-				super.OnGestureRegistered(id);
-			}
-
 			@Override
 			public void OnStateReceived(boolean isEnabled) {
 				super.OnStateReceived(isEnabled);
@@ -385,13 +388,14 @@ public class MotionEditor extends Activity {
 			if(savedInstanceState.containsKey("action")){
 				action=savedInstanceState.getString("action");
 				motionId=savedInstanceState.getLong("motionId");
+				//isActive = savedInstanceState.getBoolean("isactivated");
 			}
 		}
 				
 		//if we edit motion we should get what we are going to edit		
 		if (action.equals(android.content.Intent.ACTION_EDIT)) {
 			initElements();
-			if(motionId == 0)
+			if(motionId == -1)
 				motionId = getIntent().getExtras().getLong("id");
 			Cursor taskCursor = getContentResolver().query(MotionsDB.TASKS_CONTENT_URI,
 					null, ActivityColumns.MOTION_ID + "=" + motionId, null,
@@ -415,17 +419,21 @@ public class MotionEditor extends Activity {
 			Cursor c = getContentResolver().query(
 					ContentUris.withAppendedId(MotionsDB.MOTIONS_CONTENT_URI,
 							motionId),
-					new String[] { MotionColumns.NAME, MotionColumns.TIME },
+					new String[] { MotionColumns.NAME, MotionColumns.TIME, MotionColumns.ISACTIVE },
 					null, null, null);
 
 			c.moveToFirst();
 			//set name of motion in edit text
-			if (c.getString(0) != null)
+			if (!c.isNull(0))
 				((EditText) findViewById(R.id.NameInput)).setText(c
 						.getString(0));
 			//if motion was recorded let to test it
 			if (!c.isNull(1))
 				testGesture.setEnabled(true);
+			if (!c.isNull(2))
+				isActive = (c.getInt(2) == 0 ? false : true);
+			else 
+				isActive = false;
 			c.close();
 			taskCursor.close();
 		}else{

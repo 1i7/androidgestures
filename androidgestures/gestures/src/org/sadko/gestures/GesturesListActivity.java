@@ -59,7 +59,7 @@ public class GesturesListActivity extends ListActivity{
 	
 	private void fillListView() {
 		gesturesFromDatabase = getContentResolver().query(MotionsDB.MOTIONS_CONTENT_URI,
-				new String[] { "_id", MotionColumns.NAME, MotionColumns.MODIFIED_DATE }, null, null, null);
+				new String[] { "_id", MotionColumns.NAME, MotionColumns.MODIFIED_DATE, MotionColumns.ISACTIVE }, null, null, null);
 		startManagingCursor(gesturesFromDatabase);
 		/*gesturesFromDatabase.registerContentObserver(new ContentObserver(new Handler() {
 
@@ -123,6 +123,9 @@ public class GesturesListActivity extends ListActivity{
 			name.setTextSize(20);
 			name.setTextColor(Color.BLACK);
 			name.setText(cursor.getString(cursor.getColumnIndex(MotionColumns.NAME)));
+			ImageView isActive = (ImageView) view.findViewById(R.id.activated_indicator);
+			boolean isactive = cursor.getInt(cursor.getColumnIndex(MotionColumns.ISACTIVE)) == 0 ? false : true;
+			isActive.setImageResource(isactive ? R.drawable.widget_on : R.drawable.widget_off);
 		}
 		@Override
 		public void bindView(View arg0, Context arg1, Cursor arg2) {

@@ -15,8 +15,14 @@
     <string name="app_name">Gestures</string>
 <string name="main_screen_label">HowTo</string>
 <string name="lib_label">Library</string>
+
+
 <string name="widget_name">Gestures widget</string>
 <string name="bad_gesture_text">This gesture is like a non-moving gesture. Usage of this gesture leads to malfunction. Try again!</string>
-
+<string name="helper_dialog_title">How to turn on</string>
+<string name="helper_dialog_text">You can turn gestures service on buy 
+clicking on banner "Gestures" on the top of the screen or by using gestures
+ widget which can be added to your Home screen.<br /> In order to add widget go to your home screen,
+ click menu &#8594; add &#8594; widgets and find Gestures widget there.</string>
 
 </resources>
