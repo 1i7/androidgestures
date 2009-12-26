@@ -19,7 +19,7 @@
 			android:textSize="18px"></TextView>
 		<Button android:id="@+id/add_first" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:layout_gravity="center"
-			android:text="Add my first gesture " android:layout_marginBottom="20px"></Button>
+			android:text="Add my first gesture " android:layout_marginBottom="20px" android:background="@drawable/button"></Button>
 		<ImageView android:id="@+id/ImageView01"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
 			android:src="@drawable/android_icon_125" android:layout_gravity="center_horizontal"></ImageView>
