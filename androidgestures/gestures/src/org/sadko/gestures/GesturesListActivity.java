@@ -119,13 +119,14 @@ public class GesturesListActivity extends ListActivity{
 				mDate.setTime(date);
 				dateTextView.setText(mDate.toLocaleString());
 			}
+			
 			dateTextView.setTextColor(Color.BLACK);
 			name.setTextSize(20);
 			name.setTextColor(Color.BLACK);
 			name.setText(cursor.getString(cursor.getColumnIndex(MotionColumns.NAME)));
 			ImageView isActive = (ImageView) view.findViewById(R.id.activated_indicator);
 			boolean isactive = cursor.getInt(cursor.getColumnIndex(MotionColumns.ISACTIVE)) == 0 ? false : true;
-			isActive.setImageResource(isactive ? R.drawable.widget_on : R.drawable.widget_off);
+			isActive.setVisibility(isactive ? View.INVISIBLE : View.VISIBLE);
 		}
 		@Override
 		public void bindView(View arg0, Context arg1, Cursor arg2) {
