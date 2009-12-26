@@ -25,7 +25,10 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
 import android.os.Bundle;
+import android.preference.RingtonePreference;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -115,7 +118,8 @@ public class Manager extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-
+		RingtoneManager rManager = new RingtoneManager(this);
+		rManager.getRingtone(this, android.provider.Settings.System.DEFAULT_NOTIFICATION_URI).play();
 		setContentView(R.layout.main);
 		super.onCreate(savedInstanceState);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.LinearLayout01);
@@ -124,10 +128,13 @@ public class Manager extends Activity {
 		startService(new Intent(this, MotionHandler1.class));
 		serviceState = (TextView) findViewById(R.id.text_about_service_state);
 		moreInfo = (Button) findViewById(R.id.more_info_button);
+		
 		moreInfo.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
+				
+                
 				showDialog(DIALOG_HELPER);
 			}
 		});
