@@ -13,18 +13,17 @@
 		android:text="Sensitivity" android:layout_width="fill_parent"
 		android:gravity="center" android:layout_marginTop="20px"
 		android:textSize="20px"></TextView>
-	<SeekBar android:layout_height="wrap_content" android:id="@+id/Sensitivity_bar"
+	<SeekBar android:id="@+id/Sensitivity_bar"
 		android:layout_gravity="center" android:layout_marginRight="40px"
 		android:layout_width="fill_parent" 
-		android:layout_marginLeft="40px" android:layout_weight="1"></SeekBar>
+		android:layout_marginLeft="40px" android:thumbOffset="-1px" android:layout_height="wrap_content" android:paddingBottom="10px" android:paddingTop="10px"></SeekBar>
 	<TextView android:id="@+id/TextView02" android:layout_height="wrap_content"
 		android:gravity="center" android:layout_width="fill_parent"
 		android:text="Period" android:textColor="#000"
 		android:layout_marginTop="20px" android:textSize="20px"></TextView>
 	<SeekBar android:layout_height="wrap_content" android:id="@+id/Time_bar"
 		android:layout_gravity="center" android:layout_marginLeft="40px"
-		android:layout_marginRight="40px" android:layout_width="fill_parent"
-		android:layout_weight="1"></SeekBar>
+		android:layout_marginRight="40px" android:layout_width="fill_parent" android:paddingBottom="10px" android:paddingTop="10px"></SeekBar>
 
 
 
