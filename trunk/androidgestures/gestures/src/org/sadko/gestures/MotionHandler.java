@@ -32,6 +32,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
@@ -50,7 +51,9 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 	public static final int DEBUG_MODE = 1;
 	protected List<Motion> motions;
 	boolean isEnabled=false;
+	MotionHandlerBroadcastReceiver controller;
 	SensorManager mgr;
+	
 	public void addMotion(Motion motion){
 		motions.add(motion);
 		//Log.i("motion","added!");
@@ -62,6 +65,21 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 	
 	MotionHandler(){
 		motions=new ArrayList<Motion>();
+	}
+	@Override
+	public void onDestroy() {
+		unregisterReceiver(controller);
+		super.onDestroy();
+	}
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		// TODO Auto-generated method stub
+		
 	}
 	protected void deleteAllMotions(){
 		motions.clear();
@@ -83,20 +101,27 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		IntentFilter iFilter = new IntentFilter();
 
-		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_GET_STATE);
-		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_OFF);
-		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_ON);
-		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_SET_MODE);
-		registerReceiver(new MotionHandlerBroadcastReceiver(this), iFilter);
-		throwStateBroadcast();
+
 		mgr = (SensorManager)getSystemService( SENSOR_SERVICE);
 		//Log.i("service", "started");
 		displayWidget();
 		
+		
 	}
 
+	@Override
+	public void onCreate() {
+		IntentFilter iFilter = new IntentFilter();
+		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_GET_STATE);
+		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_OFF);
+		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_TURN_ON);
+		iFilter.addAction(MotionHandlerBroadcastReceiver.ACTION_SET_MODE);
+		controller = new MotionHandlerBroadcastReceiver(this);
+		registerReceiver(controller, iFilter);
+		throwStateBroadcast();
+		super.onCreate();
+	}
 	private void displayWidget() {
 		RemoteViews updateViews = new RemoteViews(getPackageName(), isEnabled ? R.layout.widget_on : R.layout.widget_off);
 		
@@ -108,7 +133,6 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 		ComponentName thisWidget = new ComponentName(this, SwitchWidget.class);
 		AppWidgetManager manager = AppWidgetManager.getInstance(this);
 		manager.updateAppWidget(thisWidget, updateViews);
-		
 	}
 
 	protected void notifyListeners(long motion){

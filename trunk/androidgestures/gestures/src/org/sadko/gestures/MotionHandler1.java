@@ -40,8 +40,10 @@ public class MotionHandler1 extends MotionHandler {
 	public static final String PERIOD_STRING = "Gestures.time.period";
 	public static final float MAX_SENSITIVITY = 4;
 	public static final float MAX_PERIOD = 500;
-	public static float MOTION_SENSITIVITY = 0.1f;
+	public static float SENSITIVITY = 0.1f;
+	public static float SENSITIVITY_DEFAULT = 2.0f;
 	public static long PERIOD = 100;
+	public static long PERIOD_DEFAULT = 100;
 	long needTime = 0;
 	long oldestTime = 0;
 	public static final long timeBetweenRegistering = 1500;
@@ -149,16 +151,16 @@ public class MotionHandler1 extends MotionHandler {
 				}
 			});
 		isOnSharedPreferencesRegistered = true;
-		MOTION_SENSITIVITY = settings.getFloat(MOTION_SENSITIVITY_STRING, 0.1f);
-		PERIOD = settings.getLong(PERIOD_STRING, 100);
-		Log.i("preferences", "SENSITIVITY = " + MOTION_SENSITIVITY);
+		SENSITIVITY = settings.getFloat(MOTION_SENSITIVITY_STRING, SENSITIVITY_DEFAULT);
+		PERIOD = settings.getLong(PERIOD_STRING, PERIOD_DEFAULT);
+		Log.i("preferences", "SENSITIVITY = " + SENSITIVITY);
 	}
 	private void savePreferences(){
-		settings.edit().putFloat(MOTION_SENSITIVITY_STRING, (float) MOTION_SENSITIVITY)
+		settings.edit().putFloat(MOTION_SENSITIVITY_STRING, (float) SENSITIVITY)
 		.putLong(PERIOD_STRING, PERIOD).commit();
 	}
 	public void changeSensitivity(float d) {
-		MOTION_SENSITIVITY = d;
+		SENSITIVITY = d;
 		savePreferences();
 	}
 	public void changePeriod(long d) {
@@ -199,7 +201,7 @@ public class MotionHandler1 extends MotionHandler {
 						for (int l = 0; l < 3; l++)
 							ss += (matrix[k][l] - m.matrix[k][l])
 									* (matrix[k][l] - m.matrix[k][l]);
-					if (ss < MOTION_SENSITIVITY
+					if (ss < SENSITIVITY
 							&& (lastAcceptedTime - lastRegisterTime > timeBetweenRegistering
 							|| m.id != lastRegisteredGestureId)
 							) {

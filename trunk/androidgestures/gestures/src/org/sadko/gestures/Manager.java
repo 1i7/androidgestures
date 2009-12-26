@@ -103,42 +103,12 @@ public class Manager extends Activity {
 		startMyService = (ImageButton) findViewById(R.id.start_stop_service);
 		startService(new Intent(this, MotionHandler1.class));
 		serviceState = (TextView) findViewById(R.id.text_about_service_state);
-		mMotionHandlerHelper = new MotionHandlerHelper(this) {
-			@Override
-			public void OnGestureRegistered(long id) {
-				
-				Log.i("manager", "received gesture with id " + id);
-				Cursor tasksForGesture = getContentResolver().query(
-						MotionsDB.TASKS_CONTENT_URI,
-						new String[] { ActivityColumns.PACK,
-								ActivityColumns.ACTIVITY },
-						ActivityColumns.MOTION_ID + "=" + id, null, null);
-				tasksForGesture.moveToFirst();
-				while (!tasksForGesture.isAfterLast()) {
-					if (tasksForGesture.getString(0) != null
-							&& tasksForGesture.getString(1) != null) {
-						Intent i = new Intent();
-						i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-								| Intent.FLAG_ACTIVITY_NEW_TASK);
-						i.setClassName(tasksForGesture.getString(0),
-								tasksForGesture.getString(1));
-						try {
-							startActivity(i);
-						} catch (Exception e) {
-							Toast.makeText(mContext, "cant't start activity",
-									1000).show();
-							e.printStackTrace();
-						}
-					}
-					tasksForGesture.moveToNext();
-				}
-				tasksForGesture.close();
-			}
-
+		mMotionHandlerHelper = new MotionHandlerHelper(this){
 			@Override
 			public void OnStateReceived(boolean isEnabled) {
 				setBannerEnabled(isEnabled);
 			}
+		
 		};
 		
 		startMyService.setOnClickListener(new OnClickListener() {
@@ -176,6 +146,7 @@ public class Manager extends Activity {
 
 	@Override
 	protected void onDestroy() {
+		mMotionHandlerHelper.unregisterAsReceiver();
 		super.onDestroy();
 	}
 

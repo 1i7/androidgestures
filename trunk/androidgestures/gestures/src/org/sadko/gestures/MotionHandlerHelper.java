@@ -9,7 +9,9 @@ import android.util.Log;
 public class MotionHandlerHelper extends BroadcastReceiver {
 	Context mContext;
 	boolean lastState;
-
+	public MotionHandlerHelper(){
+		super();
+	}
 	public MotionHandlerHelper(Context context) {
 		mContext = context;
 		registerAsReceiver();
@@ -52,6 +54,7 @@ public class MotionHandlerHelper extends BroadcastReceiver {
 	}
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		mContext = context;
 		String action = intent.getAction();
 		if(action.equals(MotionHandler.ACTION_SERVICE_STATE)){
 			Log.i("mhh","state received");
