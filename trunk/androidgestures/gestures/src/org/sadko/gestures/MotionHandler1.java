@@ -89,8 +89,9 @@ public class MotionHandler1 extends MotionHandler {
 		c = getContentResolver().query(
 				MotionsDB.MOTIONS_CONTENT_URI,
 				new String[] { "A00", "A01", "A02", "A10", "A11", "A12", "A20",
-						"A21", "A22", "time", "_id" },
-				null, null, null);
+						"A21", "A22", MotionColumns.TIME, MotionColumns._ID,
+						MotionColumns.ISACTIVE },
+				MotionColumns.ISACTIVE + " = " + 1, null, null);
 		
 		while (c.getCount()!=0 && !c.isLast()) {
 			c.moveToNext();

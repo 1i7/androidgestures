@@ -50,14 +50,14 @@ public final class MotionColumns implements BaseColumns {
      * <P>Type: TEXT</P>
      */
     public static final String NAME = "name";
-    public static final String TIME="time";
+    public static final String TIME= "time";
     /**
      * The note itself
      * <P>Type: TEXT</P>
      */
     //public static final String PATH = "path";
     public static final String [][] MATRIX=new String[3][3];
-
+    public static final String ISACTIVE = "gestureActive";
     /**
      * The timestamp for when the note was created
      * <P>Type: INTEGER (long from System.curentTimeMillis())</P>

@@ -20,23 +20,22 @@ h  * Copyright (C) 2007 The Android Open Source Project
 package org.sadko.gestures;
 
 import android.app.Activity;
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sadko.about.AboutActivity;
 
@@ -46,10 +45,31 @@ public class Manager extends Activity {
 	private static final int SETTINNGS_ID = 3;
 	private static final int EXIT_ID = 1;
 	private static final int ABOUT_ID = 2;
+	private static final int DIALOG_HELPER = 0;
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		if (id == DIALOG_HELPER){
+			return new AlertDialog.Builder(this)
+				.setTitle(R.string.helper_dialog_title)
+				.setMessage(R.string.helper_dialog_text).setNeutralButton("OK", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						
+					}
+				}).create();
+		}
+		return super.onCreateDialog(id);
+	}
+
+	
 	public static boolean isServiceStarted = false;
 	ImageButton startMyService;
 	TextView serviceState;
+	Button moreInfo;
 	MotionHandlerHelper mMotionHandlerHelper;
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,6 +123,14 @@ public class Manager extends Activity {
 		startMyService = (ImageButton) findViewById(R.id.start_stop_service);
 		startService(new Intent(this, MotionHandler1.class));
 		serviceState = (TextView) findViewById(R.id.text_about_service_state);
+		moreInfo = (Button) findViewById(R.id.more_info_button);
+		moreInfo.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				showDialog(DIALOG_HELPER);
+			}
+		});
 		mMotionHandlerHelper = new MotionHandlerHelper(this){
 			@Override
 			public void OnStateReceived(boolean isEnabled) {
