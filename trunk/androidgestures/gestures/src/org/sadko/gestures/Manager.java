@@ -147,8 +147,8 @@ public class Manager extends Activity {
 	}
 
 	private void setBannerEnabled(boolean isEnabled) {
-		startMyService.setBackgroundResource(isEnabled ? R.drawable.banner_up
-				: R.drawable.banner_down);
+		startMyService.setBackgroundResource(isEnabled ? R.drawable.banner_down
+				: R.drawable.banner_up);
 
 	}
 
