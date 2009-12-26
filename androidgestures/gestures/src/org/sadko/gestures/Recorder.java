@@ -188,6 +188,7 @@ public class Recorder extends Activity {
 				switch (stage) {
 				case BEGIN: {
 					stage = RECORD;
+					start.setBackgroundResource(R.drawable.record_gest_button_down);
 					start.setText("Stop");
 					break;
 				}
