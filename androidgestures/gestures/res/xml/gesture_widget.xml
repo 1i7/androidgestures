@@ -5,5 +5,6 @@
     android:minHeight="100dip"
     android:updatePeriodMillis="86400000"
     android:initialLayout="@layout/widget_off"
+    android:configure="org.sadko.gestures.ConfigWidgetActivity" 
   >
 </appwidget-provider>

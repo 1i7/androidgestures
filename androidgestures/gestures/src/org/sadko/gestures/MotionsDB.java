@@ -120,6 +120,7 @@ public class MotionsDB extends ContentProvider {
 		}
 
 		}
+		getContext().getContentResolver().notifyChange(arg0, null);
 		return 0;
 	}
 
