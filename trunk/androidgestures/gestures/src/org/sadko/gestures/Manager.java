@@ -121,11 +121,6 @@ public class Manager extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		RingtoneManager rManager = new RingtoneManager(this);
-		rManager.setType(1);
-		rManager.getRingtone(rManager.getRingtonePosition(Settings.System.DEFAULT_NOTIFICATION_URI)).play();
-		 
-		
 		setContentView(R.layout.main);
 		super.onCreate(savedInstanceState);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.LinearLayout01);
