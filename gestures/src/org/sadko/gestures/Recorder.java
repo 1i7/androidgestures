@@ -42,7 +42,9 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.hardware.SensorListener;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -57,8 +59,8 @@ public class Recorder extends Activity {
 	//private ServiceConnection con;
 	//private ListnerBinder lb;
 	public static final String RESULT_CONTENT_VALUES_NAME="org.sadko.gestures.Recorder/val";
-	public static final double THRESHOLD_DEVIATION = 3.0; 
-	public static double[][] math(double yaw2, double pitch2, double roll2,
+	public static final double THRESHOLD_DEVIATION = 1.0; 
+	/*public static double[][] math(double yaw2, double pitch2, double roll2,
 			double yaw, double pitch, double roll) {
 
 		double[][] ans = new double[3][3];
@@ -161,7 +163,7 @@ public class Recorder extends Activity {
 				* Math.sin(yaw2) * Math.sin(roll) * Math.sin(yaw));
 		return ans;
 
-	}
+	}*/
 
 	Button start;
 	static final int BEGIN = 0;
@@ -206,7 +208,10 @@ public class Recorder extends Activity {
 		//getSystemService(SENSOR_SERVICE));
 		//SensorManagerSimulator.connectSimulator();
 		mSensorManager.registerListener(r,
-				SensorManager.SENSOR_ORIENTATION,
+				mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+				SensorManager.SENSOR_DELAY_UI);
+		mSensorManager.registerListener(r,
+				mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
 				SensorManager.SENSOR_DELAY_UI);
 	}
 	@Override
@@ -239,15 +244,19 @@ public class Recorder extends Activity {
 		return null;
 	}
 	
-	private class recordListener implements SensorListener {
+	private class recordListener implements SensorEventListener {
 		int ARRAY_SIZE = 10;
 
-		double[][] maxMatrix;
+		float[][] maxMatrix;
 		long[] times = new long[ARRAY_SIZE];
-		protected double yaws[] = new double[ARRAY_SIZE];
-		protected double rolls[] = new double[ARRAY_SIZE];
-		protected double pitchs[] = new double[ARRAY_SIZE];
-		int position = 0;
+		//protected double yaws[] = new double[ARRAY_SIZE];
+		//protected double rolls[] = new double[ARRAY_SIZE];
+		//protected double pitchs[] = new double[ARRAY_SIZE];
+		protected float magnetics[][] = new float[ARRAY_SIZE][3];
+		protected float accels[][] = new float[ARRAY_SIZE][3];
+		protected float accels_last[] = new float[3];
+		int position_magnetic = 0;
+		
 
 		public void onAccuracyChanged(int sensor, int accuracy) {
 		}
@@ -255,43 +264,51 @@ public class Recorder extends Activity {
 		private void increase() {
 			ARRAY_SIZE *= 2;
 			long[] newt = new long[ARRAY_SIZE];
-			System.arraycopy(times, 0, newt, 0, position + 1);
+			System.arraycopy(times, 0, newt, 0, position_magnetic + 1);
 			times = newt;
-			double[] newy = new double[ARRAY_SIZE];
-			System.arraycopy(yaws, 0, newy, 0, position + 1);
-			yaws = newy;
-			double[] newr = new double[ARRAY_SIZE];
-			System.arraycopy(rolls, 0, newr, 0, position + 1);
-			rolls = newr;
-			double[] newp = new double[ARRAY_SIZE];
-			System.arraycopy(pitchs, 0, newp, 0, position + 1);
-			pitchs = newp;
+			float[][] newm = new float[ARRAY_SIZE][3];
+			System.arraycopy(magnetics, 0, newm, 0, position_magnetic + 1);
+			magnetics = newm;
+			float[][] newa = new float[ARRAY_SIZE][3];
+			System.arraycopy(accels, 0, newa, 0, position_magnetic + 1);
+			accels = newa;
 
 		}
-
-		public void onSensorChanged(int sensor, float[] values) {
+		boolean flag = false;
+		public void onSensorChanged(SensorEvent event) {
 			if (stage == RECORD) {
-				if (position == ARRAY_SIZE - 1)
+				if (position_magnetic == ARRAY_SIZE - 1 )
 					increase();
-				yaws[position] = values[0] * Math.PI / 180;
-				rolls[position] = values[2] * Math.PI / 180;
-				pitchs[position] = values[1] * Math.PI / 180;
-				times[position] = System.currentTimeMillis();
-			//	Log.i("sens " + position, "" + yaws[position] + "\t"
-				//		+ pitchs[position] + "\t" + rolls[position] + "\t"
-					//	+ times[position] + "\n");
-				position++;
+				if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+					accels_last[0] = event.values[0];
+					accels_last[1] = event.values[1];
+					accels_last[2] = event.values[2];
+					flag = true;
+				}
+				if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){
+					magnetics[position_magnetic][0] = event.values[0];
+					magnetics[position_magnetic][1] = event.values[1];
+					magnetics[position_magnetic][2] = event.values[2];
+					accels[position_magnetic][0] = accels_last[0];
+					accels[position_magnetic][1] = accels_last[1];
+					accels[position_magnetic][2] = accels_last[2];
+					times[position_magnetic] = event.timestamp / 1000000;
+					if(flag != false){
+						position_magnetic++;
+						flag = false;
+					}
+				}
+
 			}
 			if (stage == END) {
-				double[][] matrix;
+				float[][] matrix;
 				long time = 0;
 				double matrixNorm = 0;
-				maxMatrix = new double[3][3];
+				maxMatrix = new float[3][3];
 				maxMatrix[1][1] = maxMatrix[2][2] = maxMatrix[0][0] = 1;
 				double maxMatrixNorm = 0;
-				for (int i = 1; i < position; i++) {
-					matrix = math(yaws[i], pitchs[i], rolls[i], yaws[0],
-							pitchs[0], rolls[0]);
+				for (int i = 1; i < position_magnetic; i++) {
+					matrix = math_2(accels[0], magnetics[0], accels[i], magnetics[i]);
 					matrixNorm = (matrix[0][0] - 1) * (matrix[0][0] - 1)
 							+ matrix[0][1] * matrix[0][1] + matrix[0][2]
 							* matrix[0][2] + matrix[1][0] * matrix[1][0]
@@ -314,9 +331,11 @@ public class Recorder extends Activity {
 				ContentValues val = new ContentValues();
 				Intent rez = new Intent();
 
-				for (int i = 0; i < 3; i++)
+				for (int i = 0; i < 3; i++){
 					for (int j = 0; j < 3; j++)
 						val.put(MotionColumns.MATRIX[i][j], maxMatrix[i][j]);
+					Log.i("recorder", "matrix " + maxMatrix[i][0] + " "+ maxMatrix[i][1] + " "+ maxMatrix[i][2] + " ");
+				}
 				val.put(MotionColumns.TIME, time);
 				
 				rez.putExtra(RESULT_CONTENT_VALUES_NAME, val);
@@ -324,7 +343,8 @@ public class Recorder extends Activity {
 				setResult(1, rez);
 				mSensorManager.unregisterListener(this);
 				Recorder.this.finish();
-				position = 0;
+				position_magnetic = 0;
+				
 				stage = BEGIN;
 
 			}
@@ -335,6 +355,33 @@ public class Recorder extends Activity {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+			// TODO Auto-generated method stub
+			
+		}
 		
+	}
+	public static float[][] math_2(float accels_init[], float[] magnetic_init, float[]accels, float[] magnetic){
+		for(int i = 0; i < 3; ++i)
+			Log.i("math2args", accels_init[i]+" "+magnetic_init[i]+" "+accels[i]+ " " + accels_init[i]);
+		float [] R = new float[9];
+		float [] I = new float[9];
+		float [] R_init = new float[9];
+		float [] I_init = new float[9];
+		float[][] result = new float[3][3];
+		 if(!SensorManager.getRotationMatrix(R, I, accels, magnetic))
+			 Log.i("aaa!!", "pzdc!");
+		if(!SensorManager.getRotationMatrix(R_init, I_init, accels_init, magnetic_init))
+			Log.i("aaa!!", "pzzzdc!");
+		for(int i = 0; i < 3; ++i)
+			for(int j = 0; j < 3; ++j){
+				result[i][j] = 0;
+				for(int k = 0; k < 3; ++k)
+					result[i][j] += R_init[3 * k + i] * R[3 * k + j];
+				Log.i("math2", result[i][j] + " ");
+			}
+		return result;
 	}
 }

@@ -50,6 +50,7 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 	public static final int NORMAL_MODE = 0;
 	public static final int DEBUG_MODE = 1;
 	protected List<Motion> motions;
+	
 	boolean isEnabled=false;
 	MotionHandlerBroadcastReceiver controller;
 	SensorManager mgr;
@@ -89,10 +90,14 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 		Log.i("service", "on bind");
 		if(listners.isEmpty()){
 			if(isEnabled)
-				if(motions.size() > 0)
+				if(motions.size() > 0){
 					mgr.registerListener(this, 
 							mgr.getSensorList(Sensor.TYPE_ORIENTATION).get(0), 
 							SensorManager.SENSOR_DELAY_UI);
+					mgr.registerListener(this, 
+							mgr.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).get(0), 
+							SensorManager.SENSOR_DELAY_UI);
+				}
 		}
 		ListnerBinder lb=new ListnerBinder();
 		lb.mh=this;
@@ -105,7 +110,7 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 
 		mgr = (SensorManager)getSystemService( SENSOR_SERVICE);
 		//Log.i("service", "started");
-		displayWidget();
+		//displayWidget();
 		
 		
 	}
@@ -152,7 +157,7 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 		}
 		
 	}
-	public static double[][] math(double yaw2, double pitch2, double roll2, double yaw,
+	/*public static double[][] math(double yaw2, double pitch2, double roll2, double yaw,
     		double pitch, double roll ){
 
     	double[][]ans=new double[3][3];
@@ -167,7 +172,23 @@ public abstract class MotionHandler extends Service implements SensorEventListen
     	ans[2][2]=(double)(Math.cos(pitch2)*Math.cos(roll2)*Math.cos(pitch)*Math.cos(roll)+Math.sin(roll2)*Math.cos(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.sin(yaw)+Math.sin(pitch2)*Math.cos(roll2)*Math.sin(yaw2)*Math.cos(yaw)*Math.sin(roll)+Math.sin(roll2)*Math.cos(yaw2)*Math.cos(yaw)*Math.sin(roll)-Math.sin(pitch2)*Math.cos(roll2)*Math.cos(yaw2)*Math.sin(roll)*Math.sin(yaw)-Math.sin(roll2)*Math.sin(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.cos(yaw)+Math.sin(pitch2)*Math.cos(roll2)*Math.cos(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.cos(yaw)+Math.sin(pitch2)*Math.cos(roll2)*Math.sin(yaw2)*Math.sin(pitch)*Math.cos(roll)*Math.sin(yaw)+Math.sin(roll2)*Math.sin(yaw2)*Math.sin(roll)*Math.sin(yaw));
      	return ans;
     	 
-    }
+    }*/
+	public static float[][] math_2(float accels_init[], float[] magnetic_init, float[]accels, float[] magnetic){
+		float [] R = new float[9];
+		float [] I = new float[9];
+		float [] R_init = new float[9];
+		float [] I_init = new float[9];
+		float[][] result = new float[3][3];
+		SensorManager.getRotationMatrix(R, I, accels, magnetic);
+		SensorManager.getRotationMatrix(R_init, I_init, accels_init, magnetic_init);
+		for(int i = 0; i < 3; ++i)
+			for(int j = 0; j < 3; ++j){
+				result[i][j] = 0;
+				for(int k = 0; k < 3; ++k)
+					result[i][j] += R_init[3 * k + i] * R[3 * k + j];
+			}
+		return result;
+	}
 	protected void showNotification() {
 		Intent m_clickIntent = new Intent();
 		m_clickIntent.setClass(this, MyTabActivity.class);
@@ -192,14 +213,18 @@ public abstract class MotionHandler extends Service implements SensorEventListen
 			killNotification();
 		}
 		else{
-			if(motions.size() > 0)
+			if(motions.size() > 0){
 				mgr.registerListener(this, 
-						mgr.getSensorList(Sensor.TYPE_ORIENTATION).get(0), 
+						mgr.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0), 
 						SensorManager.SENSOR_DELAY_UI);
+				mgr.registerListener(this, 
+					mgr.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).get(0), 
+					SensorManager.SENSOR_DELAY_UI);
+			}
 			showNotification();
 		}
 		isEnabled= !isEnabled;
-		displayWidget();
+		//displayWidget();
 		throwStateBroadcast();
 		// TODO Auto-generated method stub
 		
