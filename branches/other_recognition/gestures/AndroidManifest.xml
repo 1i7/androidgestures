@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<!--
+		Copyright (C) 2007 The Android Open Source Project Licensed under the
+		Apache License, Version 2.0 (the "License"); you may not use this file
+		except in compliance with the License. You may obtain a copy of the
+		License at http://www.apache.org/licenses/LICENSE-2.0 Unless required
+		by applicable law or agreed to in writing, software distributed under
+		the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	android:versionCode="2" android:versionName="1.1" package="org.sadko.gestures">
+	<uses-sdk android:minSdkVersion="2" />
+	<application android:label="@string/app_name" android:icon="@drawable/icon2">
+
+		<activity android:label="Gesture Recorder" android:name="org.sadko.gestures.Recorder">
+			<intent-filter>
+				
+				
+				<action android:name="android.intent.action.MAIN"></action>
+
+			</intent-filter>
+		</activity>
+
+		<provider android:name="org.sadko.gestures.MotionsDB"
+
+			android:authorities="org.sadko.gestures.content">
+		</provider>
+
+		<activity android:name="Manager"></activity>
+		<activity android:name="com.sadko.about.AboutActivity"
+			android:label="@string/about_caption">
+		</activity>
+		<activity android:name="com.sadko.bursaq.GotoBursaqActivity"
+			android:label="@string/get_bursaq_caption">
+		</activity>
+		<activity android:name="MotionEditor" android:label="Gesture Editor"></activity>
+		<activity android:name="AppPicker" android:label="Application Picker"></activity>
+		<activity android:name="SettingsActivity" android:label="Settings"></activity>
+		<activity android:name="MyTabActivity" android:label="Gestures">
+			<intent-filter>
+				<category android:name="android.intent.category.LAUNCHER"></category>
+				<action android:name="android.intent.action.MAIN"></action>
+
+			</intent-filter>
+		</activity>
+		<service android:name="MotionHandler1">
+			<intent-filter>
+				<action android:name="net.sadko.gestures.CONTROL_SERVICE"></action>
+			</intent-filter>
+		</service>
+		<activity android:name="GesturesListActivity" android:label="Gestures lib"></activity>
+		<activity android:name="TestGestureActivity" android:label="Gesture Tester"></activity>
+		<activity android:name="ConfigWidgetActivity">
+		    <intent-filter>
+       			 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+   			 </intent-filter>
+		</activity>
+		<receiver android:name = ".LauncherReceiver">
+			<intent-filter>
+                <action android:name="gesture.registered" />
+            </intent-filter>
+		</receiver>
+		<receiver android:name=".SwitchWidget" android:label="@string/widget_name">
+            <intent-filter>
+                <action android:name="gestures.handler.state" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
+                <action android:name="android.appwidget.action.APPWIDGET_PICK" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/gesture_widget" />
+        </receiver>
+        
+		
+
+	</application>
+
+	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
+
+</manifest> 

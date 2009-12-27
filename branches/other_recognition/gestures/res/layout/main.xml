@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout android:id="@+id/LinearLayout01"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:focusable="true" android:clickable="true"
+	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:orientation="vertical">
+
+	<ImageButton android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal" 
+		android:id="@+id/start_stop_service"
+		android:background="@drawable/banner_up"
+		android:layout_width="fill_parent" />
+	<RelativeLayout android:id="@+id/RelativeLayout01"
+		android:layout_width="wrap_content" android:layout_height="wrap_content">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Gestures service listens to your phone movements and launches specified application, if recognized action matches the gesture recorded earlier by you."
+			android:id="@+id/program_description" android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_below="@+id/text_about_service_state"
+			android:layout_toLeftOf="@+id/service_start"
+			android:layout_marginLeft="30px" android:layout_marginRight="30px"
+			android:layout_marginTop="30px" android:textColor="#000"
+			android:textSize="20px" android:gravity="center" />
+		<Button android:id = "@+id/more_info_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:layout_below = "@+id/program_description"
+			android:text = "More info" android:layout_centerHorizontal="true" android:layout_marginTop="20px" android:background="@drawable/button" android:height="50px"/>
+	</RelativeLayout>
+	
+	
+		
+</LinearLayout>
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+

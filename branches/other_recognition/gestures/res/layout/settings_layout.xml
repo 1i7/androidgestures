@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:background="@drawable/background">
+	<ImageView android:id="@+id/ImageView01"
+		android:layout_height="wrap_content" android:background="@drawable/banner_up"
+		android:layout_width="fill_parent"></ImageView>
+	<TextView android:id="@+id/TextView03" android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:gravity="center"
+		android:textColor="#000" android:text="Settings" android:textSize="35px"></TextView>
+	<TextView android:id="@+id/TextView01" android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal" android:textColor="#000"
+		android:text="Sensitivity" android:layout_width="fill_parent"
+		android:gravity="center" android:textSize="20px" android:layout_marginTop="10px"></TextView>
+	<SeekBar android:id="@+id/Sensitivity_bar"
+		android:layout_gravity="center" android:layout_marginRight="40px"
+		android:layout_width="fill_parent" 
+		android:layout_marginLeft="40px" android:layout_height="wrap_content" android:paddingBottom="10px" android:paddingTop="10px"></SeekBar>
+	<TextView android:id="@+id/TextView02" android:layout_height="wrap_content"
+		android:gravity="center" android:layout_width="fill_parent"
+		android:text="Period" android:textColor="#000"
+		android:textSize="20px"></TextView>
+	<SeekBar android:layout_height="wrap_content" android:id="@+id/Time_bar"
+		android:layout_gravity="center" android:layout_marginLeft="40px"
+		android:layout_marginRight="40px" android:layout_width="fill_parent" android:paddingBottom="10px" android:paddingTop="10px"></SeekBar>
+
+
+
+
+
+
+	<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:textColor="#000" android:text="How it works?" android:background="@drawable/button" android:height="50px" android:id="@+id/about_settings_button"></Button><LinearLayout android:id="@+id/LinearLayout01"
+		android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:gravity="center" android:layout_weight="1" android:layout_marginBottom="30px" android:layout_marginRight="50px" android:layout_marginLeft="50px">
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="Discard &amp; Exit"
+			android:id="@+id/Discard" android:background="@drawable/button" android:layout_weight="1" android:layout_marginRight="5px" android:height="50px"></Button>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="   Save &amp; Exit   "
+			android:id="@+id/Save" android:background="@drawable/button" android:layout_weight="1" android:layout_marginLeft="5px" android:height="50px"></Button>
+	
+</LinearLayout>
+</LinearLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:background="@drawable/background_lib_big">
+	<ListView android:id="@+id/android:list" android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+	</ListView>
+	<LinearLayout android:id="@+id/android:empty"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:focusable="true" android:clickable="true"
+		android:layout_height="fill_parent" android:layout_width="fill_parent"
+		android:orientation="vertical">
+		<TextView android:id="@+id/TextView01" android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Welcome to Gestures. With our app you can record and match simple motions of your phone to any events on your phone. It is the first version, so you can only start other apps with it."
+			android:layout_marginRight="20px"
+			android:layout_marginLeft="20px" android:gravity="center_horizontal" android:textColor="#000"
+			android:textSize="18px" android:layout_marginTop="20px" android:layout_marginBottom="20px"></TextView>
+		<Button android:id="@+id/add_first" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_gravity="center"
+			android:text="Add my first gesture " android:layout_marginBottom="20px" android:background="@drawable/button" android:height="50px"></Button>
+		<ImageView android:id="@+id/ImageView01"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:src="@drawable/android_icon_125" android:layout_gravity="center_horizontal"></ImageView>
+
+	</LinearLayout>
+
+</LinearLayout>
