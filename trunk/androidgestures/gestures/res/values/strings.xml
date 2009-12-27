@@ -26,5 +26,10 @@ clicking on banner <b>"Gestures"</b> on the top of the screen or by using <b>Ges
 widget</b> which can be added to your Home screen.
 \nIn order to add widget go to your home screen,
 click <i>menu</i> &#8594; <i>add</i> &#8594; <i>widgets</i> and find <b>Gestures widget</b> there.</string>
+<string name = "about_settings_title"> About Sensitivity and Period</string>
+<string name = "about_settings"> Sensitivity is parameter which is responsible for acceptability of
+your movements. The more is sensitivity the more precisely you have to reproduce your gestures.
+\nPeriod is variable responsible for frequency of checking gestures. The less is period the more operations your CPU have to do, but recognition quality increases.   
+</string>
 
 </resources>

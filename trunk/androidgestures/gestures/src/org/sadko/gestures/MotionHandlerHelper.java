@@ -45,6 +45,7 @@ public class MotionHandlerHelper extends BroadcastReceiver {
 				new Intent(MotionHandlerBroadcastReceiver.
 						ACTION_TURN_OFF));
 		Log.i("mhh","call off");
+		//String s = android.appwidget.AppWidgetManager.ACTION_APPWIDGET_ENABLED;
 	}
 	public void getState(){
 		mContext.sendBroadcast(

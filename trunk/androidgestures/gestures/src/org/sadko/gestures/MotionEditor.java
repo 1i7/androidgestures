@@ -244,22 +244,9 @@ public class MotionEditor extends Activity {
 		ImageButton record = (ImageButton) findViewById(R.id.Record);
 		record.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				bindService(new Intent(MotionEditor.this,MotionHandler1.class), new ServiceConnection(){
-
-					public void onServiceConnected(ComponentName arg0,
-							IBinder arg1) {
-						ListnerBinder lb=(ListnerBinder) arg1;
-						if(lb.mh.isEnabled)
-							lb.mh.switchMe();
-						unbindService(this);
-					}
-
-					public void onServiceDisconnected(ComponentName name) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-				}, 0);
+				saveGesture();
+				action=android.content.Intent.ACTION_EDIT;
+				helper.turnOff();
 				Intent i = new Intent(MotionEditor.this, Recorder.class);
 				startActivityForResult(i, RECORD_REQEST_CODE);
 			}
@@ -321,6 +308,7 @@ public class MotionEditor extends Activity {
 		saveExit.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+				discarding = false;
 				finish();
 			}
 
@@ -372,7 +360,6 @@ public class MotionEditor extends Activity {
 				super.OnStateReceived(isEnabled);
 				setBannerEnabled(isEnabled);
 			}
-			
 		};
 		
 		//if(action)

@@ -17,7 +17,8 @@
 
 		<activity android:label="Gesture Recorder" android:name="org.sadko.gestures.Recorder">
 			<intent-filter>
-			
+				
+				
 				<action android:name="android.intent.action.MAIN"></action>
 
 			</intent-filter>
@@ -52,6 +53,11 @@
 		</service>
 		<activity android:name="GesturesListActivity" android:label="Gestures lib"></activity>
 		<activity android:name="TestGestureActivity" android:label="Gesture Tester"></activity>
+		<activity android:name="ConfigWidgetActivity">
+		    <intent-filter>
+       			 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+   			 </intent-filter>
+		</activity>
 		<receiver android:name = ".LauncherReceiver">
 			<intent-filter>
                 <action android:name="gesture.registered" />
@@ -59,10 +65,14 @@
 		</receiver>
 		<receiver android:name=".SwitchWidget" android:label="@string/widget_name">
             <intent-filter>
+                <action android:name="gestures.handler.state" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
+                <action android:name="android.appwidget.action.APPWIDGET_PICK" />
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/gesture_widget" />
         </receiver>
+        
 		
 
 	</application>

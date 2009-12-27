@@ -10,5 +10,5 @@
 		android:text="0"
 		android:layout_height="wrap_content" android:layout_below="@+id/gesture_name"></TextView>
 	
-<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/activated_indicator" android:layout_alignParentRight="true" android:maxWidth="70px" android:maxHeight="70px" android:src="@drawable/not_activ"></ImageView>
+<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/activated_indicator" android:layout_alignParentRight="true" android:maxWidth="70px" android:maxHeight="70px" android:src="@android:drawable/ic_menu_close_clear_cancel"></ImageView>
 </RelativeLayout>
